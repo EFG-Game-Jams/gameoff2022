@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,8 +9,8 @@ public class ExamplePlayerInput : MonoBehaviour
     private float cameraPitch;
 
     #region Input Message Handlers
-    private void OnInputMove(InputValue value) => controlMove = value.Get<Vector2>();
-    private void OnInputAim(InputValue value) => ApplyAimDelta(value.Get<Vector2>());
+    public void OnInputMove(InputValue value) => controlMove = value.Get<Vector2>();
+    public void OnInputAim(InputValue value) => ApplyAimDelta(value.Get<Vector2>());
     #endregion
 
     private void ApplyAimDelta(Vector2 delta)
