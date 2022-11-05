@@ -17,6 +17,11 @@ public class SatriProtoPlayer : MonoBehaviour
     private Vector3 position;
     private Vector3 velocity;
 
+    [SerializeField] float reloadTime;
+    [SerializeField] float rocketRadius;
+    [SerializeField] float rocketImpulse;
+    private float nextReloadedTime;    
+
     private void OnInputMove(InputValue value)
     {
         controlStateMove.move = value.Get<Vector2>();
@@ -35,6 +40,20 @@ public class SatriProtoPlayer : MonoBehaviour
         cameraPitch -= delta.y;
         cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
         cameraTransform.localEulerAngles = new Vector3(cameraPitch, 0, 0);
+    }
+
+    private void OnInputFire()
+    {
+        if (nextReloadedTime > Time.timeSinceLevelLoad)
+            return;
+
+        nextReloadedTime = Time.timeSinceLevelLoad + reloadTime;
+        if (!Physics.Raycast(cameraTransform.position, cameraTransform.forward, out RaycastHit hitInfo, rocketRadius, ~0, QueryTriggerInteraction.Ignore))
+            return;
+
+        Vector3 diff = transform.position - hitInfo.point;
+        Vector3 dir = diff.normalized;
+        velocity += dir * rocketImpulse;
     }
 
     private void Start()

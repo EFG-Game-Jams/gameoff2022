@@ -83,39 +83,6 @@ public class SatriProtoPlayerMovement : MonoBehaviour
 
     private Vector3 CalculateJumpAndGravityImpulse(Vector3 currentVelocity, in ControlState controlState, bool isGrounded, float deltaTime)
     {
-        /*
-        // end jump?
-        if (!controlState.jump)
-        {
-            if (isGrounded)
-                jumpTime = 0f;
-            else
-                jumpTime = jumpMaxSustainTime;
-            jumpInitialVelocity = 0f;
-            return Vector3.zero;
-        }
-
-        // start jump?
-        if (isGrounded && controlState.jump && jumpTime == 0f)
-        {
-            Debug.Log("Start jump");
-            jumpTime = deltaTime;
-            jumpInitialVelocity = currentVelocity.y;
-            return new Vector3(0f, jumpVelocity, 0f);
-        }
-
-        // sustain
-        jumpTime += deltaTime;
-        if (jumpTime < jumpMaxSustainTime)
-        {
-            Debug.Log("Sustain jump");
-            return new Vector3(0f, jumpInitialVelocity + jumpVelocity - currentVelocity.y, 0f);
-        }
-
-        // beyond max sustain time
-        return Vector3.zero;
-        */
-
         if (isGrounded && controlState.jump && !jumping)
         {
             // start jump
