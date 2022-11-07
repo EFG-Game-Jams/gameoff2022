@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Replay;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,7 +10,15 @@ public class SatriProtoPlayer : MonoBehaviour
     private SatriProtoPlayerMovement movement;
     private SatriProtoPlayerCollision collision;
 
+    private Replayable replayable;
+    private ReplayStream.Writer replayWriterPosition;
+    private ReplayStream.Writer replayWriterAim;
+    private ReplayStream.Reader replayReaderPosition;
+    private ReplayStream.Reader replayReaderAim;
+
     private SatriProtoPlayerMovement.ControlState controlStateMove;
+
+    private float cameraHeading;
     private float cameraPitch;
     private Vector3 prevPosition;
     private Vector3 position;
@@ -35,14 +42,25 @@ public class SatriProtoPlayer : MonoBehaviour
     {
         Vector2 delta = value.Get<Vector2>();
 
-        transform.Rotate(Vector3.up, delta.x);
+        cameraHeading = Mathf.DeltaAngle(0, cameraHeading + delta.x);
+        //transform.localEulerAngles = new Vector3(0f, cameraHeading, 0f);
 
         cameraPitch -= delta.y;
         cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
-        cameraTransform.localEulerAngles = new Vector3(cameraPitch, 0, 0);
+        //cameraTransform.localEulerAngles = new Vector3(cameraPitch, 0, 0);
     }
 
     private void OnInputFire()
+    {
+        TryFire();
+    }
+
+    private void ApplyAim(float heading, float pitch)
+    {
+        transform.localEulerAngles = new Vector3(0f, heading, 0f);
+        cameraTransform.localEulerAngles = new Vector3(pitch, 0, 0);
+    }
+    private void TryFire()
     {
         if (nextReloadedTime > Time.timeSinceLevelLoad)
             return;
@@ -61,6 +79,18 @@ public class SatriProtoPlayer : MonoBehaviour
         movement = GetComponent<SatriProtoPlayerMovement>();
         collision = GetComponent<SatriProtoPlayerCollision>();
 
+        replayable = GetComponent<Replay.Replayable>();
+        if (replayable.Mode == ReplaySystem.ReplayMode.Record)
+        {
+            replayWriterPosition = replayable.GetWriter("position");
+            replayWriterAim = replayable.GetWriter("aim");
+        }
+        else
+        {
+            replayReaderPosition = replayable.GetReader("position");
+            replayReaderAim = replayable.GetReader("aim");
+        }
+
         position = transform.position;
         velocity = Vector3.zero;
 
@@ -73,21 +103,42 @@ public class SatriProtoPlayer : MonoBehaviour
     {
         float deltaTime = Time.fixedDeltaTime;
 
-        Vector3 newVelocity = movement.CalculateVelocity(velocity, controlStateMove, collision.IsGrounded, deltaTime);
+        if (replayable.Mode == ReplaySystem.ReplayMode.Record)
+        {
+            ApplyAim(cameraHeading, cameraPitch);
 
-        Vector3 displacement = newVelocity * deltaTime; // (velocity + newVelocity) * (.5f * deltaTime);
-        Vector3 newPosition = position + displacement;
+            Vector3 newVelocity = movement.CalculateVelocity(velocity, controlStateMove, collision.IsGrounded, deltaTime);
 
-        collision.ApplyCollisionResponse(position, ref newPosition, ref newVelocity, deltaTime);
+            Vector3 displacement = newVelocity * deltaTime; // (velocity + newVelocity) * (.5f * deltaTime);
+            Vector3 newPosition = position + displacement;
 
-        prevPosition = position;
-        position = newPosition;
-        velocity = newVelocity;
+            collision.ApplyCollisionResponse(position, ref newPosition, ref newVelocity, deltaTime);
+
+            prevPosition = position;
+            position = newPosition;
+            velocity = newVelocity;            
+
+            replayWriterPosition.Write(position);
+            replayWriterAim.Write(new Vector2(cameraHeading, cameraPitch));
+        }
+        else
+        {
+            Vector2 aim = replayReaderAim.ReadVector2();
+            cameraHeading = aim.x;
+            cameraPitch = aim.y;
+            ApplyAim(cameraHeading, cameraPitch);
+
+            prevPosition = position;
+            position = replayReaderPosition.ReadVector3();
+            velocity = (position - prevPosition) / Time.fixedDeltaTime;
+        }
     }
 
     private void Update()
     {
-        float interpolationTime = (float)(Time.timeAsDouble - Time.fixedTimeAsDouble); ;
+        ApplyAim(cameraHeading, cameraPitch);
+
+        float interpolationTime = (float)(Time.timeAsDouble - Time.fixedTimeAsDouble);
         switch (positionMode)
         {
             case RigidbodyInterpolation.None:

@@ -1,3 +1,4 @@
+using Replay;
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,16 +12,26 @@ public class SatriProtoTimeTrialGamemode : MonoBehaviour
     public void EventStartTimer()
     {
         if (!timerStart.HasValue)
-            timerStart = Time.timeSinceLevelLoadAsDouble;
+            timerStart = Time.fixedTime;// Time.timeSinceLevelLoadAsDouble;
     }
     public void EventEndTimer()
     {
         if (!timerEnd.HasValue)
-            timerEnd = Time.timeSinceLevelLoadAsDouble;
+            timerEnd = Time.fixedTime;// Time.timeSinceLevelLoadAsDouble;
     }
     public void EventReset()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneBase.ReloadScene();
+    }
+    public void EventReplay()
+    {
+        var replayData = FindObjectOfType<SceneBase>().ReplaySystem.Data.ToJson(true);
+        Debug.Log($"Replay data length : {replayData.Length}");
+        SceneBase.ReloadScene(() =>
+        {
+            ReplaySystem replaySystem = FindObjectOfType<SceneBase>().ReplaySystem;
+            replaySystem.Playback(replayData);
+        });
     }
 
     private void Update()
@@ -29,7 +40,7 @@ public class SatriProtoTimeTrialGamemode : MonoBehaviour
         if (timerEnd.HasValue)
             time = timerEnd.Value - timerStart.Value;
         else if (timerStart.HasValue)
-            time = Time.timeSinceLevelLoadAsDouble - timerStart.Value;
+            time = /*Time.timeSinceLevelLoadAsDouble*/Time.fixedTime - timerStart.Value;
 
         TimeSpan timeSpan = TimeSpan.FromSeconds(time);
         string timeText = string.Format("{0:D2}:{1:D2}.{2:D3}", timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
