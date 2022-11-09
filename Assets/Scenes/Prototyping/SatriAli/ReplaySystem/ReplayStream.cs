@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -9,8 +7,16 @@ namespace Replay
     {
         public enum DataType
         {
-            Float32,    // 32 bit float
-            //Quant16,    // 16 bit quantised float
+            Float32,
+            Quant16,
+            QuantAuto,
+            QuantDelta,
+        }
+        public enum InterpolationType
+        {
+            Linear,
+            Angular,
+            None,
         }
 
         [System.Serializable]
@@ -18,182 +24,124 @@ namespace Replay
         {
             [Tooltip("Must be unique within this gameobject")]
             public string name;
-            [Tooltip("Stream type\nFloat32 - raw 32-bit\nQuant16 - quantised 16-bit")]
+            [Tooltip("Stream type\nFloat32 - raw 32-bit absolute\nQuant16 - quantised 16-bit absolute\nQuantAuto - quantised 6/14/22/30-bit absolute\nQuantDelta - quantised 6/14/22/30-bit delta")]
             public DataType dataType;
             [Tooltip("Number of values per sample\n1: float\n2: Vector2\n3: Vector3\netc...")]
             public int stride;
             [Tooltip("Quantisation scale\nValues will be multiplied by this then rounded to the nearest integer\nThis is ignored for non-quantised types")]
             public int quantise;
+            [Tooltip("Number of raw samples per recorded keyframe")]
+            public int keyframeInterval;
+            [Tooltip("Interpolation method used to reconstruct samples between keyframes")]
+            public InterpolationType interpolation;
         }
 
         [System.Serializable]
-        public struct Serialised
+        internal struct Serialised
         {
             public Descriptor descriptor;
             public string data;
         }
 
         public readonly Descriptor descriptor;
-        private MemoryStream stream;
-        private Writer writer;
+        private MemoryStream dataStream;
+        private Writer activeWriter;
 
-        public ReplayStream(in Descriptor descriptor, bool asReadOnly = false)
+        private bool CanRead => dataStream.Position < dataStream.Length;
+
+        internal ReplayStream(in Descriptor descriptor, bool asReadOnly = false)
         {
             this.descriptor = descriptor;
             if (asReadOnly)
-                stream = new(new byte[0], false);
+                dataStream = new(new byte[0], false);
             else
-                stream = new();
+                dataStream = new();
         }
-        public ReplayStream(in Serialised serialised)
-            : this(serialised.descriptor)
+        internal ReplayStream(in Serialised serialised)
         {
+            descriptor = serialised.descriptor;
             byte[] bytes = System.Convert.FromBase64String(serialised.data);
-            stream = new(bytes, false);
+            bytes = Decompress(bytes);
+            dataStream = new(bytes, false);
         }
 
-        public Serialised Serialise()
+        internal Serialised Serialise()
         {
-            writer?.Flush();
-            byte[] bytes = stream.ToArray();
+            activeWriter?.Finish();
+
+            byte[] bytes = dataStream.ToArray();
+            bytes = Compress(bytes);
             string base64 = System.Convert.ToBase64String(bytes);
+
             return new Serialised { descriptor = descriptor, data = base64 };
+        }
+
+        private byte[] Compress(byte[] bytes)
+        {
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new System.IO.Compression.GZipStream(mso, System.IO.Compression.CompressionLevel.Optimal))
+                //using (var gs = new Ionic.Zlib.GZipStream(mso, Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression))
+                {
+                    msi.CopyTo(gs);
+                }
+                return mso.ToArray();
+            }
+        }
+        private byte[] Decompress(byte[] bytes)
+        {
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new System.IO.Compression.GZipStream(msi, System.IO.Compression.CompressionMode.Decompress))
+                //using (var gs = new Ionic.Zlib.GZipStream(mso, Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression))
+                {
+                    gs.CopyTo(mso);
+                }
+                return mso.ToArray();
+            }
         }
 
         public Writer GetWriter()
         {
-            Debug.Assert(writer == null);
-            Debug.Assert(stream.CanWrite);            
+            Debug.Assert(activeWriter == null);
+            Debug.Assert(dataStream.CanWrite);            
             switch (descriptor.dataType)
             {
                 case DataType.Float32:
-                    writer = new WriterFloat32(this);
+                    activeWriter = new WriterFloat32(this);
+                    break;
+                case DataType.Quant16:
+                    activeWriter = new WriterQuant16(this);
+                    break;
+                case DataType.QuantAuto:
+                    activeWriter = new WriterQuantAuto(this);
+                    break;
+                case DataType.QuantDelta:
+                    activeWriter = new WriterQuantDelta(this);
                     break;
                 default:
                     throw new System.NotImplementedException();
             }
-            return writer;
+            return activeWriter;
         }
         public Reader GetReader()
         {
-            Debug.Assert(writer == null);
+            Debug.Assert(activeWriter == null);
             switch (descriptor.dataType)
             {
                 case DataType.Float32:
                     return new ReaderFloat32(this);
+                case DataType.Quant16:
+                    return new ReaderQuant16(this);
+                case DataType.QuantAuto:
+                    return new ReaderQuantAuto(this);
+                case DataType.QuantDelta:
+                    return new ReaderQuantDelta(this);
                 default:
                     throw new System.NotImplementedException();
             }
-        }
-
-        public abstract class Writer
-        {
-            protected readonly ReplayStream stream;
-
-            private Writer() { }
-            protected Writer(ReplayStream stream) { this.stream = stream; }
-
-            public void Write(float value)
-            {
-                Debug.Assert(stream.descriptor.stride == 1);
-                SetChannel(0, value, true);
-            }
-            public void Write(Vector2 value)
-            {
-                Debug.Assert(stream.descriptor.stride == 2);
-                SetChannel(0, value.x);
-                SetChannel(1, value.y, true);
-            }
-            public void Write(Vector3 value)
-            {
-                Debug.Assert(stream.descriptor.stride == 3);
-                SetChannel(0, value.x);
-                SetChannel(1, value.y);
-                SetChannel(2, value.z, true);
-            }
-
-            protected abstract void SetChannel(int channel, float value, bool commit = false);
-            public virtual void Flush() { }
-        }
-
-        public abstract class Reader
-        {
-            protected readonly ReplayStream stream;
-
-            private Reader() { }
-            protected Reader(ReplayStream stream) { this.stream = stream; }
-
-            public float ReadFloat()
-            {
-                Debug.Assert(stream.descriptor.stride == 1);                
-                return GetChannel(0, true);
-            }
-            public Vector2 ReadVector2()
-            {
-                Debug.Assert(stream.descriptor.stride == 2);
-                Vector2 result;
-                result.x = GetChannel(0, true);
-                result.y = GetChannel(1);
-                return result;
-            }
-            public Vector3 ReadVector3()
-            {
-                Debug.Assert(stream.descriptor.stride == 3);
-                Vector3 result;
-                result.x = GetChannel(0, true);
-                result.y = GetChannel(1);
-                result.z = GetChannel(2);
-                return result;
-            }
-
-            protected abstract float GetChannel(int channel, bool pump = false);
-        }
-
-        private bool CanRead => stream.Position < stream.Length;
-
-        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
-        private struct UnionFloat32
-        {
-            [System.Runtime.InteropServices.FieldOffset(0)] public float asFloat;
-            [System.Runtime.InteropServices.FieldOffset(0)] public int asInt;
-        }
-
-        private void WriteShort(short value)
-        {
-            stream.WriteByte((byte)(value & 0xFF));
-            stream.WriteByte((byte)((value >> 8) & 0xFF));
-        }
-        private void WriteInt(int value)
-        {
-            stream.WriteByte((byte)(value & 0xFF));
-            stream.WriteByte((byte)((value >> 8) & 0xFF));
-            stream.WriteByte((byte)((value >> 16) & 0xFF));
-            stream.WriteByte((byte)((value >> 24) & 0xFF));
-        }
-        private void WriteFloat(float value)
-        {
-            WriteInt((new UnionFloat32 { asFloat = value }).asInt);
-        }
-
-        private short ReadShort()
-        {
-            return (short)(
-                stream.ReadByte() |
-                (stream.ReadByte() << 8)
-            );
-        }
-        private int ReadInt()
-        {
-            return (
-                stream.ReadByte() |
-                (stream.ReadByte() << 8) |
-                (stream.ReadByte() << 16) |
-                (stream.ReadByte() << 24)
-            );
-        }
-        private float ReadFloat()
-        {
-            return (new UnionFloat32 { asInt = ReadInt() }).asFloat;
         }
     }
 }

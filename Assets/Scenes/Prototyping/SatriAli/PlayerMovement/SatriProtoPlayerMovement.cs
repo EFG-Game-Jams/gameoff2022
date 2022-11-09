@@ -31,7 +31,7 @@ public class SatriProtoPlayerMovement : MonoBehaviour
     {
         Vector3 newVelocity = velocity;
         newVelocity += CalculateMoveImpulse(velocity, controlState, isGrounded, deltaTime);
-        newVelocity += CalculateJumpAndGravityImpulse(newVelocity, controlState, isGrounded, deltaTime);        
+        newVelocity += CalculateJumpAndGravityImpulse(newVelocity, controlState, isGrounded, deltaTime);
         return newVelocity;
     }
 

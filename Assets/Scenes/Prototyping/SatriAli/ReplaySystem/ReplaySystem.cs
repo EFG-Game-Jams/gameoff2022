@@ -23,8 +23,8 @@ namespace Replay
         public ReplayMode Mode { get; private set; } = ReplayMode.Record;
         public ReplayData Data { get; private set; } = new();
 
-        public int DynamicFrameCount { get; private set; }
-        public int FixedFrameCount { get; private set; }
+        //public uint DynamicFrameCount { get; private set; }
+        public uint FixedFrameCount { get; private set; }
 
         private void OnValidate()
         {
@@ -38,10 +38,10 @@ namespace Replay
             }
         }
 
-        private void Update()
+        /*private void Update()
         { 
             ++DynamicFrameCount;
-        }
+        }*/
 
         private void FixedUpdate()
         {
@@ -56,7 +56,7 @@ namespace Replay
         public void Playback(string json)
         {
             Mode = ReplayMode.Playback;
-            Data.FromJson(json);
+            Data.FromJson(json, this);
         }
 
         internal void SetRecordingStream(Replayable replayable, ReplayStream stream)
@@ -75,6 +75,24 @@ namespace Replay
             if (!Data.TryGetStream(replayable.UID, defaultDescriptor.name, out ReplayStream stream))
                 stream = new ReplayStream(defaultDescriptor, asReadOnly: true);
             return stream;
+        }
+
+        internal void SetRecordingEventList(Replayable replayable, ReplayEventList eventList)
+        {
+            Debug.Assert(Mode == ReplayMode.Record);
+            Debug.Assert(replayable != null && replayable.UID != 0);
+            Debug.Assert(eventList != null);
+
+            Data.AddEventList(replayable.UID, eventList);
+        }
+        internal ReplayEventList GetPlaybackEventList(Replayable replayable, string name)
+        {
+            Debug.Assert(Mode == ReplayMode.Playback);
+            Debug.Assert(replayable != null && replayable.UID != 0);
+
+            if (!Data.TryGetEventList(replayable.UID, name, out ReplayEventList eventList))
+                eventList = new ReplayEventList(name, this, true);
+            return eventList;
         }
     }
 }

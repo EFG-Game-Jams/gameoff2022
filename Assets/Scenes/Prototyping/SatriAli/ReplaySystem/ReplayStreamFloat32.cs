@@ -1,3 +1,4 @@
+using Replay.StreamExtensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,45 +7,29 @@ namespace Replay
 {
     public partial class ReplayStream
     {
-        private class WriterFloat32 : Writer
+        private class WriterFloat32 : WriterBasic
         {
-            private float[] channels;
-
             public WriterFloat32(ReplayStream stream)
                 : base(stream)
             {
-                channels = new float[stream.descriptor.stride];
             }
 
-            protected override void SetChannel(int channel, float value, bool commit = false)
+            protected override void WriteToStream(float value, int channel)
             {
-                channels[channel] = value;
-
-                if (commit)
-                {
-                    for (int i = 0; i < channels.Length; ++i)
-                        stream.WriteFloat(channels[i]);
-                }
+                stream.dataStream.WriteFloat(value);
             }
         }
 
-        public class ReaderFloat32 : Reader
+        private class ReaderFloat32 : ReaderBasic
         {
-            private float[] channels;
-
             public ReaderFloat32(ReplayStream stream)
                 : base(stream)
             {
-                channels = new float[stream.descriptor.stride];
             }
 
-            protected override float GetChannel(int channel, bool pump = false)
+            protected override float ReadFromStream(int channel)
             {
-                if (pump && stream.CanRead)
-                    for (int i = 0; i < channels.Length; ++i)
-                        channels[i] = stream.ReadFloat();
-
-                return channels[channel];
+                return stream.dataStream.ReadFloat();
             }
         }
     }

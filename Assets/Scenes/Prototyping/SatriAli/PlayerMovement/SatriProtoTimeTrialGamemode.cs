@@ -23,12 +23,16 @@ public class SatriProtoTimeTrialGamemode : MonoBehaviour
     {
         SceneBase.ReloadScene();
     }
+
+    [TextArea] public string replayJsonDebug;
     public void EventReplay()
     {
         var replayData = FindObjectOfType<SceneBase>().ReplaySystem.Data.ToJson(true);
         Debug.Log($"Replay data length : {replayData.Length}");
+
         SceneBase.ReloadScene(() =>
         {
+            FindObjectOfType<SatriProtoTimeTrialGamemode>().replayJsonDebug = replayData;
             ReplaySystem replaySystem = FindObjectOfType<SceneBase>().ReplaySystem;
             replaySystem.Playback(replayData);
         });

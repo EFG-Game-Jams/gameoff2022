@@ -19,12 +19,14 @@ namespace Replay
 
         [Header("Data")]
         [SerializeField] ReplayStream.Descriptor[] streamDescriptors;
+        [SerializeField] string[] eventNames;
 
         public ReplaySystem System => replaySystem;
         public int UID => replayUID;
         public ReplaySystem.ReplayMode Mode => replaySystem.Mode;
 
-        private List<ReplayStream> streams;
+        private ReplayStream[] streams;
+        private ReplayEventList[] eventLists;
 
         public ReplayStream.Writer GetWriter(string name)
         {
@@ -54,7 +56,7 @@ namespace Replay
             Debug.Assert(replaySystem != null);
             Debug.Assert(replayUID != 0);
 
-            SetupStreams();
+            SetupData();
             UpdateComponents();
         }
 
@@ -82,22 +84,34 @@ namespace Replay
                 throw new NotImplementedException($"Replayable.SetComponentEnabled doesn't currently support component {component.name}");
         }
 
-        private void SetupStreams()
+        private void SetupData()
         {
-            streams = new(streamDescriptors.Length);
+            streams = new ReplayStream[streamDescriptors.Length];
+            eventLists = new ReplayEventList[eventNames.Length];
+
             if (Mode == ReplaySystem.ReplayMode.Record)
             {
                 for (int i = 0; i < streamDescriptors.Length; ++i)
                 {
                     ReplayStream stream = new ReplayStream(streamDescriptors[i]);
                     replaySystem.SetRecordingStream(this, stream);
-                    streams.Add(stream);
+                    streams[i] = stream;
+                }
+
+                for (int i = 0; i < eventNames.Length; ++i)
+                {
+                    ReplayEventList eventList = new ReplayEventList(eventNames[i], System);
+                    replaySystem.SetRecordingEventList(this, eventList);
+                    eventLists[i] = eventList;
                 }
             }
             else
             {
                 for (int i = 0; i < streamDescriptors.Length; ++i)
-                    streams.Add(replaySystem.GetPlaybackStream(this, streamDescriptors[i]));
+                    streams[i] = replaySystem.GetPlaybackStream(this, streamDescriptors[i]);
+
+                for (int i = 0; i < eventNames.Length; ++i)
+                    eventLists[i] = replaySystem.GetPlaybackEventList(this, eventNames[i]);
             }
         }
     }
