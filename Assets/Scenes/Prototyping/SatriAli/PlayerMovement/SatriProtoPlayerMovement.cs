@@ -21,6 +21,7 @@ public class SatriProtoPlayerMovement : MonoBehaviour
     [SerializeField] float gravityScale = 1f;
     [SerializeField] float jumpVelocity = 5f;
     [SerializeField] float jumpStopStrength = 3f;
+    [SerializeField] bool jumpInheritVerticalVelocity = false;
 
     private bool jumping;
     private float jumpInitialVelocity;
@@ -88,8 +89,16 @@ public class SatriProtoPlayerMovement : MonoBehaviour
             // start jump
             // add jump impulse, no gravity this frame
             jumping = true;
-            jumpInitialVelocity = currentVelocity.y;
-            return new Vector3(0f, jumpVelocity, 0f);
+            if (jumpInheritVerticalVelocity)
+            {
+                jumpInitialVelocity = currentVelocity.y;
+                return new Vector3(0f, jumpVelocity, 0f);
+            }
+            else
+            {
+                jumpInitialVelocity = 0f;
+                return new Vector3(0f, jumpVelocity - currentVelocity.y, 0f);
+            }
         }
 
         if (jumping && currentVelocity.y > jumpInitialVelocity + jumpVelocity)
