@@ -28,6 +28,9 @@ namespace Replay
 
         private void OnValidate()
         {
+            if (sceneReplayables == null)
+                return; // probably haven't ever been serialised yet
+
             // assign negative IDs to all registered scene replayables
             for (int i = 0; i < sceneReplayables.Length; ++i)
             {
