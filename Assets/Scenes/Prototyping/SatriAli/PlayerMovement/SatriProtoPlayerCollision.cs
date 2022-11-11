@@ -12,6 +12,8 @@ public class SatriProtoPlayerCollision : MonoBehaviour
     [SerializeField] private float restitution = 0f;
     [SerializeField] private float friction = .1f;
     [SerializeField] private int maxIterations = 10;
+    [SerializeField] private int warnIterations = 5;
+    [SerializeField] private LayerMask collisionMask;
 
     public bool IsGrounded { get; private set; }
 
@@ -22,6 +24,7 @@ public class SatriProtoPlayerCollision : MonoBehaviour
         Vector3 p1 = prevPosition + transform.up * sphereHigh;
         Vector3 p2 = prevPosition + transform.up * sphereLow;
 
+        int responseIterations = 0;
         for (int i = 0; i < maxIterations; ++i)
         {
             if (newPosition == prevPosition)
@@ -31,8 +34,9 @@ public class SatriProtoPlayerCollision : MonoBehaviour
             float distance = displacement.magnitude;
             Vector3 direction = displacement / distance;
 
-            if (!Physics.CapsuleCast(p1, p2, sphereRadius, direction, out RaycastHit hitInfo, distance, ~0, QueryTriggerInteraction.Ignore))
+            if (!Physics.CapsuleCast(p1, p2, sphereRadius, direction, out RaycastHit hitInfo, distance, collisionMask, QueryTriggerInteraction.Ignore))
                 break;
+            ++responseIterations;
 
             // depenetration            
             float penetrationDistance = distance - hitInfo.distance;
@@ -57,6 +61,9 @@ public class SatriProtoPlayerCollision : MonoBehaviour
             // we consider we're grounded if we hit something with a normal at most 45° from vertical
             IsGrounded = IsGrounded || Vector3.Dot(hitInfo.normal, Vector3.up) >= .5f;
         }
+
+        if (responseIterations >= warnIterations)
+            Debug.LogWarning($"PlayerCollision detected {responseIterations} penetrations, this could mean it's colliding with something it shouldn't...");
     }
 
     private void OnDrawGizmosSelected()

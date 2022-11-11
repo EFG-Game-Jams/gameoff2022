@@ -3542,7 +3542,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a72ae8f62f26ad449af3a3a87e21ca3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: {x: 5, y: 10}
+  maxSpeed: {x: 5, y: 20}
   maxAcceleration: {x: 10, y: 10}
   airControlScale: {x: 0.2, y: 0.5}
   accelerationCurve:
@@ -3558,10 +3558,28 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.4
+      time: 0.25
       value: 1
       inSlope: -0
-      outSlope: -4.4999995
+      outSlope: -16.499996
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.3
+      value: 0.175
+      inSlope: -16.499996
+      outSlope: 0
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 0.175
+      inSlope: -0
+      outSlope: -0.74999976
       tangentMode: 69
       weightedMode: 0
       inWeight: 0.33333334
@@ -3569,7 +3587,7 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0.6
       value: 0.1
-      inSlope: -4.4999995
+      inSlope: -0.74999976
       outSlope: 0
       tangentMode: 69
       weightedMode: 0
@@ -3590,6 +3608,7 @@ MonoBehaviour:
   gravityScale: 1
   jumpVelocity: 5
   jumpStopStrength: 3
+  jumpInheritVerticalVelocity: 0
 --- !u!136 &733336065
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -7889,16 +7908,16 @@ MonoBehaviour:
       time: 6
       value: 0
       inSlope: -0
-      outSlope: 0.25
+      outSlope: 0.071428575
       tangentMode: 69
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 10
+      time: 20
       value: 1
-      inSlope: 0.25
-      outSlope: 0.25
+      inSlope: 0.071428575
+      outSlope: 0.071428575
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
