@@ -19,13 +19,7 @@ namespace Replay
 
             protected override void WriteToStream(float value, int channel)
             {
-                float fquant = value * quantise;
-                int iquant = Mathf.RoundToInt(fquant);
-
-                Debug.Assert(iquant >= short.MinValue);
-                Debug.Assert(iquant <= short.MaxValue);
-
-                stream.dataStream.WriteShort((short)iquant);
+                stream.dataStream.WriteFloatQuantised16(value, quantise);
             }
         }
 
@@ -41,7 +35,7 @@ namespace Replay
 
             protected override float ReadFromStream(int channel)
             {
-                return (float)stream.dataStream.ReadShort() / quantise;
+                return stream.dataStream.ReadFloatQuantised16(quantise);
             }
         }
     }

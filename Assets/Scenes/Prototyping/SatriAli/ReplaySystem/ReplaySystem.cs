@@ -23,8 +23,7 @@ namespace Replay
         public ReplayMode Mode { get; private set; } = ReplayMode.Record;
         public ReplayData Data { get; private set; } = new();
 
-        //public uint DynamicFrameCount { get; private set; }
-        public uint FixedFrameCount { get; private set; }
+        public uint FixedFrameCount { get; private set; } = 0;
 
         private void OnValidate()
         {
@@ -41,14 +40,20 @@ namespace Replay
             }
         }
 
-        /*private void Update()
-        { 
-            ++DynamicFrameCount;
-        }*/
-
-        private void FixedUpdate()
+        private void Start()
         {
-            ++FixedFrameCount;
+            StartCoroutine(CoLateFixedUpdate());
+        }
+
+        private IEnumerator CoLateFixedUpdate()
+        {
+            var wait = new WaitForFixedUpdate();
+
+            while (true)
+            {
+                yield return wait;
+                ++FixedFrameCount;
+            }
         }
 
         public void Record()

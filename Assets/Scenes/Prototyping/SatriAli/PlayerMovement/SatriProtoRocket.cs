@@ -1,0 +1,119 @@
+using System;
+using UnityEngine;
+
+public class SatriProtoRocket : MonoBehaviour
+{
+    public struct ImpactInfo
+    {
+        public Vector3 position;
+        public Vector3 normal;
+        public float time;
+    }
+
+    [Header("References")]
+    [SerializeField] MeshRenderer projectileMesh;
+    [SerializeField] AudioSource flightSfx;
+    [SerializeField] ParticleSystem flightVfx;
+    [SerializeField] GameObject impactEffectPrefab;
+
+    [Header("Behaviour")]
+    [SerializeField] LayerMask impactLayers;
+    [SerializeField] float gravityScale;
+
+
+    private ProjectileStateInitial initialState;
+    private ProjectileState currentState;
+
+    public void Configure(Vector3 position, Vector3 velocity)
+    {
+        initialState = new ProjectileStateInitial
+        {
+            position = position,
+            velocity = velocity,
+            acceleration = Physics.gravity * gravityScale,
+        };
+
+        currentState = initialState.AsState;
+
+        UpdateTransform(position, velocity);
+    }
+
+    public bool Advance(float deltaTime)
+    {
+        ProjectileState prevState = currentState;
+        currentState = ProjectileUtils.GetStateAt(initialState, prevState.time + deltaTime);
+
+        Vector3 diff = currentState.position - prevState.position;
+        float dist = diff.magnitude;
+        Vector3 dir = diff / dist;
+
+        if (Physics.Raycast(prevState.position, dir, out RaycastHit hitInfo, dist, impactLayers))
+        {
+            UpdateTransform(prevState.position + dir * hitInfo.distance, currentState.velocity);
+            Detonate();
+            return false;
+        }
+        else
+        {
+            UpdateTransform(currentState.position, currentState.velocity);
+        }
+
+        return true;
+    }
+
+    private void UpdateTransform(Vector3 position, Vector3 velocity)
+    {
+        transform.position = position;
+        transform.LookAt(position + velocity, Vector3.up);
+    }
+
+    private void Detonate()
+    {
+        projectileMesh.enabled = false;
+        flightSfx.Stop();
+        flightVfx.Stop();
+
+        Instantiate(impactEffectPrefab, transform.position, impactEffectPrefab.transform.rotation);
+
+        Destroy(gameObject, 5f); // give the particle system time to finish
+    }
+
+    public bool FindImpact(Vector3 origin, Vector3 velocity, float timeMax, float timeStep, out ImpactInfo impact)
+    {
+        impact = default;
+
+        ProjectileStateInitial psi = new ProjectileStateInitial
+        {
+            position = origin,
+            velocity = velocity,
+            acceleration = Physics.gravity * gravityScale
+        };
+
+        Vector3 prevPosition = origin;
+        int steps = Mathf.FloorToInt(timeMax / timeStep);
+        for (int i = 1; i <= steps; ++i)
+        {
+            float time = i * timeStep;
+            Vector3 position = ProjectileUtils.GetPositionAt(psi, time);
+            Vector3 diff = position - prevPosition;
+            float dist = diff.magnitude;
+            Vector3 dir = diff / dist;
+
+            if (Physics.Raycast(prevPosition, dir, out RaycastHit hitInfo, dist, impactLayers))
+            {
+                impact.position = hitInfo.point;
+                impact.normal = hitInfo.normal;
+                impact.time = (time - timeStep) + (timeStep * (hitInfo.distance / dist));
+                return true;
+            }
+
+            prevPosition = position;
+        }
+        return false;
+    }
+
+    public Vector3 GetPositionAt(Vector3 origin, Vector3 velocity, float time)
+    {
+        return ProjectileUtils.GetPositionAt(new ProjectileStateInitial { position = origin, velocity = velocity, acceleration = Physics.gravity * gravityScale }, time);
+    }
+}

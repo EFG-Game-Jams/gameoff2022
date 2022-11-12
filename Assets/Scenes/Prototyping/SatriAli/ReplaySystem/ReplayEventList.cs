@@ -18,6 +18,16 @@ namespace Replay
             public string data;
         }
 
+        public struct NoPayload : IStreamable
+        {
+            public void ReadFromStream(Stream s)
+            {
+            }
+            public void WriteToStream(Stream s)
+            {
+            }
+        }
+
         public readonly string Name;
         public readonly ReplaySystem replaySystem;
         private MemoryStream dataStream;
@@ -82,6 +92,11 @@ namespace Replay
             dataStream.WriteStruct(eventData);
         }
 
+        public void Write()
+        {
+            Write(new NoPayload());
+        }
+
         public bool TryRead<T>(out T eventData)
             where T : struct, IStreamable
         {
@@ -100,7 +115,13 @@ namespace Replay
                 return false; // event is in the future
 
             eventData = dataStream.ReadStruct<T>();
+            nextEventFrame = uint.MaxValue;
             return true;
+        }
+
+        public bool TryRead()
+        {
+            return TryRead(out NoPayload _);
         }
     }
 }

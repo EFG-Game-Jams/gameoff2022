@@ -1,0 +1,144 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3119357719848465845
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6189273483221299732}
+  - component: {fileID: 2552695217652673027}
+  m_Layer: 0
+  m_Name: RocketStraight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6189273483221299732
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3119357719848465845}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2572804170407826394}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2552695217652673027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3119357719848465845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54565068e5be4bd4d90850cc7757bd0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileMesh: {fileID: 4724963272778503401}
+  flightSfx: {fileID: 2750507140533281666}
+  flightVfx: {fileID: 1963808234685599763}
+  impactEffectPrefab: {fileID: 1764654978243476, guid: a98b15aa948478849b54661e4d9a317e, type: 3}
+  impactLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  gravityScale: 0
+--- !u!1001 &2866549394898176345
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 6189273483221299732}
+    m_Modifications:
+    - target: {fileID: 136168842684345051, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_Volume
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 136168842684345051, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: DopplerLevel
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 988175382482574601, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4092872357349286730, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_Name
+      value: Rocket Projectile
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+--- !u!198 &1963808234685599763 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 4361980691020798282, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+  m_PrefabInstance: {fileID: 2866549394898176345}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2572804170407826394 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+  m_PrefabInstance: {fileID: 2866549394898176345}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &2750507140533281666 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 136168842684345051, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+  m_PrefabInstance: {fileID: 2866549394898176345}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &4724963272778503401 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7375337548765109680, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+  m_PrefabInstance: {fileID: 2866549394898176345}
+  m_PrefabAsset: {fileID: 0}

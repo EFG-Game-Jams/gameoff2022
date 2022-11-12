@@ -50,10 +50,10 @@ public class SatriProtoPlayer : MonoBehaviour
         //cameraTransform.localEulerAngles = new Vector3(cameraPitch, 0, 0);
     }
 
-    private void OnInputFire()
+    /*private void OnInputFire()
     {
         TryFire();
-    }
+    }*/
 
     private void ApplyAim(float heading, float pitch)
     {

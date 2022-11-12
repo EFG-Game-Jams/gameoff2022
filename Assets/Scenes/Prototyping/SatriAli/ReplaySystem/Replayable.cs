@@ -51,6 +51,17 @@ namespace Replay
             return null;
         }
 
+        public ReplayEventList GetEventList(string name)
+        {
+            Debug.Assert(eventLists != null);
+
+            foreach (var eventList in eventLists)
+                if (eventList.Name == name)
+                    return eventList;
+
+            return null;
+        }
+
         private void Awake()
         {
             Debug.Assert(replaySystem != null);
