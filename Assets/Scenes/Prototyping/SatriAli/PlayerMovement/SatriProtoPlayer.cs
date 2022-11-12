@@ -15,6 +15,8 @@ public class SatriProtoPlayer : MonoBehaviour
     [SerializeField] float rocketImpulseMax;
     [SerializeField] float rocketRadiusMin;
     [SerializeField] float rocketRadiusMax;
+    [SerializeField] bool rocketLimitFinalSpeed;
+    [SerializeField] float rocketFinalSpeedMax;
 
     private SatriProtoPlayerMovement movement;
     private SatriProtoPlayerCollision collision;
@@ -75,7 +77,38 @@ public class SatriProtoPlayer : MonoBehaviour
         Vector3 dir = diff / dist;
         Vector3 impulse = dir * rocketImpulse;
 
-        velocity += impulse;
+        if (rocketLimitFinalSpeed && (velocity + impulse).magnitude > rocketFinalSpeedMax)
+        {
+            if (velocity.magnitude < rocketFinalSpeedMax || Vector3.Dot(velocity.normalized, impulse.normalized) < 0) // only add velocity if we aren't yet at the cap
+            {
+                // wolfram alpha: solve m = sqrt((a + x A)^2 + (b + x B)^2 + (c + x C)^2) for x
+                float m = rocketFinalSpeedMax;
+                float a = velocity.x;
+                float b = velocity.y;
+                float c = velocity.z;
+                float A = impulse.x;
+                float B = impulse.y;
+                float C = impulse.z;
+                // ok let's go...
+                float part1 = 1f / (2 * (A * A + B * B + C * C));
+                float part2 = Mathf.Sqrt(
+                    Mathf.Pow(2 * a * A + 2 * b * B + 2 * c * C, 2)
+                    - 4 * (A * A + B * B + C * C) * (a * a + b * b + c * c - m * m)           
+                    );
+                float part3 = -2 * a * A - 2 * b * B - 2 * c * C;
+
+                float ratio = part1 * (part2 + part3);
+                if (ratio < 0)
+                    ratio = part1 * (-part2 + part3);
+
+                Debug.Assert(ratio >= 0);
+                velocity += impulse * ratio;
+            }
+        }
+        else
+        {
+            velocity += impulse;
+        }
     }
 
     private void Start()

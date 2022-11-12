@@ -18,14 +18,10 @@ namespace Replay
             public string data;
         }
 
-        public struct NoPayload : IStreamable
+        public struct PayloadNone : IStreamable
         {
-            public void ReadFromStream(Stream s)
-            {
-            }
-            public void WriteToStream(Stream s)
-            {
-            }
+            public void ReadFromStream(Stream s) {}
+            public void WriteToStream(Stream s) {}
         }
 
         public readonly string Name;
@@ -94,7 +90,7 @@ namespace Replay
 
         public void Write()
         {
-            Write(new NoPayload());
+            Write(new PayloadNone());
         }
 
         public bool TryRead<T>(out T eventData)
@@ -121,7 +117,7 @@ namespace Replay
 
         public bool TryRead()
         {
-            return TryRead(out NoPayload _);
+            return TryRead(out PayloadNone _);
         }
     }
 }

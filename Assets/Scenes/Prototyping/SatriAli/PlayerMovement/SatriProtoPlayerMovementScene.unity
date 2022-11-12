@@ -3773,6 +3773,8 @@ MonoBehaviour:
   rocketImpulseMax: 15
   rocketRadiusMin: 4
   rocketRadiusMax: 8
+  rocketLimitFinalSpeed: 1
+  rocketFinalSpeedMax: 20
 --- !u!114 &733336058
 MonoBehaviour:
   m_ObjectHideFlags: 0
