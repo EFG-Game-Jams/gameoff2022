@@ -16,16 +16,18 @@ public class SatriProtoRocket : MonoBehaviour
     [SerializeField] ParticleSystem flightVfx;
     [SerializeField] GameObject impactEffectPrefab;
 
-    [Header("Behaviour")]
+    [Header("Projectile behaviour")]
     [SerializeField] LayerMask impactLayers;
     [SerializeField] float gravityScale;
 
-
+    private SatriProtoPlayer player;
     private ProjectileStateInitial initialState;
     private ProjectileState currentState;
 
-    public void Configure(Vector3 position, Vector3 velocity)
+    public void Configure(SatriProtoPlayer player, Vector3 position, Vector3 velocity)
     {
+        this.player = player;
+
         initialState = new ProjectileStateInitial
         {
             position = position,
@@ -74,6 +76,8 @@ public class SatriProtoRocket : MonoBehaviour
         flightVfx.Stop();
 
         Instantiate(impactEffectPrefab, transform.position, impactEffectPrefab.transform.rotation);
+
+        player.OnRocketDetonated(transform.position);
 
         Destroy(gameObject, 5f); // give the particle system time to finish
     }

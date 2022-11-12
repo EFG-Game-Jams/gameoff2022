@@ -5,9 +5,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SatriProtoPlayerLauncher : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] Transform muzzle;
     [SerializeField] LineRenderer previewLine;
     [SerializeField] GameObject previewImpact;
@@ -17,19 +19,36 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
     [SerializeField] AudioSource sfxFire;
     [SerializeField] AudioSource sfxReload;
 
+    [Header("Launcher config")]
     [SerializeField] int maxGeneratedShots;
     [SerializeField] float launcherReloadTime; 
     [SerializeField] float shotRegenTime;
-    [SerializeField] float muzzleVelocity;
 
+    [Header("Shot config")]
+    [SerializeField] bool inheritVelocity;
+    [SerializeField] bool chargeShots;
+    [SerializeField] float chargeShotTime;
+    [SerializeField] float chargeShotDelay;
+    [SerializeField] float muzzleVelocityMin;
+    [SerializeField] float muzzleVelocityMax;
+
+    [Header("Trajectory preview")]
+    [SerializeField] int trajectoryPreviewSegments;
+    [SerializeField] float trajectoryPreviewTime;
+
+    private SatriProtoPlayer player;
     private Replayable replayable;
     private ReplayEventList replayFire;
     private ReplayEventList replayDryFire;
+    private ReplayEventList replayChargeShot;
 
+    private bool shouldBeginCharge;
     private bool shouldTryFire;
+
     private int generatedShots;
     private float reloadTimer;
     private float regenTimer;
+    private float chargeTimer;
 
     private struct RocketInfo : IStreamable
     {
@@ -53,20 +72,48 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
     private bool Reloading => (generatedShots > 0 && reloadTimer > 0);
     private bool ShotLoaded => (generatedShots > 0 && !Reloading);
 
+    private Vector3 ChargedMuzzleVelocity
+    {
+        get
+        {
+            float speed = chargeShots
+                ? Mathf.Lerp(muzzleVelocityMin, muzzleVelocityMax, (chargeTimer - chargeShotDelay) / chargeShotTime)
+                : muzzleVelocityMax;
+
+            Vector3 velocity = muzzle.forward * speed;
+            if (inheritVelocity)
+                velocity += player.Velocity;
+
+            return velocity;
+        }
+    }
+
     private void Awake()
     {
+        player = GetComponent<SatriProtoPlayer>();
+
         replayable = GetComponent<Replayable>();
         replayFire = replayable.GetEventList("Launcher.Fire");
         replayDryFire = replayable.GetEventList("Launcher.DryFire");
+        replayChargeShot = replayable.GetEventList("Launcher.ChargeShot");
 
         generatedShots = maxGeneratedShots;
         reloadTimer = 0;
         regenTimer = shotRegenTime;
+        chargeTimer = -1;
     }
 
-    private void OnInputFire()
+    private void OnInputFire(InputValue value)
     {
-        shouldTryFire = true;
+        if (chargeShots)
+        {
+            shouldBeginCharge = value.isPressed;
+            shouldTryFire = !value.isPressed;
+        }
+        else
+        {
+            shouldTryFire = value.isPressed;
+        }
     }
 
     private void FixedUpdate()
@@ -106,6 +153,13 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         // fire
         if (replayable.Mode == ReplaySystem.ReplayMode.Record)
         {
+            if (shouldBeginCharge)
+            {
+                replayChargeShot.Write();
+                DoBeginCharge();
+            }
+            shouldBeginCharge = false;
+
             if (shouldTryFire)
                 TryFire();
             shouldTryFire = false;
@@ -114,9 +168,15 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         {
             while (replayDryFire.TryRead())
                 DoDryFire();
+            while (replayChargeShot.TryRead())
+                DoBeginCharge();
             while (replayFire.TryRead(out RocketInfo info))
                 DoFire(info);
         }
+
+        // charge shot
+        if (chargeTimer >= 0)
+            chargeTimer += Time.fixedDeltaTime;
     }
 
     private void TryFire()
@@ -124,7 +184,7 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         Debug.Assert(replayable.Mode == ReplaySystem.ReplayMode.Record);
         if (ShotLoaded)
         {
-            RocketInfo info = new RocketInfo { origin = muzzle.position, velocity = muzzle.forward * muzzleVelocity };
+            RocketInfo info = new RocketInfo { origin = muzzle.position, velocity = ChargedMuzzleVelocity };
             replayFire.Write(info);
             DoFire(info);
         }
@@ -138,38 +198,51 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
     private void LateUpdate()
     {
         const float maxTime = 10f;
-        //bool hit = Physics.Raycast(muzzle.position, muzzle.forward, out RaycastHit hitInfo, 100, collisionLayers);
-        bool hit = rocketPrefab.FindImpact(muzzle.position, muzzle.forward * muzzleVelocity, maxTime, Time.fixedDeltaTime, out SatriProtoRocket.ImpactInfo hitInfo);
+        Vector3 origin = muzzle.position;
+        Vector3 velocity = ChargedMuzzleVelocity;
 
-        previewLine.positionCount = 2;
-        previewLine.SetPosition(0, previewLine.transform.position);
+        bool hit = rocketPrefab.FindImpact(origin, velocity, maxTime, Time.fixedDeltaTime, out SatriProtoRocket.ImpactInfo hitInfo);
 
-        if (hit)
+        float previewTimeEnd = (hit ? hitInfo.time : trajectoryPreviewTime);
+        float previewTimeStep = previewTimeEnd / trajectoryPreviewSegments;
+        Vector3 previewToMuzzle = muzzle.position - previewLine.transform.position;
+        Vector3 previewToMuzzleStep = previewToMuzzle / trajectoryPreviewSegments;
+
+        if (previewLine.positionCount != trajectoryPreviewSegments + 1)
+            previewLine.positionCount = trajectoryPreviewSegments + 1;
+
+        for (int i = 0; i <= trajectoryPreviewSegments; ++i)
         {
-            previewLine.SetPosition(1, hitInfo.position);
-            previewImpact.transform.position = hitInfo.position;
-        }
-        else
-        {
-            previewLine.SetPosition(1, muzzle.position + muzzle.forward * 10 * muzzleVelocity);
+            float time = i * previewTimeStep;
+            Vector3 offset = previewToMuzzleStep * -(trajectoryPreviewSegments - i);
+            previewLine.SetPosition(i, rocketPrefab.GetPositionAt(origin, velocity, time) + offset);
         }
 
         previewImpact.SetActive(hit);
+        if (hit)
+            previewImpact.transform.position = hitInfo.position;
     }
 
     private void DoFire(in RocketInfo info)
     {
+        var rocket = Instantiate(rocketPrefab);
+        rocket.Configure(player, info.origin, info.velocity);
+        activeRockets.Add(rocket);
+
         --generatedShots;
         reloadTimer = launcherReloadTime;
+        chargeTimer = -1;
 
         sfxFire.Play();
-
-        var rocket = Instantiate(rocketPrefab);
-        rocket.Configure(info.origin, info.velocity);
-        activeRockets.Add(rocket);
     }
     private void DoDryFire()
     {
+        chargeTimer = -1;
+
         sfxDryFire.PlayOneShot(sfxDryFire.clip);
+    }
+    private void DoBeginCharge()
+    {
+        chargeTimer = 0;
     }
 }

@@ -34,12 +34,12 @@
                 },
                 {
                     "name": "InputFire",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "d97c51a0-f2d4-4570-993a-b0b7a12c0d70",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [

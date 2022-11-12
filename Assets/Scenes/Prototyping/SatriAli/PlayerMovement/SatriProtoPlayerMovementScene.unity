@@ -3770,9 +3770,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 1352304895}
   positionMode: 1
-  reloadTime: 1
-  rocketRadius: 5
-  rocketImpulse: 10
+  rocketImpulseMax: 15
+  rocketRadiusMin: 4
+  rocketRadiusMax: 8
 --- !u!114 &733336058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4019,6 +4019,7 @@ MonoBehaviour:
   eventNames:
   - Launcher.Fire
   - Launcher.DryFire
+  - Launcher.ChargeShot
 --- !u!114 &733336067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4041,7 +4042,14 @@ MonoBehaviour:
   maxGeneratedShots: 3
   launcherReloadTime: 1
   shotRegenTime: 5
-  muzzleVelocity: 50
+  inheritVelocity: 0
+  chargeShots: 1
+  chargeShotTime: 0.5
+  chargeShotDelay: 0.1
+  muzzleVelocityMin: 5
+  muzzleVelocityMax: 30
+  trajectoryPreviewSegments: 32
+  trajectoryPreviewTime: 10
 --- !u!1 &743791422
 GameObject:
   m_ObjectHideFlags: 0
@@ -4466,7 +4474,7 @@ LineRenderer:
   - {x: 4.4862456, y: 7.069009, z: 41.858467}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.05
+    widthMultiplier: 0.025
     widthCurve:
       serializedVersion: 2
       m_Curve:

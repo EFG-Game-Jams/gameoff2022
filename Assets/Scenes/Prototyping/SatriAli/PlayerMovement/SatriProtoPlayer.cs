@@ -1,11 +1,20 @@
 using Replay;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class SatriProtoPlayer : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] Transform cameraTransform;
+
+    [Header("Movement")]
     [SerializeField] RigidbodyInterpolation positionMode;
+
+    [Header("Rockets")]
+    [SerializeField] float rocketImpulseMax;
+    [SerializeField] float rocketRadiusMin;
+    [SerializeField] float rocketRadiusMax;
 
     private SatriProtoPlayerMovement movement;
     private SatriProtoPlayerCollision collision;
@@ -24,10 +33,7 @@ public class SatriProtoPlayer : MonoBehaviour
     private Vector3 position;
     private Vector3 velocity;
 
-    [SerializeField] float reloadTime;
-    [SerializeField] float rocketRadius;
-    [SerializeField] float rocketImpulse;
-    private float nextReloadedTime;    
+    public Vector3 Velocity => velocity;
 
     private void OnInputMove(InputValue value)
     {
@@ -43,35 +49,33 @@ public class SatriProtoPlayer : MonoBehaviour
         Vector2 delta = value.Get<Vector2>();
 
         cameraHeading = Mathf.DeltaAngle(0, cameraHeading + delta.x);
-        //transform.localEulerAngles = new Vector3(0f, cameraHeading, 0f);
 
         cameraPitch -= delta.y;
         cameraPitch = Mathf.Clamp(cameraPitch, -90f, 90f);
-        //cameraTransform.localEulerAngles = new Vector3(cameraPitch, 0, 0);
     }
-
-    /*private void OnInputFire()
-    {
-        TryFire();
-    }*/
 
     private void ApplyAim(float heading, float pitch)
     {
         transform.localEulerAngles = new Vector3(0f, heading, 0f);
         cameraTransform.localEulerAngles = new Vector3(pitch, 0, 0);
     }
-    private void TryFire()
+
+    public void OnRocketDetonated(Vector3 impactPosition)
     {
-        if (nextReloadedTime > Time.timeSinceLevelLoad)
+        if (replayable.Mode == ReplaySystem.ReplayMode.Playback)
+            return; // ignore during playback
+
+        Vector3 diff = position - impactPosition;
+        float dist = diff.magnitude;
+        if (dist >= rocketRadiusMax)
             return;
 
-        nextReloadedTime = Time.timeSinceLevelLoad + reloadTime;
-        if (!Physics.Raycast(cameraTransform.position, cameraTransform.forward, out RaycastHit hitInfo, rocketRadius, ~0, QueryTriggerInteraction.Ignore))
-            return;
+        float rocketStrength = 1f - Mathf.Clamp01((dist - rocketRadiusMin) / (rocketRadiusMax - rocketRadiusMin));
+        float rocketImpulse = rocketStrength * rocketImpulseMax;
+        Vector3 dir = diff / dist;
+        Vector3 impulse = dir * rocketImpulse;
 
-        Vector3 diff = transform.position - hitInfo.point;
-        Vector3 dir = diff.normalized;
-        velocity += dir * rocketImpulse;
+        velocity += impulse;
     }
 
     private void Start()
@@ -95,8 +99,6 @@ public class SatriProtoPlayer : MonoBehaviour
         velocity = Vector3.zero;
 
         Cursor.lockState = CursorLockMode.Locked;
-
-        //Time.fixedDeltaTime = .01f;
     }
 
     private void FixedUpdate()
@@ -109,7 +111,7 @@ public class SatriProtoPlayer : MonoBehaviour
 
             Vector3 newVelocity = movement.CalculateVelocity(velocity, controlStateMove, collision.IsGrounded, deltaTime);
 
-            Vector3 displacement = newVelocity * deltaTime; // (velocity + newVelocity) * (.5f * deltaTime);
+            Vector3 displacement = newVelocity * deltaTime;
             Vector3 newPosition = position + displacement;
 
             collision.ApplyCollisionResponse(position, ref newPosition, ref newVelocity, deltaTime);
@@ -151,9 +153,6 @@ public class SatriProtoPlayer : MonoBehaviour
                 transform.position = transform.position = position + velocity * interpolationTime;
                 break;
         }
-
-        //Debug.Log($"Speed: {velocity.magnitude}");
-        //Debug.Log($"H speed: {Vector3.Scale(velocity, new Vector3(1, 0, 1)).magnitude}");
     }
 
     private void OnGUI()
