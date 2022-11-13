@@ -10,11 +10,12 @@ public class SatriProtoPlayerWindSound : MonoBehaviour
 
     [SerializeField] float maxSpeed;
     [SerializeField] Vector2 volumeRange;
-    [SerializeField] Vector2 pitchRange;
-    [SerializeField] AnimationCurve speedToVolume;
-    [SerializeField] AnimationCurve speedToPitch;
     [SerializeField] float volumeChangeSpeed;
+    [SerializeField] AnimationCurve speedToVolume;
+    [SerializeField] Vector2 pitchRange;
     [SerializeField] float pitchChangeSpeed;
+    [SerializeField] AnimationCurve speedToPitch;
+    [SerializeField] float maxPan;
 
     private void FixedUpdate()
     {
@@ -27,5 +28,9 @@ public class SatriProtoPlayerWindSound : MonoBehaviour
 
         audioSource.volume = Mathf.MoveTowards(audioSource.volume, volume, volumeChangeSpeed * Time.fixedDeltaTime);
         audioSource.pitch = Mathf.MoveTowards(audioSource.pitch, pitch, pitchChangeSpeed * Time.fixedDeltaTime);
+
+        Vector3 dir = velocity.normalized;
+        Vector3 ldir = listener.InverseTransformDirection(dir);
+        audioSource.panStereo = ldir.x * maxPan;
     }
 }
