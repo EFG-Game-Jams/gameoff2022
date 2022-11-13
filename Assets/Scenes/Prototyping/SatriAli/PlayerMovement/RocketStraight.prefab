@@ -309,6 +309,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4392684341814366192, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4392684341814366192, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
       propertyPath: emitterVelocityMode
       value: 0
       objectReference: {fileID: 0}
@@ -323,6 +327,10 @@ PrefabInstance:
     - target: {fileID: 4392684341814366192, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
       propertyPath: InheritVelocityModule.enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4393177119155519084, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4393177119155519084, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
       propertyPath: emitterVelocityMode
