@@ -455,6 +455,7 @@ GameObject:
   m_Component:
   - component: {fileID: 74680853}
   - component: {fileID: 74680852}
+  - component: {fileID: 74680854}
   m_Layer: 0
   m_Name: Gamemode
   m_TagString: Untagged
@@ -475,7 +476,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerDisplay: {fileID: 1844979428}
-  replayJsonDebug: 
 --- !u!4 &74680853
 Transform:
   m_ObjectHideFlags: 0
@@ -497,6 +497,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &74680854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 74680851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36faefab66682f44fa175dd44bdc12c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  replaySystem: {fileID: 398777283}
+  replayUID: -2
+  enabledInRecordOnly: []
+  enabledInPlaybackOnly: []
+  streamDescriptors: []
+  eventNames:
+  - Gamemode.TimerEvent
 --- !u!1 &85089132
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,9 +528,8 @@ GameObject:
   - component: {fileID: 85089138}
   - component: {fileID: 85089137}
   - component: {fileID: 85089136}
-  - component: {fileID: 85089135}
   - component: {fileID: 85089134}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ReplayTrigger (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -545,14 +563,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d0383670a1b22a40869c35cc25dfe1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filterTag: Player
   onTriggerEnter:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 74680852}
         m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
         m_MethodName: EventReplay
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -561,25 +578,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!54 &85089135
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 85089132}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &85089136
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -839,9 +837,8 @@ GameObject:
   - component: {fileID: 223091400}
   - component: {fileID: 223091399}
   - component: {fileID: 223091398}
-  - component: {fileID: 223091397}
   - component: {fileID: 223091396}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EndTimerTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -875,14 +872,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d0383670a1b22a40869c35cc25dfe1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filterTag: Player
   onTriggerEnter:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 74680852}
         m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
         m_MethodName: EventEndTimer
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -891,25 +887,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!54 &223091397
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 223091394}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &223091398
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3742,7 +3719,6 @@ GameObject:
   - component: {fileID: 733336062}
   - component: {fileID: 733336061}
   - component: {fileID: 733336060}
-  - component: {fileID: 733336065}
   - component: {fileID: 733336058}
   - component: {fileID: 733336057}
   - component: {fileID: 733336064}
@@ -3895,6 +3871,9 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 64
+  triggerMask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!114 &733336064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3974,20 +3953,6 @@ MonoBehaviour:
   jumpVelocity: 5
   jumpStopStrength: 3
   jumpInheritVerticalVelocity: 0
---- !u!136 &733336065
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 733336056}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &733336066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4471,9 +4436,7 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 3.1802826, y: 1.8289272, z: 0}
-  - {x: 4.4862456, y: 7.069009, z: 41.858467}
+  m_Positions: []
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.025
@@ -5281,9 +5244,8 @@ GameObject:
   - component: {fileID: 927036022}
   - component: {fileID: 927036021}
   - component: {fileID: 927036020}
-  - component: {fileID: 927036019}
   - component: {fileID: 927036018}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: StartTimerTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5302,14 +5264,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d0383670a1b22a40869c35cc25dfe1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filterTag: Player
   onTriggerEnter:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 74680852}
         m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
         m_MethodName: EventStartTimer
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -5318,25 +5279,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!54 &927036019
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 927036017}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &927036020
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6235,9 +6177,8 @@ GameObject:
   - component: {fileID: 1139203987}
   - component: {fileID: 1139203986}
   - component: {fileID: 1139203985}
-  - component: {fileID: 1139203984}
   - component: {fileID: 1139203983}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ResetTrigger (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6271,14 +6212,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d0383670a1b22a40869c35cc25dfe1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filterTag: Player
   onTriggerEnter:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 74680852}
         m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
         m_MethodName: EventReset
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -6287,25 +6227,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!54 &1139203984
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1139203981}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &1139203985
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8082,9 +8003,8 @@ GameObject:
   - component: {fileID: 1216242105}
   - component: {fileID: 1216242104}
   - component: {fileID: 1216242103}
-  - component: {fileID: 1216242102}
   - component: {fileID: 1216242101}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ReplayTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8118,14 +8038,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d0383670a1b22a40869c35cc25dfe1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filterTag: Player
   onTriggerEnter:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 74680852}
         m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
         m_MethodName: EventReplay
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -8134,25 +8053,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!54 &1216242102
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1216242099}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &1216242103
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8412,9 +8312,8 @@ GameObject:
   - component: {fileID: 1250779558}
   - component: {fileID: 1250779557}
   - component: {fileID: 1250779556}
-  - component: {fileID: 1250779555}
   - component: {fileID: 1250779554}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ResetTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8448,14 +8347,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d0383670a1b22a40869c35cc25dfe1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filterTag: Player
   onTriggerEnter:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 74680852}
         m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
         m_MethodName: EventReset
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -8464,25 +8362,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onTriggerExit:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!54 &1250779555
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1250779552}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &1250779556
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13403,7 +13282,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4648809316914195276, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
       propertyPath: sceneReplayables.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4648809316914195276, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
       propertyPath: sceneReplayables.Array.data[0]
@@ -13412,7 +13291,7 @@ PrefabInstance:
     - target: {fileID: 4648809316914195276, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
       propertyPath: sceneReplayables.Array.data[1]
       value: 
-      objectReference: {fileID: 733336066}
+      objectReference: {fileID: 74680854}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
 --- !u!1 &1822591892
@@ -13505,7 +13384,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh87568
+  m_Name: pb_Mesh24914
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

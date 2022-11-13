@@ -5,19 +5,16 @@ using UnityEngine.Events;
 
 public class SatriProtoTriggerArea : MonoBehaviour
 {
-    [SerializeField] string filterTag;
+    public UnityEvent<GameObject, double> onTriggerEnter;
 
-    public UnityEvent<GameObject> onTriggerEnter;
-    public UnityEvent<GameObject> onTriggerExit;
+    private bool hasTriggered;
 
-    private void OnTriggerEnter(Collider other)
+    public void OnEnter(GameObject go, double time)
     {
-        if (filterTag.Length == 0 || other.gameObject.CompareTag(filterTag))
-            onTriggerEnter?.Invoke(other.gameObject);
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (filterTag.Length == 0 || other.gameObject.CompareTag(filterTag))
-            onTriggerExit?.Invoke(other.gameObject);
+        if (hasTriggered)
+            return;
+
+        hasTriggered = true;
+        onTriggerEnter?.Invoke(go, time);
     }
 }

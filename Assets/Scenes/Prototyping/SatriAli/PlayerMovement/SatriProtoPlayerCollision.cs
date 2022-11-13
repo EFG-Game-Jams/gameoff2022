@@ -14,8 +14,16 @@ public class SatriProtoPlayerCollision : MonoBehaviour
     [SerializeField] private int maxIterations = 10;
     [SerializeField] private int warnIterations = 5;
     [SerializeField] private LayerMask collisionMask;
+    [SerializeField] private LayerMask triggerMask;
+
+    private RaycastHit[] cachedHitResultArray;
 
     public bool IsGrounded { get; private set; }
+
+    private void Awake()
+    {
+        cachedHitResultArray = new RaycastHit[64];
+    }
 
     public void ApplyCollisionResponse(Vector3 prevPosition, ref Vector3 newPosition, ref Vector3 newVelocity, float deltaTime)
     {
@@ -64,6 +72,24 @@ public class SatriProtoPlayerCollision : MonoBehaviour
 
         if (responseIterations >= warnIterations)
             Debug.LogWarning($"PlayerCollision detected {responseIterations} penetrations, this could mean it's colliding with something it shouldn't...");
+
+        // triggers
+        {
+            Vector3 displacement = newPosition - prevPosition;
+            float distance = displacement.magnitude;
+            Vector3 direction = displacement / distance;
+            int triggerCount = Physics.CapsuleCastNonAlloc(p1, p2, sphereRadius, direction, cachedHitResultArray, distance, triggerMask, QueryTriggerInteraction.Collide);
+            for (int i = 0; i < triggerCount; ++i)
+            {
+                RaycastHit hit = cachedHitResultArray[i];
+                SatriProtoTriggerArea trigger = hit.collider.GetComponent<SatriProtoTriggerArea>();
+                Debug.Assert(trigger != null);
+
+                double time = Time.fixedTimeAsDouble;
+                time += (hit.distance / distance) * deltaTime;
+                trigger.OnEnter(gameObject, time);
+            }
+        }
     }
 
     private void OnDrawGizmosSelected()
