@@ -12733,6 +12733,18 @@ PrefabInstance:
       propertyPath: maxPan
       value: 0.3
       objectReference: {fileID: 0}
+    - target: {fileID: 1417943016, guid: 3872baaf08a47584182de35675412929, type: 3}
+      propertyPath: maxSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6453059204940380648, guid: 3872baaf08a47584182de35675412929, type: 3}
+      propertyPath: rocketFinalSpeedMax
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6453059204940380648, guid: 3872baaf08a47584182de35675412929, type: 3}
+      propertyPath: rocketLimitFinalSpeed
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6453059204940380649, guid: 3872baaf08a47584182de35675412929, type: 3}
       propertyPath: m_Name
       value: Player
@@ -12781,9 +12793,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6453059204940380690, guid: 3872baaf08a47584182de35675412929, type: 3}
+      propertyPath: rocketPrefab
+      value: 
+      objectReference: {fileID: 1950169915042156356, guid: 52ba0ca4babf84c4ba1259447a2c51f6, type: 3}
+    - target: {fileID: 6453059204940380690, guid: 3872baaf08a47584182de35675412929, type: 3}
+      propertyPath: shotRegenTime
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6453059204940380690, guid: 3872baaf08a47584182de35675412929, type: 3}
+      propertyPath: muzzleVelocityMax
+      value: 35
+      objectReference: {fileID: 0}
     - target: {fileID: 6453059204940380691, guid: 3872baaf08a47584182de35675412929, type: 3}
       propertyPath: replaySystem
       value: 
       objectReference: {fileID: 398777283}
+    - target: {fileID: 6453059205490818868, guid: 3872baaf08a47584182de35675412929, type: 3}
+      propertyPath: speedToSoftHard.m_Curve.Array.data[2].time
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6453059205490818868, guid: 3872baaf08a47584182de35675412929, type: 3}
+      propertyPath: speedToSoftHard.m_Curve.Array.data[2].inSlope
+      value: 0.05263158
+      objectReference: {fileID: 0}
+    - target: {fileID: 6453059205490818868, guid: 3872baaf08a47584182de35675412929, type: 3}
+      propertyPath: speedToSoftHard.m_Curve.Array.data[1].outSlope
+      value: 0.05263158
+      objectReference: {fileID: 0}
+    - target: {fileID: 6453059205490818868, guid: 3872baaf08a47584182de35675412929, type: 3}
+      propertyPath: speedToSoftHard.m_Curve.Array.data[2].outSlope
+      value: 0.05263158
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3872baaf08a47584182de35675412929, type: 3}
