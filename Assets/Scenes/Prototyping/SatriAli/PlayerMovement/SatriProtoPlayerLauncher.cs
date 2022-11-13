@@ -88,7 +88,7 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         }
     }
 
-    private void Awake()
+    private void Start()
     {
         player = GetComponent<SatriProtoPlayer>();
 
