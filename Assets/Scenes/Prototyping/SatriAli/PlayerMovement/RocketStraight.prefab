@@ -69,7 +69,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1736440501891832789
 Transform:
   m_ObjectHideFlags: 0
@@ -267,6 +267,106 @@ PrefabInstance:
     - target: {fileID: 4092872357349286730, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
       propertyPath: m_Name
       value: Rocket Projectile
+      objectReference: {fileID: 0}
+    - target: {fileID: 4361980691020798282, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: moveWithTransform
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4361980691020798282, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: TrailModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4361980691020798282, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: emitterVelocityMode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4361980691020798282, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: VelocityModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4361980691020798282, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: ClampVelocityModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4361980691020798282, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: ClampVelocityModule.drag.scalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4361980691020798282, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: InitialModule.customEmitterVelocity.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4361980691020798282, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: ClampVelocityModule.multiplyDragByParticleSize
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4361980691020798282, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: ClampVelocityModule.multiplyDragByParticleVelocity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4392286474562801516, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4392684341814366192, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: emitterVelocityMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4392684341814366192, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4392684341814366192, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: ShapeModule.alignToDirection
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4392684341814366192, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: InheritVelocityModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4393177119155519084, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: emitterVelocityMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4393177119155519084, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: InheritVelocityModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4481426177819234960, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4483430645354312142, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4483430645354312142, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4483430645354312142, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5088939673380300228, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5088939673380300228, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5088939673380300228, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5088939673380300228, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5088939673380300228, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 91128310120046435, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
