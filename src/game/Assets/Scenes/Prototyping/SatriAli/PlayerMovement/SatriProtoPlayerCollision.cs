@@ -29,8 +29,8 @@ public class SatriProtoPlayerCollision : MonoBehaviour
     {
         IsGrounded = false;
 
-        Vector3 p1 = prevPosition + transform.up * sphereHigh;
-        Vector3 p2 = prevPosition + transform.up * sphereLow;
+        Vector3 pOffset1 = transform.up * sphereHigh;
+        Vector3 pOffset2 = transform.up * sphereLow;
 
         int responseIterations = 0;
         for (int i = 0; i < maxIterations; ++i)
@@ -42,7 +42,11 @@ public class SatriProtoPlayerCollision : MonoBehaviour
             float distance = displacement.magnitude;
             Vector3 direction = displacement / distance;
 
-            if (!Physics.CapsuleCast(p1, p2, sphereRadius, direction, out RaycastHit hitInfo, distance, collisionMask, QueryTriggerInteraction.Ignore))
+            Vector3 castOffset = prevPosition + direction * -depenetrationBias;
+            Vector3 p1 = castOffset + pOffset1;
+            Vector3 p2 = castOffset + pOffset2;
+
+            if (!Physics.CapsuleCast(p1, p2, sphereRadius, direction, out RaycastHit hitInfo, distance + depenetrationBias, collisionMask, QueryTriggerInteraction.Ignore))
                 break;
             ++responseIterations;
 
@@ -78,7 +82,12 @@ public class SatriProtoPlayerCollision : MonoBehaviour
             Vector3 displacement = newPosition - prevPosition;
             float distance = displacement.magnitude;
             Vector3 direction = displacement / distance;
-            int triggerCount = Physics.CapsuleCastNonAlloc(p1, p2, sphereRadius, direction, cachedHitResultArray, distance, triggerMask, QueryTriggerInteraction.Collide);
+
+            Vector3 castOffset = prevPosition + direction * -depenetrationBias;
+            Vector3 p1 = castOffset + pOffset1;
+            Vector3 p2 = castOffset + pOffset2;
+
+            int triggerCount = Physics.CapsuleCastNonAlloc(p1, p2, sphereRadius, direction, cachedHitResultArray, distance + depenetrationBias, triggerMask, QueryTriggerInteraction.Collide);
             for (int i = 0; i < triggerCount; ++i)
             {
                 RaycastHit hit = cachedHitResultArray[i];
