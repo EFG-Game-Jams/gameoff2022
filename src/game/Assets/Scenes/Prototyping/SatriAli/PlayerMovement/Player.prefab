@@ -144,8 +144,8 @@ MonoBehaviour:
   player: {fileID: 6453059204940380648}
   listener: {fileID: 6453059205093286126}
   audioSource: {fileID: 1417943017}
-  maxSpeed: 20
-  volumeRange: {x: 0.025, y: 0.5}
+  maxSpeed: 30
+  volumeRange: {x: 0.005, y: 0.5}
   volumeChangeSpeed: 0.25
   speedToVolume:
     serializedVersion: 2
@@ -160,10 +160,10 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.25
+      time: 0.4
       value: 0
       inSlope: -0
-      outSlope: 1.3333334
+      outSlope: 1.6666666
       tangentMode: 69
       weightedMode: 0
       inWeight: 0.33333334
@@ -171,8 +171,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 1.3333334
-      outSlope: 1.3333334
+      inSlope: 1.6666666
+      outSlope: 1.6666666
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -871,8 +871,8 @@ MonoBehaviour:
   depenetrationBias: 0.001
   restitution: 0
   friction: 1.5
-  maxIterations: 100
-  warnIterations: 10
+  maxIterations: 20
+  warnIterations: 5
   collisionMask:
     serializedVersion: 2
     m_Bits: 64
