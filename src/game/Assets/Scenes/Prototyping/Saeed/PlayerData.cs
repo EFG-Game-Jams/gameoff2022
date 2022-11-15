@@ -13,10 +13,10 @@ public class PlayerData : ScriptableObject {
     // How many rockets player has ready
     public int rocketReadyCount;
 
-    // Timer showing the reloading of ready rockets
+    // Timer showing the reloading of ready rockets. Goes from 1(start of reload) to 0(finished)
     public float rocketReloadTime;
 
-    // Timer showing the regeneration of rockets
+    // Timer showing the regeneration of rockets. Goes from 1(start of regen) to 0(finished)
     public float rocketRegenTime;
 
     // Level number
