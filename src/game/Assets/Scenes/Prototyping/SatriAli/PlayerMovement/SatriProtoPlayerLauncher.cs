@@ -177,6 +177,12 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         // charge shot
         if (chargeTimer >= 0)
             chargeTimer += Time.fixedDeltaTime;
+
+        // UI
+        var uiData = player.uiData;
+        uiData.rocketReadyCount = generatedShots;
+        uiData.rocketRegenTime = regenTimer / shotRegenTime;
+        uiData.rocketReloadTime = reloadTimer / launcherReloadTime;
     }
 
     private void TryFire()

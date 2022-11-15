@@ -7,6 +7,7 @@ public class SatriProtoPlayer : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] Transform cameraTransform;
+    [SerializeField] public PlayerData uiData;
 
     [Header("Movement")]
     [SerializeField] RigidbodyInterpolation positionMode;
@@ -151,7 +152,7 @@ public class SatriProtoPlayer : MonoBehaviour
 
             prevPosition = position;
             position = newPosition;
-            velocity = newVelocity;            
+            velocity = newVelocity;
 
             replayWriterPosition.Write(position);
             replayWriterAim.Write(new Vector2(cameraHeading, cameraPitch));
@@ -167,6 +168,9 @@ public class SatriProtoPlayer : MonoBehaviour
             position = replayReaderPosition.ReadVector3();
             velocity = (position - prevPosition) / Time.fixedDeltaTime;
         }
+
+        uiData.speed = Vector3.Scale(velocity, new Vector3(1, 0, 1)).magnitude;
+        uiData.maxSpeed = rocketFinalSpeedMax;
     }
 
     private void Update()
@@ -188,9 +192,9 @@ public class SatriProtoPlayer : MonoBehaviour
         }
     }
 
-    private void OnGUI()
+    /*private void OnGUI()
     {
         GUILayout.Label($"H speed: {Vector3.Scale(velocity, new Vector3(1, 0, 1)).magnitude}");
         GUILayout.Label($"V speed: {velocity.y}");
-    }
+    }*/
 }

@@ -767,6 +767,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 6453059205093286126}
+  uiData: {fileID: 11400000, guid: e3225c47847774ddfb645633d7789ca0, type: 2}
   positionMode: 1
   rocketImpulseMax: 15
   rocketRadiusMin: 4
