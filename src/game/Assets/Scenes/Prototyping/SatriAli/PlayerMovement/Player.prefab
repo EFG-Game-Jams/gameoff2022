@@ -146,7 +146,7 @@ MonoBehaviour:
   audioSource: {fileID: 1417943017}
   maxSpeed: 20
   volumeRange: {x: 0.025, y: 0.5}
-  pitchRange: {x: 1, y: 1.5}
+  volumeChangeSpeed: 0.25
   speedToVolume:
     serializedVersion: 2
     m_Curve:
@@ -180,6 +180,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  pitchRange: {x: 1, y: 1.5}
+  pitchChangeSpeed: 1
   speedToPitch:
     serializedVersion: 2
     m_Curve:
@@ -213,8 +215,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  volumeChangeSpeed: 0.25
-  pitchChangeSpeed: 1
+  maxPan: 0
 --- !u!1 &6453059204309576046
 GameObject:
   m_ObjectHideFlags: 0
@@ -771,7 +772,7 @@ MonoBehaviour:
   rocketRadiusMin: 4
   rocketRadiusMax: 8
   rocketLimitFinalSpeed: 1
-  rocketFinalSpeedMax: 20
+  rocketFinalSpeedMax: 30
 --- !u!114 &6453059204940380689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -786,7 +787,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: {x: 5, y: 20}
   maxAcceleration: {x: 10, y: 10}
-  airControlScale: {x: 0.2, y: 0.5}
+  airControlScale: {x: 0.5, y: 0.5}
   accelerationCurve:
     serializedVersion: 2
     m_Curve:

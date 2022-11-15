@@ -13,7 +13,7 @@ public class SatriProtoRocket : MonoBehaviour
     [Header("References")]
     [SerializeField] MeshRenderer projectileMesh;
     [SerializeField] AudioSource flightSfx;
-    [SerializeField] ParticleSystem flightVfx;
+    [SerializeField] ParticleSystem[] flightVfx;
     [SerializeField] GameObject impactEffectPrefab;
 
     [Header("Projectile behaviour")]
@@ -73,13 +73,15 @@ public class SatriProtoRocket : MonoBehaviour
     {
         projectileMesh.enabled = false;
         flightSfx.Stop();
-        flightVfx.Stop();
+
+        foreach (var vfx in flightVfx)
+            vfx.Stop();
 
         Instantiate(impactEffectPrefab, transform.position, impactEffectPrefab.transform.rotation);
 
         player.OnRocketDetonated(transform.position);
 
-        Destroy(gameObject, 5f); // give the particle system time to finish
+        Destroy(gameObject, .5f); // give the particle system time to finish
     }
 
     public bool FindImpact(Vector3 origin, Vector3 velocity, float timeMax, float timeStep, out ImpactInfo impact)
