@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerData
   m_EditorClassIdentifier: 
   objectName: PlayerData
-  speed: 0
+  speed: 1.91
   maxSpeed: 0
   shotsReady: 0
   reloadTime: 0
