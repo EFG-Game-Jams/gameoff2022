@@ -182,7 +182,7 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         var uiData = player.uiData;
         uiData.rocketReadyCount = generatedShots;
         uiData.rocketRegenTime = generatedShots < maxGeneratedShots ? Mathf.Clamp01(1f - regenTimer / shotRegenTime) : 0f;
-        uiData.rocketReloadTime = Mathf.Clamp01(1f - reloadTimer / launcherReloadTime);
+        uiData.rocketReloadTime = reloadTimer <= 0 ? 0f : Mathf.Clamp01(1f - reloadTimer / launcherReloadTime);
         uiData.isRocketLoaded = ShotLoaded;
     }
 
