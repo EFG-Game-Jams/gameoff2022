@@ -20,6 +20,7 @@ public class UIManager : MonoBehaviour
     public Sprite rocketLauncherEmtpy;
     public Sprite rocketLauncherLoaded;
     public Image rocketReloadCircle;
+    public Image rocketLauncher;
     
     // Start is called before the first frame update
     void Start()
@@ -38,11 +39,13 @@ public class UIManager : MonoBehaviour
         rocketCount.text = playerData.rocketReadyCount.ToString();
         float rocketsRegenFillAmount =
             Mathf.Clamp01(playerData.rocketRegenTime);
-        rocketRegenCircle.fillAmount = 1 - rocketsRegenFillAmount;
+        rocketRegenCircle.fillAmount = rocketsRegenFillAmount;
         
         float rockerReloadFillAmount =
             Mathf.Clamp01(playerData.rocketReloadTime);
-        rocketRegenCircle.fillAmount = 1 - rockerReloadFillAmount;
+        rocketReloadCircle.fillAmount = rockerReloadFillAmount;
+        
+        rocketLauncher.sprite = playerData.isRocketLoaded ? rocketLauncherLoaded : rocketLauncherEmtpy;
 
     }
 }
