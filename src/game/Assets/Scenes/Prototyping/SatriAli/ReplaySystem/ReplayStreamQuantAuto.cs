@@ -44,7 +44,7 @@ namespace Replay
                 if (isAngle)
                     value = Mathf.DeltaAngle(0f, value); // to +/- 180°
                 float fquant = value * quantise;
-                Debug.Assert(fquant >= QuantAuto.MinValue32 && fquant <= QuantAuto.MaxValue32);
+                Debug.Assert(fquant > QuantAuto.MinValue32 && fquant <= QuantAuto.MaxValue32);
                 return Mathf.RoundToInt(fquant);
             }
 
