@@ -5,22 +5,24 @@ using System;
 
 namespace Replay
 {
-    [DefaultExecutionOrder(1000)]
     public class ReplaySystem : MonoBehaviour
     {
+        public enum ReplayMode
+        {
+            None,
+            Record,
+            Playback,
+        }
+
+        [SerializeField] ReplayMode mode = ReplayMode.Record;
+
         [Header("Scene replayables")]
         [SerializeField] Replayable[] sceneReplayables;
 
         [Header("Runtime replayables")]
         [SerializeField] Replayable[] prefabReplayables;
 
-        public enum ReplayMode
-        {
-            Record,
-            Playback,
-        }
-
-        public ReplayMode Mode { get; private set; } = ReplayMode.Record;
+        public ReplayMode Mode => mode;
         public ReplayData Data { get; private set; } = new();
 
         public uint FixedFrameCount { get; private set; } = 0;
@@ -58,12 +60,12 @@ namespace Replay
 
         public void Record()
         {
-            Mode = ReplayMode.Record;
+            mode = ReplayMode.Record;
             Data.Clear();
         }
         public void Playback(string json)
         {
-            Mode = ReplayMode.Playback;
+            mode = ReplayMode.Playback;
             Data.FromJson(json, this);
         }
 

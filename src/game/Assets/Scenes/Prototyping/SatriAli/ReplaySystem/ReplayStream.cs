@@ -48,6 +48,7 @@ namespace Replay
         private Writer activeWriter;
 
         private bool CanRead => dataStream.Position < dataStream.Length;
+        public long Size => dataStream.Length;
 
         internal ReplayStream(in Descriptor descriptor, bool asReadOnly = false)
         {

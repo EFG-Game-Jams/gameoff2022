@@ -65,7 +65,7 @@ public class SatriProtoPlayer : MonoBehaviour
 
     public void OnRocketDetonated(Vector3 impactPosition)
     {
-        if (replayable.Mode == ReplaySystem.ReplayMode.Playback)
+        if (replayable.ShouldPlayback)
             return; // ignore during playback
 
         Vector3 diff = position - impactPosition;
@@ -118,7 +118,7 @@ public class SatriProtoPlayer : MonoBehaviour
         collision = GetComponent<SatriProtoPlayerCollision>();
 
         replayable = GetComponent<Replay.Replayable>();
-        if (replayable.Mode == ReplaySystem.ReplayMode.Record)
+        if (replayable.ShouldRecord)
         {
             replayWriterPosition = replayable.GetWriter("position");
             replayWriterAim = replayable.GetWriter("aim");
@@ -139,7 +139,7 @@ public class SatriProtoPlayer : MonoBehaviour
     {
         float deltaTime = Time.fixedDeltaTime;
 
-        if (replayable.Mode == ReplaySystem.ReplayMode.Record)
+        if (replayable.ShouldRecord)
         {
             ApplyAim(cameraHeading, cameraPitch);
 

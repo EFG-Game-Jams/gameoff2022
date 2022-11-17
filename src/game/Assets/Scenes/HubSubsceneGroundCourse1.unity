@@ -12018,6 +12018,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4648809316914195276, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
+      propertyPath: mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4648809316914195276, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
       propertyPath: sceneReplayables.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -14408,6 +14412,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1834156744}
     m_Modifications:
+    - target: {fileID: 231479840550226064, guid: a92842c98ef62aa49865a19cf10f9d5d, type: 3}
+      propertyPath: elevation
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 231479840550226065, guid: a92842c98ef62aa49865a19cf10f9d5d, type: 3}
       propertyPath: m_RootOrder
       value: 0

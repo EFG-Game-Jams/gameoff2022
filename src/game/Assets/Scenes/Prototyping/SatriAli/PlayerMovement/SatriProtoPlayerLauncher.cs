@@ -151,7 +151,7 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         }
 
         // fire
-        if (replayable.Mode == ReplaySystem.ReplayMode.Record)
+        if (replayable.ShouldRecord)
         {
             if (shouldBeginCharge)
             {
@@ -188,7 +188,7 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
 
     private void TryFire()
     {
-        Debug.Assert(replayable.Mode == ReplaySystem.ReplayMode.Record);
+        Debug.Assert(replayable.ShouldRecord);
         if (ShotLoaded)
         {
             RocketInfo info = new RocketInfo { origin = muzzle.position, velocity = ChargedMuzzleVelocity };

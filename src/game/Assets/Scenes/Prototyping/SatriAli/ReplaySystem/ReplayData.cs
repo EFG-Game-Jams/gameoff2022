@@ -7,6 +7,16 @@ namespace Replay
 {
     public class ReplayData
     {
+        public struct Metrics
+        {
+            public int objectCount;
+            public int streamCount;
+            public int eventListCount;
+            public long streamBytes;
+            public long eventListBytes;
+            public long totalBytes;
+        }
+
         [System.Serializable]
         private class Serialised
         {
@@ -26,6 +36,31 @@ namespace Replay
             public List<ReplayEventList> eventLists = new();
         }
         private Dictionary<int, ObjectRuntimeData> objectRuntimeData = new();
+
+        public Metrics GetMetrics()
+        {
+            Metrics m = default;
+
+            foreach (var pair in objectRuntimeData)
+            {
+                ++m.objectCount;
+
+                foreach (var stream in pair.Value.streams)
+                {
+                    ++m.streamCount;
+                    m.streamBytes += stream.Size;
+                }
+
+                foreach (var eventList in pair.Value.eventLists)
+                {
+                    ++m.eventListCount;
+                    m.eventListBytes += eventList.Size;
+                }
+            }
+            m.totalBytes = m.streamBytes + m.eventListBytes;
+
+            return m;
+        }
 
         public string ToJson(bool prettyPrint = false)
         {

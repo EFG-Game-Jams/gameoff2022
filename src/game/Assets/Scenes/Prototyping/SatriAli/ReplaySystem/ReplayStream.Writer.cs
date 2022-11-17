@@ -7,16 +7,32 @@ namespace Replay
 {
     public partial class ReplayStream
     {
-        public abstract class Writer
+        public interface Writer
+        {
+            public void Write(float value);
+            public void Write(Vector2 value);
+            public void Write(Vector3 value);
+            public void Finish();
+        }
+
+        internal class WriterNull : Writer
+        {
+            public void Write(float value) { }
+            public void Write(Vector2 value) { }
+            public void Write(Vector3 value) { }
+            public void Finish() { }
+        }
+
+        public abstract class WriterBacked : Writer
         {
             protected readonly ReplayStream stream;
             private readonly int commitInterval;
             private int samplesSinceLastCommit;
 
-            private Writer()
+            private WriterBacked()
             {
             }
-            protected Writer(ReplayStream stream)
+            protected WriterBacked(ReplayStream stream)
             {
                 this.stream = stream;
                 commitInterval = stream.descriptor.keyframeInterval;
@@ -69,7 +85,7 @@ namespace Replay
             protected abstract void Flush();
         }
 
-        private abstract class WriterBasic : Writer
+        private abstract class WriterBasic : WriterBacked
         {
             private float[] channels;
 

@@ -25,14 +25,20 @@ namespace Replay
         public int UID => replayUID;
         public ReplaySystem.ReplayMode Mode => replaySystem.Mode;
 
+        public bool ShouldRecord => (Mode != ReplaySystem.ReplayMode.Playback);
+        public bool ShouldPlayback => (Mode == ReplaySystem.ReplayMode.Playback);
+
         private ReplayStream[] streams;
         private ReplayEventList[] eventLists;
 
         public ReplayStream.Writer GetWriter(string name)
         {
-            Debug.Assert(Mode == ReplaySystem.ReplayMode.Record);
-            Debug.Assert(streams != null);
-            
+            Debug.Assert(Mode != ReplaySystem.ReplayMode.Playback);
+
+            if (Mode == ReplaySystem.ReplayMode.None)
+                return new ReplayStream.WriterNull();
+
+            Debug.Assert(streams != null);            
             foreach (var stream in streams)
                 if (stream.descriptor.name == name)
                     return stream.GetWriter();
@@ -53,8 +59,10 @@ namespace Replay
 
         public ReplayEventList GetEventList(string name)
         {
-            Debug.Assert(eventLists != null);
+            if (Mode == ReplaySystem.ReplayMode.None)
+                return new ReplayEventList(name, System, nullStream: true);
 
+            Debug.Assert(eventLists != null);
             foreach (var eventList in eventLists)
                 if (eventList.Name == name)
                     return eventList;
@@ -79,7 +87,7 @@ namespace Replay
 
         private void UpdateComponents()
         {
-            bool isRecording = (Mode == ReplaySystem.ReplayMode.Record);
+            bool isRecording = (Mode != ReplaySystem.ReplayMode.Playback);
             foreach (var component in enabledInRecordOnly)
                 SetComponentEnabled(component, isRecording);
             foreach (var component in enabledInPlaybackOnly)
@@ -116,7 +124,7 @@ namespace Replay
                     eventLists[i] = eventList;
                 }
             }
-            else
+            else if (Mode == ReplaySystem.ReplayMode.Playback)
             {
                 for (int i = 0; i < streamDescriptors.Length; ++i)
                     streams[i] = replaySystem.GetPlaybackStream(this, streamDescriptors[i]);

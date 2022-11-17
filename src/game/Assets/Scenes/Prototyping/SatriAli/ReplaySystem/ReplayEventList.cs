@@ -26,17 +26,21 @@ namespace Replay
 
         public readonly string Name;
         public readonly ReplaySystem replaySystem;
-        private MemoryStream dataStream;
+        private Stream dataStream;
         private uint nextEventFrame = uint.MaxValue;
 
-        internal ReplayEventList(string name, ReplaySystem system, bool asReadOnly = false)
+        public long Size => dataStream.Length;
+
+        internal ReplayEventList(string name, ReplaySystem system, bool asReadOnly = false, bool nullStream = false)
         {
             Name = name;
             replaySystem = system;
-            if (asReadOnly)
-                dataStream = new(new byte[0], false);
+            if (nullStream)
+                dataStream = System.IO.Stream.Null;
+            else if (asReadOnly)
+                dataStream = new MemoryStream(new byte[0], false);
             else
-                dataStream = new();
+                dataStream = new MemoryStream();
         }
         internal ReplayEventList(in Serialised serialised, ReplaySystem system)
         {
@@ -44,12 +48,14 @@ namespace Replay
             replaySystem = system;
             byte[] bytes = Convert.FromBase64String(serialised.data);
             bytes = Decompress(bytes);
-            dataStream = new(bytes, false);
+            dataStream = new MemoryStream(bytes, false);
         }
 
         internal Serialised Serialise()
         {
-            byte[] bytes = dataStream.ToArray();
+            Debug.Assert(dataStream is MemoryStream);
+
+            byte[] bytes = (dataStream as MemoryStream).ToArray();
             bytes = Compress(bytes);
             string base64 = Convert.ToBase64String(bytes);
 
