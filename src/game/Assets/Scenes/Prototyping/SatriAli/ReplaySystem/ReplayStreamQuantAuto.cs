@@ -51,11 +51,11 @@ namespace Replay
             protected void WriteQuantised(int quantised)
             {
                 int byteCount = 4;
-                if (quantised >= QuantAuto.MinValue8 && quantised <= QuantAuto.MaxValue8)
+                if (quantised > QuantAuto.MinValue8 && quantised <= QuantAuto.MaxValue8)
                     byteCount = 1;
-                else if (quantised >= QuantAuto.MinValue16 && quantised <= QuantAuto.MaxValue16)
+                else if (quantised > QuantAuto.MinValue16 && quantised <= QuantAuto.MaxValue16)
                     byteCount = 2;
-                else if (quantised >= QuantAuto.MinValue24 && quantised <= QuantAuto.MaxValue24)
+                else if (quantised > QuantAuto.MinValue24 && quantised <= QuantAuto.MaxValue24)
                     byteCount = 3;
 
                 int uquant = Mathf.Abs(quantised);
@@ -101,7 +101,7 @@ namespace Replay
                 for (int i = 1; i < byteCount; ++i)
                     encoded |= stream.dataStream.ReadByte() << (i * 8);
 
-                int uquant = encoded >> 3;
+                int uquant = (encoded >> 3);
                 return (signBit != 0 ? -uquant : uquant);
             }
         }

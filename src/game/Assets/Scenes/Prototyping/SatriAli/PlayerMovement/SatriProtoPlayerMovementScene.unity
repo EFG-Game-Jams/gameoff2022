@@ -11526,7 +11526,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4648809316914195276, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
       propertyPath: mode
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4648809316914195276, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
       propertyPath: sceneReplayables.Array.size
