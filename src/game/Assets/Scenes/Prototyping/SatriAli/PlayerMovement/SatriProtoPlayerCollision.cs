@@ -42,16 +42,19 @@ public class SatriProtoPlayerCollision : MonoBehaviour
             float distance = displacement.magnitude;
             Vector3 direction = displacement / distance;
 
+            // start the cast "behind" us to avoid clipping through geometry we're already touching
             Vector3 castOffset = prevPosition + direction * -depenetrationBias;
+            float castDistance = distance + depenetrationBias;
+
             Vector3 p1 = castOffset + pOffset1;
             Vector3 p2 = castOffset + pOffset2;
 
-            if (!Physics.CapsuleCast(p1, p2, sphereRadius, direction, out RaycastHit hitInfo, distance + depenetrationBias, collisionMask, QueryTriggerInteraction.Ignore))
+            if (!Physics.CapsuleCast(p1, p2, sphereRadius, direction, out RaycastHit hitInfo, castDistance, collisionMask, QueryTriggerInteraction.Ignore))
                 break;
             ++responseIterations;
 
             // depenetration            
-            float penetrationDistance = distance - hitInfo.distance;
+            float penetrationDistance = castDistance - hitInfo.distance;
             float penetrationDepth = -Vector3.Dot(direction, hitInfo.normal) * penetrationDistance;
             Vector3 depenetrationOffset = hitInfo.normal * (penetrationDepth + depenetrationBias);
 
@@ -71,7 +74,8 @@ public class SatriProtoPlayerCollision : MonoBehaviour
             newVelocity += frictionResponse;
 
             // we consider we're grounded if we hit something with a normal at most 45° from vertical
-            IsGrounded = IsGrounded || Vector3.Dot(hitInfo.normal, Vector3.up) >= .5f;
+            const float cos45 = 0.7071f;
+            IsGrounded = IsGrounded || Vector3.Dot(hitInfo.normal, Vector3.up) > cos45;
         }
 
         if (responseIterations >= warnIterations)
@@ -83,19 +87,24 @@ public class SatriProtoPlayerCollision : MonoBehaviour
             float distance = displacement.magnitude;
             Vector3 direction = displacement / distance;
 
+            // start the cast "behind" us to avoid clipping through geometry we're already touching
             Vector3 castOffset = prevPosition + direction * -depenetrationBias;
+            float castDistance = distance + depenetrationBias;
+
             Vector3 p1 = castOffset + pOffset1;
             Vector3 p2 = castOffset + pOffset2;
 
-            int triggerCount = Physics.CapsuleCastNonAlloc(p1, p2, sphereRadius, direction, cachedHitResultArray, distance + depenetrationBias, triggerMask, QueryTriggerInteraction.Collide);
+            int triggerCount = Physics.CapsuleCastNonAlloc(p1, p2, sphereRadius, direction, cachedHitResultArray, castDistance, triggerMask, QueryTriggerInteraction.Collide);
             for (int i = 0; i < triggerCount; ++i)
             {
                 RaycastHit hit = cachedHitResultArray[i];
                 SatriProtoTriggerArea trigger = hit.collider.GetComponent<SatriProtoTriggerArea>();
                 Debug.Assert(trigger != null);
 
-                double time = Time.fixedTimeAsDouble;
-                time += (hit.distance / distance) * deltaTime;
+                float hitDistance = hit.distance - depenetrationBias; // time begins at the start position, so compensate for backtracking
+                float hitDistanceRatio = Mathf.Clamp01(hitDistance / distance);
+                float hitTime = hitDistanceRatio * deltaTime;
+                double time = Time.fixedTimeAsDouble + hitTime;
                 trigger.OnEnter(gameObject, time);
             }
         }

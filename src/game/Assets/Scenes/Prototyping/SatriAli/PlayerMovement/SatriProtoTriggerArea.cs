@@ -9,12 +9,12 @@ public class SatriProtoTriggerArea : MonoBehaviour
 
     private bool hasTriggered;
 
-    public void OnEnter(GameObject go, double time)
+    public void OnEnter(GameObject go, double fixedTime)
     {
         if (hasTriggered)
             return;
 
         hasTriggered = true;
-        onTriggerEnter?.Invoke(go, time);
+        onTriggerEnter?.Invoke(go, fixedTime);
     }
 }
