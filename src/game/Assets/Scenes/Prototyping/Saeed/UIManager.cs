@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +22,14 @@ public class UIManager : MonoBehaviour
     public Sprite rocketLauncherLoaded;
     public Image rocketReloadCircle;
     public Image rocketLauncher;
+
+    [Header("LevelNumber")] 
+    public TMP_Text levelNumberText;
+    public GameObject levelNumberHolder;
+    
+    [Header("LevelTimer")] 
+    public TMP_Text levelTimerText;
+    public GameObject levelTimerHolder;
     
     // Start is called before the first frame update
     void Start()
@@ -30,22 +39,31 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Speed indicator calculation
         speedText.text = playerData.speed.ToString("0.0") + " m/s";
-
         float speedCircleFillAmount =
             Mathf.Clamp01(playerData.speed / playerData.maxSpeed);
         speedCircle.fillAmount = speedCircleFillAmount;
 
+        // Rocket count indicator calculation
         rocketCount.text = playerData.rocketReadyCount.ToString();
         float rocketsRegenFillAmount =
             Mathf.Clamp01(playerData.rocketRegenTime);
         rocketRegenCircle.fillAmount = rocketsRegenFillAmount;
         
+        // Rocket launcher indicator calculation
         float rockerReloadFillAmount =
             Mathf.Clamp01(playerData.rocketReloadTime);
         rocketReloadCircle.fillAmount = rockerReloadFillAmount;
-        
         rocketLauncher.sprite = playerData.isRocketLoaded ? rocketLauncherLoaded : rocketLauncherEmtpy;
+        
+        // Level number
+        levelNumberHolder.SetActive(playerData.levelNumberText != null);
+        levelNumberText.text = playerData.levelNumberText;
+        
+        // Level timer
+        levelTimerHolder.SetActive(playerData.levelTimerText != null);
+        levelTimerText.text = playerData.levelTimerText;
 
     }
 }
