@@ -84,14 +84,15 @@ public class SatriProtoRocket : MonoBehaviour
             if (button.ShouldConsumeRocket)
                 Instantiate(impactEffectPrefab, transform.position, impactEffectPrefab.transform.rotation);
             button.OnRocketImpact(transform.position);
+            Destroy(gameObject);
         }
         else
         {
             Instantiate(impactEffectPrefab, transform.position, impactEffectPrefab.transform.rotation);
             player.OnRocketDetonated(transform.position);
+            Destroy(gameObject, .5f); // give the particle system time to finish
         }
 
-        Destroy(gameObject, .5f); // give the particle system time to finish
     }
 
     public bool FindImpact(Vector3 origin, Vector3 velocity, float timeMax, float timeStep, out ImpactInfo impact)
