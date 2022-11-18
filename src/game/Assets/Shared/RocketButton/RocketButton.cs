@@ -6,7 +6,12 @@ public class RocketButton : MonoBehaviour
     [SerializeField] string title;
     [SerializeField] bool alwaysDisplayTitle;
     [SerializeField] bool doNotConsumeRocket;
-    [SerializeField] public UnityEvent onTrigger;
+
+    [Space]
+
+    [SerializeField] public UnityEvent<Vector3> onTrigger;
+    [SerializeField] public UnityEvent onHoverEnter;
+    [SerializeField] public UnityEvent onHoverExit;
 
     [Space]
 
@@ -29,15 +34,18 @@ public class RocketButton : MonoBehaviour
     {
         mesh.sharedMaterial = materialHover;
         text.gameObject.SetActive(true);
+        onHoverEnter?.Invoke();
     }
     public void OnHoverExit()
     {
         mesh.sharedMaterial = materialIdle;
         text.gameObject.SetActive(alwaysDisplayTitle);
+        onHoverExit?.Invoke();
     }
-    public void OnRocketImpact()
+    public void OnRocketImpact(Vector3 worldPosition)
     {
-        onTrigger?.Invoke();
+        Vector3 localPosition = transform.InverseTransformPoint(worldPosition);
+        onTrigger?.Invoke(localPosition);
     }
 
     private void OnValidate()

@@ -83,7 +83,7 @@ public class SatriProtoRocket : MonoBehaviour
         {
             if (button.ShouldConsumeRocket)
                 Instantiate(impactEffectPrefab, transform.position, impactEffectPrefab.transform.rotation);
-            button.OnRocketImpact();
+            button.OnRocketImpact(transform.position);
         }
         else
         {

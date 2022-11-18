@@ -5082,6 +5082,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3447213903308093027, guid: 4ba9e5300b6598e45927ec1b3fe3abe0, type: 3}
+      propertyPath: m_text
+      value: Do not consume
+      objectReference: {fileID: 0}
     - target: {fileID: 5870049672453219720, guid: 4ba9e5300b6598e45927ec1b3fe3abe0, type: 3}
       propertyPath: m_Name
       value: RocketButton (1)
@@ -9834,7 +9838,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3447213903308093027, guid: 4ba9e5300b6598e45927ec1b3fe3abe0, type: 3}
       propertyPath: m_text
-      value: Do not consume
+      value: Title always visible
       objectReference: {fileID: 0}
     - target: {fileID: 5870049672453219720, guid: 4ba9e5300b6598e45927ec1b3fe3abe0, type: 3}
       propertyPath: m_Name
