@@ -58,11 +58,11 @@ public class UIManager : MonoBehaviour
         rocketLauncher.sprite = playerData.isRocketLoaded ? rocketLauncherLoaded : rocketLauncherEmtpy;
         
         // Level number
-        levelNumberHolder.SetActive(string.IsNullOrEmpty(playerData.levelNumberText));
+        levelNumberHolder.SetActive(!string.IsNullOrEmpty(playerData.levelNumberText));
         levelNumberText.text = playerData.levelNumberText;
         
         // Level timer
-        levelTimerHolder.SetActive(string.IsNullOrEmpty(playerData.levelTimerText));
+        levelTimerHolder.SetActive(!string.IsNullOrEmpty(playerData.levelTimerText));
         levelTimerText.text = playerData.levelTimerText;
 
     }
