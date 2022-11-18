@@ -53,7 +53,7 @@ MonoBehaviour:
   impactEffectPrefab: {fileID: 1764654978243476, guid: a98b15aa948478849b54661e4d9a317e, type: 3}
   impactLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 320
   gravityScale: 0
 --- !u!1 &6699807730270293726
 GameObject:

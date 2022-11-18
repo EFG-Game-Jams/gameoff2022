@@ -8,6 +8,7 @@ public class SatriProtoRocket : MonoBehaviour
         public Vector3 position;
         public Vector3 normal;
         public float time;
+        public Collider collider;
     }
 
     [Header("References")]
@@ -52,7 +53,7 @@ public class SatriProtoRocket : MonoBehaviour
         if (Physics.Raycast(prevState.position, dir, out RaycastHit hitInfo, dist, impactLayers))
         {
             UpdateTransform(prevState.position + dir * hitInfo.distance, currentState.velocity);
-            Detonate();
+            Detonate(hitInfo);
             return false;
         }
         else
@@ -69,7 +70,7 @@ public class SatriProtoRocket : MonoBehaviour
         transform.LookAt(position + velocity, Vector3.up);
     }
 
-    private void Detonate()
+    private void Detonate(RaycastHit hitInfo)
     {
         projectileMesh.enabled = false;
         flightSfx.Stop();
@@ -77,11 +78,21 @@ public class SatriProtoRocket : MonoBehaviour
         foreach (var vfx in flightVfx)
             vfx.Stop();
 
-        Instantiate(impactEffectPrefab, transform.position, impactEffectPrefab.transform.rotation);
+        RocketButton button = RocketButton.FromCollider(hitInfo.collider);
+        if (button != null)
+        {
+            if (button.ShouldConsumeRocket)
+                Instantiate(impactEffectPrefab, transform.position, impactEffectPrefab.transform.rotation);
+            button.OnRocketImpact(transform.position);
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instantiate(impactEffectPrefab, transform.position, impactEffectPrefab.transform.rotation);
+            player.OnRocketDetonated(transform.position);
+            Destroy(gameObject, .5f); // give the particle system time to finish
+        }
 
-        player.OnRocketDetonated(transform.position);
-
-        Destroy(gameObject, .5f); // give the particle system time to finish
     }
 
     public bool FindImpact(Vector3 origin, Vector3 velocity, float timeMax, float timeStep, out ImpactInfo impact)
@@ -110,6 +121,7 @@ public class SatriProtoRocket : MonoBehaviour
                 impact.position = hitInfo.point;
                 impact.normal = hitInfo.normal;
                 impact.time = (time - timeStep) + (timeStep * (hitInfo.distance / dist));
+                impact.collider = hitInfo.collider;
                 return true;
             }
 
