@@ -81,6 +81,8 @@ public class SatriProtoRocket : MonoBehaviour
         RocketButton button = RocketButton.FromCollider(hitInfo.collider);
         if (button != null)
         {
+            if (button.ShouldConsumeRocket)
+                Instantiate(impactEffectPrefab, transform.position, impactEffectPrefab.transform.rotation);
             button.OnRocketImpact();
         }
         else

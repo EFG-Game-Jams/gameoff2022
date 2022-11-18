@@ -258,8 +258,12 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         rocket.Configure(player, info.origin, info.velocity);
         activeRockets.Add(rocket);
 
-        --generatedShots;
-        reloadTimer = launcherReloadTime;
+        if (hoveredRocketButton == null || hoveredRocketButton.ShouldConsumeRocket)
+        {
+            --generatedShots;
+            reloadTimer = launcherReloadTime;
+        }
+
         chargeTimer = -1;
 
         sfxFire.Play();

@@ -6,8 +6,10 @@ public class RocketButton : MonoBehaviour
     [SerializeField] Material materialIdle;
     [SerializeField] Material materialHover;
     [SerializeField] MeshRenderer mesh;
+    [SerializeField] bool doNotConsumeRocket;
+    [SerializeField] public UnityEvent onTrigger;
 
-    public UnityEvent onTrigger;
+    public bool ShouldConsumeRocket => !doNotConsumeRocket;
 
     public static RocketButton FromCollider(Collider collider)
     {
