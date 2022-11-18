@@ -50,6 +50,8 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
     private float regenTimer;
     private float chargeTimer;
 
+    private RocketButton hoveredRocketButton;
+
     private struct RocketInfo : IStreamable
     {
         public Vector3 origin;
@@ -225,9 +227,29 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
             previewLine.SetPosition(i, rocketPrefab.GetPositionAt(origin, velocity, time) + offset);
         }
 
-        previewImpact.SetActive(hit);
+        RocketButton hitRocketButton = null;        
         if (hit)
-            previewImpact.transform.position = hitInfo.position;
+        {
+            hitRocketButton = RocketButton.FromCollider(hitInfo.collider);
+            if (hitRocketButton == null)
+            {
+                previewImpact.SetActive(true);
+                previewImpact.transform.position = hitInfo.position;
+                previewImpact.transform.LookAt(hitInfo.position + hitInfo.normal, transform.forward);
+            }
+            else
+            {
+                previewImpact.SetActive(false);
+            }
+        }
+        if (hoveredRocketButton != hitRocketButton)
+        {
+            if (hoveredRocketButton != null)
+                hoveredRocketButton.OnHoverExit();
+            hoveredRocketButton = hitRocketButton;
+            if (hitRocketButton != null)
+                hoveredRocketButton.OnHoverEnter();
+        }
     }
 
     private void DoFire(in RocketInfo info)
