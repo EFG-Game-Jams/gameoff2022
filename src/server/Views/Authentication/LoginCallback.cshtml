@@ -1,0 +1,13 @@
+<p>
+    Login callback
+</p>
+
+<script>
+    console.log(location.hash);
+    const parts = location.hash.split('=');
+    if (parts.length === 2 && parts[0] === '#access_token') {
+        const query = new URLSearchParams();
+        query.append('AccessToken', parts[1]);
+        location.href = `@Url.Action("LoginDebug", "Authentication")?${query.toString()}`;
+    }
+</script>
