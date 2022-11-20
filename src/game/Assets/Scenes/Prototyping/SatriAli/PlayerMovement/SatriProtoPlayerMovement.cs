@@ -101,12 +101,12 @@ public class SatriProtoPlayerMovement : MonoBehaviour
             }
         }
 
-        /*if (jumping && currentVelocity.y > jumpInitialVelocity + jumpVelocity)
+        if (jumping && currentVelocity.y > jumpInitialVelocity + jumpVelocity)
         {
             // something else added upwards velocity, cancel the jump so we don't apply stopping gravity when the player releases the jump
             jumping = false;
             jumpInitialVelocity = 0f;
-        }*/
+        }
 
         if (jumping && !controlState.jump)
         {
