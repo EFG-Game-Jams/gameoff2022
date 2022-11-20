@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6abb643f3e85411f8326c3af387a2e5, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  speed: 1.3231044
+  speed: 0
   maxSpeed: 30
   rocketReadyCount: 3
   rocketRegenTime: 0
   rocketReloadTime: 0
   isRocketLoaded: 1
-  levelNumberText: H1
-  levelTimerText: 
+  levelNumberText: H3
+  levelTimerText: 00:00.123
