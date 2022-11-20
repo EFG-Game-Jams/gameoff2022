@@ -1,0 +1,5 @@
+# Ignore generated databases
+**/taintrocket.db
+
+# Ignore integration test generated replays
+replays/
