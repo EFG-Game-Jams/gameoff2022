@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class SatriProtoTimeTrialGamemode : MonoBehaviour
 {
-    [SerializeField] TextMesh timerDisplay;
+    [SerializeField] PlayerData uiData;
 
     private Replayable replayable;
     private ReplayEventList replayTimerEvent;
@@ -109,7 +109,7 @@ public class SatriProtoTimeTrialGamemode : MonoBehaviour
 
         TimeSpan timeSpan = TimeSpan.FromSeconds(time);
         string timeText = string.Format("{0:D2}:{1:D2}.{2:D3}", timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
-        if (timerDisplay != null)
-            timerDisplay.text = timeText;
+        if (uiData != null)
+            uiData.levelTimerText = timeText;
     }
 }

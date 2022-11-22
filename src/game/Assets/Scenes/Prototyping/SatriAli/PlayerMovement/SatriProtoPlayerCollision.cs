@@ -98,7 +98,7 @@ public class SatriProtoPlayerCollision : MonoBehaviour
             for (int i = 0; i < triggerCount; ++i)
             {
                 RaycastHit hit = cachedHitResultArray[i];
-                SatriProtoTriggerArea trigger = hit.collider.GetComponent<SatriProtoTriggerArea>();
+                PlayerTrigger trigger = hit.collider.GetComponent<PlayerTrigger>();
                 Debug.Assert(trigger != null);
 
                 float hitDistance = hit.distance - depenetrationBias; // time begins at the start position, so compensate for backtracking

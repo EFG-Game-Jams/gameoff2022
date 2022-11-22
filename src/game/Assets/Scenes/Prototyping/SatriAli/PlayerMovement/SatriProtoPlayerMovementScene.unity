@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 866e0a4a105d4cd4e8a516c5a27f2619, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timerDisplay: {fileID: 1844979428}
+  uiData: {fileID: 11400000, guid: e3225c47847774ddfb645633d7789ca0, type: 2}
 --- !u!4 &74680853
 Transform:
   m_ObjectHideFlags: 0
@@ -326,7 +326,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-66738
+  m_Name: pb_Mesh-186274
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -680,7 +680,7 @@ GameObject:
   - component: {fileID: 223091400}
   - component: {fileID: 223091399}
   - component: {fileID: 223091398}
-  - component: {fileID: 223091396}
+  - component: {fileID: 223091401}
   m_Layer: 7
   m_Name: EndTimerTrigger
   m_TagString: Untagged
@@ -703,45 +703,6 @@ Transform:
   m_Father: {fileID: 74680853}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &223091396
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 223091394}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d0383670a1b22a40869c35cc25dfe1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onTriggerEnter:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 74680852}
-        m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
-        m_MethodName: EventEndTimer
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 223091399}
-        m_TargetAssemblyTypeName: UnityEngine.Renderer, UnityEngine
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!65 &223091398
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -805,6 +766,35 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 223091394}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &223091401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223091394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f980a622f2318884baf2ecafc7bb0ae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onTriggerEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 74680852}
+        m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
+        m_MethodName: EventEndTimer
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  oneShot: 1
+  hasTriggered: 0
 --- !u!1 &250227576
 GameObject:
   m_ObjectHideFlags: 0
@@ -4412,7 +4402,7 @@ GameObject:
   - component: {fileID: 927036022}
   - component: {fileID: 927036021}
   - component: {fileID: 927036020}
-  - component: {fileID: 927036018}
+  - component: {fileID: 927036024}
   m_Layer: 7
   m_Name: StartTimerTrigger
   m_TagString: Untagged
@@ -4420,45 +4410,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &927036018
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 927036017}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d0383670a1b22a40869c35cc25dfe1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onTriggerEnter:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 74680852}
-        m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
-        m_MethodName: EventStartTimer
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 927036021}
-        m_TargetAssemblyTypeName: UnityEngine.Renderer, UnityEngine
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!65 &927036020
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4537,6 +4488,35 @@ Transform:
   m_Father: {fileID: 74680853}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &927036024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 927036017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f980a622f2318884baf2ecafc7bb0ae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onTriggerEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 74680852}
+        m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
+        m_MethodName: EventStartTimer
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  oneShot: 1
+  hasTriggered: 0
 --- !u!1 &994352136
 GameObject:
   m_ObjectHideFlags: 0
@@ -5352,7 +5332,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-63738
+  m_Name: pb_Mesh-186260
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5529,7 +5509,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1139203982
 Transform:
   m_ObjectHideFlags: 0
@@ -7348,7 +7328,7 @@ GameObject:
   - component: {fileID: 1216242105}
   - component: {fileID: 1216242104}
   - component: {fileID: 1216242103}
-  - component: {fileID: 1216242101}
+  - component: {fileID: 1216242106}
   m_Layer: 7
   m_Name: ReplayTrigger
   m_TagString: Untagged
@@ -7371,33 +7351,6 @@ Transform:
   m_Father: {fileID: 74680853}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1216242101
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1216242099}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d0383670a1b22a40869c35cc25dfe1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onTriggerEnter:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 74680852}
-        m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
-        m_MethodName: EventReplay
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!65 &1216242103
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7461,6 +7414,35 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1216242099}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1216242106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1216242099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f980a622f2318884baf2ecafc7bb0ae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onTriggerEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 74680852}
+        m_TargetAssemblyTypeName: SatriProtoTimeTrialGamemode, Assembly-CSharp
+        m_MethodName: EventReplay
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  oneShot: 1
+  hasTriggered: 0
 --- !u!43 &1226651551
 Mesh:
   m_ObjectHideFlags: 0
@@ -7664,7 +7646,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1250779553
 Transform:
   m_ObjectHideFlags: 0
@@ -11373,6 +11355,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3237350966741072812, guid: ad99a039a39954f48906c52700558159, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -77.51611
+      objectReference: {fileID: 0}
+    - target: {fileID: 3237350966741072812, guid: ad99a039a39954f48906c52700558159, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -25.907227
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad99a039a39954f48906c52700558159, type: 3}
 --- !u!43 &1727564657
@@ -12086,6 +12076,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1008133585594567965, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -77.51611
+      objectReference: {fileID: 0}
+    - target: {fileID: 1008133585594567965, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -25.907227
+      objectReference: {fileID: 0}
     - target: {fileID: 2274355554962466950, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.7010649
@@ -12358,11 +12356,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!102 &1844979428 stripped
-TextMesh:
-  m_CorrespondingSourceObject: {fileID: 6453059206118690549, guid: 3872baaf08a47584182de35675412929, type: 3}
-  m_PrefabInstance: {fileID: 6453059204297844753}
-  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1939458228
 Mesh:
   m_ObjectHideFlags: 0
@@ -13611,7 +13604,7 @@ PrefabInstance:
       objectReference: {fileID: 1066618058}
     - target: {fileID: 2516193435782082780, guid: 408f367cf2bcb054bb26df01cef63283, type: 3}
       propertyPath: m_VersionIndex
-      value: 83
+      value: 116
       objectReference: {fileID: 0}
     - target: {fileID: 3087894604321578052, guid: 408f367cf2bcb054bb26df01cef63283, type: 3}
       propertyPath: m_Mesh
@@ -13719,7 +13712,7 @@ PrefabInstance:
       objectReference: {fileID: 95064639}
     - target: {fileID: 8363990382465723418, guid: 408f367cf2bcb054bb26df01cef63283, type: 3}
       propertyPath: m_VersionIndex
-      value: 86
+      value: 119
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 408f367cf2bcb054bb26df01cef63283, type: 3}

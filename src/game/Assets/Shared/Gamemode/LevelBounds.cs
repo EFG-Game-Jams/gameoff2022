@@ -41,7 +41,7 @@ public class LevelBounds : MonoBehaviour
 
     private void Awake()
     {
-        GetComponentInChildren<SatriProtoTriggerArea>().onTriggerEnter.AddListener(OnPlayerOutOfBounds);
+        GetComponentInChildren<PlayerTrigger>().onTriggerEnter.AddListener(OnPlayerOutOfBounds);
     }
     private void OnPlayerOutOfBounds(GameObject gameObject, double fixedTime)
     {
