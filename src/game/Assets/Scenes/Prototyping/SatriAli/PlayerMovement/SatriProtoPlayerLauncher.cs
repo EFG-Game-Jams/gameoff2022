@@ -52,6 +52,30 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
 
     private RocketButton hoveredRocketButton;
 
+    private bool isEnabled = true;
+    public bool IsEnabled
+    {
+        get => isEnabled;
+        set
+        {
+            if (isEnabled == value)
+                return;
+            isEnabled = value;
+            if (isEnabled)
+            {
+                sfxReload.Play();
+                generatedShots = maxGeneratedShots;
+            }
+            else
+            {
+                generatedShots = 0;
+            }
+            regenTimer = shotRegenTime;
+            reloadTimer = 0;
+            chargeTimer = -1;
+        }
+    }
+
     private struct RocketInfo : IStreamable
     {
         public Vector3 origin;
@@ -90,19 +114,22 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         player = GetComponent<SatriProtoPlayer>();
-
-        replayable = GetComponent<Replayable>();
-        replayFire = replayable.GetEventList("Launcher.Fire");
-        replayDryFire = replayable.GetEventList("Launcher.DryFire");
-        replayChargeShot = replayable.GetEventList("Launcher.ChargeShot");
 
         generatedShots = maxGeneratedShots;
         reloadTimer = 0;
         regenTimer = shotRegenTime;
         chargeTimer = -1;
+    }
+
+    private void Start()
+    {
+        replayable = GetComponent<Replayable>();
+        replayFire = replayable.GetEventList("Launcher.Fire");
+        replayDryFire = replayable.GetEventList("Launcher.DryFire");
+        replayChargeShot = replayable.GetEventList("Launcher.ChargeShot");
     }
 
     private void OnInputFire(InputValue value)
@@ -121,7 +148,7 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
     private void FixedUpdate()
     {
         // generate
-        if (generatedShots < maxGeneratedShots)
+        if (isEnabled && generatedShots < maxGeneratedShots)
         {
             regenTimer -= Time.fixedDeltaTime;
             if (regenTimer <= 0f)
@@ -135,7 +162,7 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         }
 
         // reload
-        if (reloadTimer > 0)
+        if (isEnabled && reloadTimer > 0)
         {
             reloadTimer = Mathf.Max(0f, reloadTimer - Time.fixedDeltaTime);
             if (reloadTimer == 0 && generatedShots > 0)
@@ -153,7 +180,12 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         }
 
         // fire
-        if (replayable.ShouldRecord)
+        if (!isEnabled)
+        {
+            shouldBeginCharge = false;
+            shouldTryFire = false;
+        }
+        else if (replayable.ShouldRecord)
         {
             if (shouldBeginCharge)
             {
@@ -177,13 +209,13 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         }
 
         // charge shot
-        if (chargeTimer >= 0)
+        if (isEnabled && chargeTimer >= 0)
             chargeTimer += Time.fixedDeltaTime;
 
         // UI
         var uiData = player.uiData;
         uiData.rocketReadyCount = generatedShots;
-        uiData.rocketRegenTime = generatedShots < maxGeneratedShots ? Mathf.Clamp01(1f - regenTimer / shotRegenTime) : 0f;
+        uiData.rocketRegenTime = isEnabled && generatedShots < maxGeneratedShots ? Mathf.Clamp01(1f - regenTimer / shotRegenTime) : 0f;
         uiData.rocketReloadTime = reloadTimer <= 0 ? 0f : Mathf.Clamp01(1f - reloadTimer / launcherReloadTime);
         uiData.isRocketLoaded = ShotLoaded;
     }
@@ -206,49 +238,60 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
 
     private void LateUpdate()
     {
-        const float maxTime = 10f;
-        Vector3 origin = muzzle.position;
-        Vector3 velocity = ChargedMuzzleVelocity;
+        previewLine.gameObject.SetActive(isEnabled);
+        previewImpact.SetActive(isEnabled);
 
-        bool hit = rocketPrefab.FindImpact(origin, velocity, maxTime, Time.fixedDeltaTime, out SatriProtoRocket.ImpactInfo hitInfo);
-
-        float previewTimeEnd = (hit ? hitInfo.time : trajectoryPreviewTime);
-        float previewTimeStep = previewTimeEnd / trajectoryPreviewSegments;
-        Vector3 previewToMuzzle = muzzle.position - previewLine.transform.position;
-        Vector3 previewToMuzzleStep = previewToMuzzle / trajectoryPreviewSegments;
-
-        if (previewLine.positionCount != trajectoryPreviewSegments + 1)
-            previewLine.positionCount = trajectoryPreviewSegments + 1;
-
-        for (int i = 0; i <= trajectoryPreviewSegments; ++i)
+        if (isEnabled)
         {
-            float time = i * previewTimeStep;
-            Vector3 offset = previewToMuzzleStep * -(trajectoryPreviewSegments - i);
-            previewLine.SetPosition(i, rocketPrefab.GetPositionAt(origin, velocity, time) + offset);
-        }
+            const float maxTime = 10f;
+            Vector3 origin = muzzle.position;
+            Vector3 velocity = ChargedMuzzleVelocity;
 
-        RocketButton hitRocketButton = null;        
-        if (hit)
-        {
-            hitRocketButton = RocketButton.FromCollider(hitInfo.collider);
-            if (hitRocketButton == null)
+            bool hit = rocketPrefab.FindImpact(origin, velocity, maxTime, Time.fixedDeltaTime, out SatriProtoRocket.ImpactInfo hitInfo);
+
+            float previewTimeEnd = (hit ? hitInfo.time : trajectoryPreviewTime);
+            float previewTimeStep = previewTimeEnd / trajectoryPreviewSegments;
+            Vector3 previewToMuzzle = muzzle.position - previewLine.transform.position;
+            Vector3 previewToMuzzleStep = previewToMuzzle / trajectoryPreviewSegments;
+
+            if (previewLine.positionCount != trajectoryPreviewSegments + 1)
+                previewLine.positionCount = trajectoryPreviewSegments + 1;
+
+            for (int i = 0; i <= trajectoryPreviewSegments; ++i)
             {
-                previewImpact.SetActive(true);
-                previewImpact.transform.position = hitInfo.position;
-                previewImpact.transform.LookAt(hitInfo.position + hitInfo.normal, transform.forward);
+                float time = i * previewTimeStep;
+                Vector3 offset = previewToMuzzleStep * -(trajectoryPreviewSegments - i);
+                previewLine.SetPosition(i, rocketPrefab.GetPositionAt(origin, velocity, time) + offset);
+            }
+
+            RocketButton hitRocketButton = null;
+            if (hit)
+            {
+                hitRocketButton = RocketButton.FromCollider(hitInfo.collider);
+                if (hitRocketButton == null)
+                {
+                    previewImpact.SetActive(true);
+                    previewImpact.transform.position = hitInfo.position;
+                    previewImpact.transform.LookAt(hitInfo.position + hitInfo.normal, transform.forward);
+                }
+                else
+                {
+                    previewImpact.SetActive(false);
+                }
             }
             else
             {
                 previewImpact.SetActive(false);
             }
-        }
-        if (hoveredRocketButton != hitRocketButton)
-        {
-            if (hoveredRocketButton != null)
-                hoveredRocketButton.OnHoverExit();
-            hoveredRocketButton = hitRocketButton;
-            if (hitRocketButton != null)
-                hoveredRocketButton.OnHoverEnter();
+
+            if (hoveredRocketButton != hitRocketButton)
+            {
+                if (hoveredRocketButton != null)
+                    hoveredRocketButton.OnHoverExit();
+                hoveredRocketButton = hitRocketButton;
+                if (hitRocketButton != null)
+                    hoveredRocketButton.OnHoverEnter();
+            }
         }
     }
 

@@ -30,7 +30,7 @@ public class GamemodeHub : MonoBehaviour
     private PersistentData persistentData;
     private string PersistentDataPath => System.IO.Path.Combine(Application.persistentDataPath, "data_hub");
 
-    //public void EventSetLauncherEnabled(bool enabled) => player.SetLauncherEnabled(enabled);
+    public void EventSetLauncherEnabled(bool enabled) => player.GetComponent<SatriProtoPlayerLauncher>().IsEnabled = enabled;
 
     void Start()
     {
@@ -42,6 +42,8 @@ public class GamemodeHub : MonoBehaviour
         gtGuiBestTime.text = (persistentData.groundTutorialBestTime > 0 ? FormatTime(persistentData.groundTutorialBestTime) : "N/A");
 
         SetupTriggers();
+
+        EventSetLauncherEnabled(false);
     }
 
     void Update()
