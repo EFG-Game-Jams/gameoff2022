@@ -4,6 +4,7 @@ public class FootstepSounds : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] AudioSource[] sources;
+    [SerializeField] SatriProtoPlayerCollision playerCollision;
 
     [Header("Audio clips")]
     [SerializeField] AudioClip[] clipsSoft;
@@ -48,6 +49,8 @@ public class FootstepSounds : MonoBehaviour
 
     private bool IsGrounded()
     {
+        if (playerCollision != null)
+            return playerCollision.IsGrounded;
         return Physics.Raycast(transform.position + Vector3.up * .01f, -Vector3.up, .1f, ~0, QueryTriggerInteraction.Ignore);
     }
 

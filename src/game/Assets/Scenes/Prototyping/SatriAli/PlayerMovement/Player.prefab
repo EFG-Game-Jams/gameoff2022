@@ -6235,6 +6235,7 @@ MonoBehaviour:
   sources:
   - {fileID: 6453059205490818870}
   - {fileID: 6453059205490818871}
+  playerCollision: {fileID: 6453059204940380654}
   clipsSoft:
   - {fileID: 8300000, guid: 4d11813f5983ce047873c94858e6a6c1, type: 3}
   - {fileID: 8300000, guid: 4544cd1f9b0d00a498e3602ecfffcacc, type: 3}
