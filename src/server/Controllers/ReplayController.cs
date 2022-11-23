@@ -1,6 +1,7 @@
 using Game.Server.Models.Replay;
 using Game.Server.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Game.Server.Controllers;
@@ -8,6 +9,7 @@ namespace Game.Server.Controllers;
 // https://docs.unity3d.com/Manual/webgl-interactingwithbrowserscripting.html
 [AllowAnonymous]
 [ApiController]
+[EnableCors]
 public class ReplayController : ControllerBase
 {
     private readonly GameService gameService;

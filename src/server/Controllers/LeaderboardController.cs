@@ -4,6 +4,7 @@ using Game.Server.Models.Leaderboard;
 using Game.Server.Services;
 using Game.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ namespace Game.Server.Controllers;
 // https://docs.unity3d.com/Manual/webgl-interactingwithbrowserscripting.html
 [AllowAnonymous]
 [ApiController]
+[EnableCors]
 public class LeaderboardController : ControllerBase
 {
     private readonly GameService gameService;
@@ -26,7 +28,6 @@ public class LeaderboardController : ControllerBase
     public async Task<ActionResult<LeaderboardListResponse>> GetGlobalLeaderboard(
         [FromRoute] uint revision,
         [FromRoute] Guid sessionSecret,
-        [FromQuery] string? playerName,
         [FromQuery] string levelName,
         [FromQuery] int? take,
         [FromQuery] int? skip,
@@ -42,11 +43,6 @@ public class LeaderboardController : ControllerBase
         }
 
         var query = await gameService.GetGlobalLeaderboardQuery(revision, levelName);
-        if (!string.IsNullOrWhiteSpace(playerName))
-        {
-            query = query.Where(e => e.Player.Name == playerName);
-        }
-
         query = ApplySort(query, sortOrder);
 
         return new LeaderboardListResponse(

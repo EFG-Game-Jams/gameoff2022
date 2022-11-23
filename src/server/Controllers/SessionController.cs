@@ -2,12 +2,14 @@ using Game.Server.Models.Session;
 using Game.Server.Services;
 using Game.Server.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Game.Server.Controllers;
 
 [AllowAnonymous]
 [ApiController]
+[EnableCors]
 public class SessionController : ControllerBase
 {
     private readonly IItchService itchService;
@@ -44,7 +46,8 @@ public class SessionController : ControllerBase
     {
         try
         {
-            return new SessionDetailsResponse(await gameService.GetPlayerNameFor(sessionSecret));
+            var (Id, Name) = await gameService.GetPlayerFor(sessionSecret);
+            return new SessionDetailsResponse(Id, Name);
         }
         catch (InvalidOperationException)
         {

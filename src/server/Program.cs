@@ -18,6 +18,8 @@ public partial class Program
             options.SupportNonNullableReferenceTypes();
         });
 
+        builder.Services.AddHealthChecks();
+
         builder.Services.AddHttpClient();
 
         builder.Services.AddTransient<IItchService, ItchService>();
@@ -26,6 +28,24 @@ public partial class Program
         builder.Services.AddScoped<GameService>();
         builder.Services.AddDbContext<ReplayDatabase>();
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(config =>
+            {
+                config
+                    .SetIsOriginAllowed(origin => true) // TODO add itch host here
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+            options.AddPolicy(Policies.HostOnly, config =>
+            {
+                config
+                    .SetIsOriginAllowed(origin => true) // TODO add hosted domain here
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+
         var app = builder
             .Build();
 
@@ -33,6 +53,10 @@ public partial class Program
         {
             app.UseDeveloperExceptionPage();
         }
+
+        app.UseCors();
+
+        app.UseHealthChecks("/health");
 
         app.UseHsts();
         app.UseHttpsRedirection();

@@ -28,7 +28,6 @@ public class GameService
     public async Task<Guid> CreateSession(string name, int itchIdentifier)
     {
         var player = await replayDatabase.Players
-            .AsNoTracking()
             .SingleOrDefaultAsync(p => p.ItchIdentifier == itchIdentifier);
 
         if (player == null)
@@ -54,13 +53,13 @@ public class GameService
         return session.Secret;
     }
 
-    public async Task<string> GetPlayerNameFor(Guid secret)
+    public async Task<(int Id, string Name)> GetPlayerFor(Guid secret)
     {
-        return (await replayDatabase.Sessions
+        var player = await replayDatabase.Sessions
             .AsNoTracking()
-            .Select(s => new { s.Secret, s.Player.Name })
-            .SingleAsync(s => s.Secret == secret))
-            .Name;
+            .Select(s => new { s.Secret, s.PlayerId, s.Player.Name })
+            .SingleAsync(s => s.Secret == secret);
+        return (player.PlayerId, player.Name);
     }
 
     public async Task<int?> TryGetPlayerIdFor(Guid secret)

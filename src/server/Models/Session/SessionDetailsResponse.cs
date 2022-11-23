@@ -1,3 +1,3 @@
 namespace Game.Server.Models.Session;
 
-public record class SessionDetailsResponse(string PlayerName);
+public record class SessionDetailsResponse(int PlayerId, string PlayerName);
