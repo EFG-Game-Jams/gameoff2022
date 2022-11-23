@@ -38,6 +38,22 @@ public class SatriProtoPlayer : MonoBehaviour
 
     public Vector3 Velocity => velocity;
 
+    public void Teleport(Vector3 pos, Quaternion rot)
+    {
+        Debug.Assert(replayable.Mode == ReplaySystem.ReplayMode.None);
+
+        Vector3 euler = rot.eulerAngles;
+        cameraHeading = euler.y;
+        cameraPitch = euler.x;
+
+        prevPosition = pos;
+        position = pos;
+        velocity = Vector3.zero;
+
+        ApplyAim(cameraHeading, cameraPitch);
+        transform.position = pos;
+    }
+
     private void OnInputMove(InputValue value)
     {
         controlStateMove.move = value.Get<Vector2>();

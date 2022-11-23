@@ -38,8 +38,8 @@ public class GamemodeHub : MonoBehaviour
         uiData.levelNumberText = "";
 
         PersistentDataLoad();
-        gtGuiLastTime.text = "N/A";
-        gtGuiBestTime.text = (persistentData.groundTutorialBestTime > 0 ? FormatTime(persistentData.groundTutorialBestTime) : "N/A");
+        gtGuiLastTime.text = FormatMonoText("N/A");
+        gtGuiBestTime.text = FormatMonoText(persistentData.groundTutorialBestTime > 0 ? FormatTime(persistentData.groundTutorialBestTime) : "N/A");
 
         SetupTriggers();
 
@@ -70,13 +70,14 @@ public class GamemodeHub : MonoBehaviour
 
             double time = Time.fixedTimeAsDouble - activeTimerStart;
             string timeString = FormatTime(time);
-            gtGuiLastTime.text = timeString;
+            string timeStringMono = FormatMonoText(timeString);
+            gtGuiLastTime.text = timeStringMono;
             uiData.levelTimerText = timeString;
             uiData.levelNumberText = "";
 
             if (persistentData.groundTutorialBestTime <= 0 || time < persistentData.groundTutorialBestTime)
             {
-                gtGuiBestTime.text = timeString;
+                gtGuiBestTime.text = timeStringMono;
                 persistentData.groundTutorialBestTime = time;
                 PersistentDataSave();
             }
@@ -98,6 +99,10 @@ public class GamemodeHub : MonoBehaviour
     {
         System.TimeSpan timeSpan = System.TimeSpan.FromSeconds(time);
         return string.Format("{0:D2}:{1:D2}.{2:D3}", timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
+    }
+    private string FormatMonoText(string text)
+    {
+        return $"<mspace=.15>{text}</mspace>";
     }
 
     private void PersistentDataLoad()
