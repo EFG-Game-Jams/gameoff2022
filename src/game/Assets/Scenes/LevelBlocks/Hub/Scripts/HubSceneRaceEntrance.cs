@@ -13,7 +13,7 @@ public class HubSceneRaceEntrance : MonoBehaviour
     [Header("References")]
     [SerializeField] TMPro.TextMeshPro nameLabel;
     [SerializeField] HubRaceEntranceScreenInfo screenFront;
-    [SerializeField] Transform screenLeft;
+    [SerializeField] HubRaceEntranceScreenLeaderboard screenLeft;
     [SerializeField] Transform screenRight;
     [SerializeField] PlayerTrigger playerTriggerFloor;
 
@@ -22,21 +22,23 @@ public class HubSceneRaceEntrance : MonoBehaviour
     private float screenAnimCurrent;
     [SerializeField] private float screenAnimDirection;
 
+    private string LevelName => gameObject.name;
+
     private void OnValidate()
     {
         if (nameLabel.text != null)
-            nameLabel.text = gameObject.name;
+            nameLabel.text = LevelName;
     }
 
     private void Start()
     {
-        nameLabel.text = gameObject.name;
+        nameLabel.text = LevelName;
 
         playerTriggerFloor.onTriggerEnter.AddListener(OnPlayerEnter);
 
-        screenFront.Configure(gameObject.name, "N/A", "N/A");
+        screenFront.Configure(LevelName, "N/A", "N/A");
 
-        screenTransforms = new Transform[] { screenFront.transform, screenLeft, screenRight };
+        screenTransforms = new Transform[] { screenFront.transform, screenLeft.transform, screenRight };
         UpdateScreenAnimation();
     }
 
@@ -50,6 +52,8 @@ public class HubSceneRaceEntrance : MonoBehaviour
             StartCoroutine(CoDeactivateScreensOnPlayerLeave());
         }
         this.player = player;
+
+        //screenLeft.Refresh(LevelName);
     }
 
     private void AnimateScreens(float direction)
@@ -88,6 +92,7 @@ public class HubSceneRaceEntrance : MonoBehaviour
 
         float opacity = Mathf.Pow(Mathf.Clamp01(screenAnimCurrent), 4);
         screenFront.Opacity = opacity;
+        screenLeft.Opacity = opacity;
     }
 
     private IEnumerator CoDeactivateScreensOnPlayerLeave()
