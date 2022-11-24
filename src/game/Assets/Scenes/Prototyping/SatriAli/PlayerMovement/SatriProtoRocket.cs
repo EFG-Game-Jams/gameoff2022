@@ -78,12 +78,12 @@ public class SatriProtoRocket : MonoBehaviour
         foreach (var vfx in flightVfx)
             vfx.Stop();
 
-        RocketButton button = RocketButton.FromCollider(hitInfo.collider);
+        RocketButtonBase button = RocketButtonBase.FromCollider(hitInfo.collider);
         if (button != null)
         {
             if (button.ShouldConsumeRocket)
                 Instantiate(impactEffectPrefab, transform.position, impactEffectPrefab.transform.rotation);
-            button.OnRocketImpact(transform.position);
+            button.OnTrigger(transform.position);
             Destroy(gameObject);
         }
         else

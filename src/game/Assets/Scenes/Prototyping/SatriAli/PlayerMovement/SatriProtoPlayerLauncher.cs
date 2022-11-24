@@ -50,7 +50,8 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
     private float regenTimer;
     private float chargeTimer;
 
-    private RocketButton hoveredRocketButton;
+    private RocketButtonBase hoveredRocketButton;
+    private LayerMask uiLayer;
 
     private bool isEnabled = true;
     public bool IsEnabled
@@ -122,6 +123,8 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         reloadTimer = 0;
         regenTimer = shotRegenTime;
         chargeTimer = -1;
+
+        uiLayer = LayerMask.GetMask("UI");
     }
 
     private void Start()
@@ -223,7 +226,13 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
     private void TryFire()
     {
         Debug.Assert(replayable.ShouldRecord);
-        if (ShotLoaded)
+        if (hoveredRocketButton != null && !hoveredRocketButton.ShouldConsumeRocket)
+        {
+            Debug.Assert(replayable.Mode == ReplaySystem.ReplayMode.None);
+            hoveredRocketButton.OnTrigger(Vector3.zero);
+            chargeTimer = -1;
+        }
+        else if (ShotLoaded)
         {
             RocketInfo info = new RocketInfo { origin = muzzle.position, velocity = ChargedMuzzleVelocity };
             replayFire.Write(info);
@@ -236,61 +245,93 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         }
     }
 
+    private RocketButtonBase GetHoveredUi(out RaycastHit hitInfo)
+    {
+        const float MaxDistance = 2f;
+        if (Physics.Raycast(muzzle.position, muzzle.forward, out hitInfo, MaxDistance, uiLayer, QueryTriggerInteraction.Collide))
+            return RocketButtonBase.FromCollider(hitInfo.collider);
+        return null;
+    }
+
+    private void UpdateRocketButton(RocketButtonBase hitRocketButton)
+    {
+        if (hoveredRocketButton != hitRocketButton)
+        {
+            if (hoveredRocketButton != null)
+                hoveredRocketButton.OnHoverExit();
+            hoveredRocketButton = hitRocketButton;
+            if (hitRocketButton != null)
+                hoveredRocketButton.OnHoverEnter();
+        }
+    }
+
     private void LateUpdate()
     {
-        previewLine.gameObject.SetActive(isEnabled);
-        previewImpact.SetActive(isEnabled);
-
-        if (isEnabled)
+        RocketButtonBase uiButton = GetHoveredUi(out RaycastHit uiHit);
+        if (uiButton != null)
         {
-            const float maxTime = 10f;
-            Vector3 origin = muzzle.position;
-            Vector3 velocity = ChargedMuzzleVelocity;
+            UpdateRocketButton(uiButton);
+            previewLine.gameObject.SetActive(false);
+            previewImpact.SetActive(true);
+            previewImpact.transform.position = uiHit.point;
+            previewImpact.transform.LookAt(uiHit.point + uiHit.normal, Vector3.up);
+        }
+        else
+        {
+            previewLine.gameObject.SetActive(isEnabled);
+            previewImpact.SetActive(isEnabled);
 
-            bool hit = rocketPrefab.FindImpact(origin, velocity, maxTime, Time.fixedDeltaTime, out SatriProtoRocket.ImpactInfo hitInfo);
-
-            float previewTimeEnd = (hit ? hitInfo.time : trajectoryPreviewTime);
-            float previewTimeStep = previewTimeEnd / trajectoryPreviewSegments;
-            Vector3 previewToMuzzle = muzzle.position - previewLine.transform.position;
-            Vector3 previewToMuzzleStep = previewToMuzzle / trajectoryPreviewSegments;
-
-            if (previewLine.positionCount != trajectoryPreviewSegments + 1)
-                previewLine.positionCount = trajectoryPreviewSegments + 1;
-
-            for (int i = 0; i <= trajectoryPreviewSegments; ++i)
+            if (isEnabled)
             {
-                float time = i * previewTimeStep;
-                Vector3 offset = previewToMuzzleStep * -(trajectoryPreviewSegments - i);
-                previewLine.SetPosition(i, rocketPrefab.GetPositionAt(origin, velocity, time) + offset);
-            }
+                const float maxTime = 10f;
+                Vector3 origin = muzzle.position;
+                Vector3 velocity = ChargedMuzzleVelocity;
 
-            RocketButton hitRocketButton = null;
-            if (hit)
-            {
-                hitRocketButton = RocketButton.FromCollider(hitInfo.collider);
-                if (hitRocketButton == null)
+                bool hit = rocketPrefab.FindImpact(origin, velocity, maxTime, Time.fixedDeltaTime, out SatriProtoRocket.ImpactInfo hitInfo);
+
+                float previewTimeEnd = (hit ? hitInfo.time : trajectoryPreviewTime);
+                float previewTimeStep = previewTimeEnd / trajectoryPreviewSegments;
+                Vector3 previewToMuzzle = muzzle.position - previewLine.transform.position;
+                Vector3 previewToMuzzleStep = previewToMuzzle / trajectoryPreviewSegments;
+
+                if (previewLine.positionCount != trajectoryPreviewSegments + 1)
+                    previewLine.positionCount = trajectoryPreviewSegments + 1;
+
+                for (int i = 0; i <= trajectoryPreviewSegments; ++i)
                 {
-                    previewImpact.SetActive(true);
-                    previewImpact.transform.position = hitInfo.position;
-                    previewImpact.transform.LookAt(hitInfo.position + hitInfo.normal, transform.forward);
+                    float time = i * previewTimeStep;
+                    Vector3 offset = previewToMuzzleStep * -(trajectoryPreviewSegments - i);
+                    previewLine.SetPosition(i, rocketPrefab.GetPositionAt(origin, velocity, time) + offset);
+                }
+
+                RocketButtonBase hitRocketButton = null;
+                if (hit)
+                {
+                    hitRocketButton = RocketButtonBase.FromCollider(hitInfo.collider);
+                    if (hitRocketButton == null)
+                    {
+                        previewImpact.SetActive(true);
+                        previewImpact.transform.position = hitInfo.position;
+                        previewImpact.transform.LookAt(hitInfo.position + hitInfo.normal, transform.forward);
+                    }
+                    else
+                    {
+                        previewImpact.SetActive(false);
+                    }
                 }
                 else
                 {
                     previewImpact.SetActive(false);
                 }
-            }
-            else
-            {
-                previewImpact.SetActive(false);
-            }
 
-            if (hoveredRocketButton != hitRocketButton)
-            {
-                if (hoveredRocketButton != null)
-                    hoveredRocketButton.OnHoverExit();
-                hoveredRocketButton = hitRocketButton;
-                if (hitRocketButton != null)
-                    hoveredRocketButton.OnHoverEnter();
+                if (hoveredRocketButton != hitRocketButton)
+                {
+                    if (hoveredRocketButton != null)
+                        hoveredRocketButton.OnHoverExit();
+                    hoveredRocketButton = hitRocketButton;
+                    if (hitRocketButton != null)
+                        hoveredRocketButton.OnHoverEnter();
+                }
             }
         }
     }
