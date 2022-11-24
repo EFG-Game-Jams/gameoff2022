@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -14,6 +16,11 @@ public class LeaderboardClient
     private int? playerId;
     private string sessionSecret;
     private bool isServerHealthy;
+
+    private int offlineId = 1;
+    private readonly List<OfflineLevel> offlineLevels = new List<OfflineLevel>();
+    private readonly List<LeaderboardListEntry> offlineLeaderboard = new List<LeaderboardListEntry>();
+    private readonly List<ReplayDownload> offlineReplays = new List<ReplayDownload>();
 
     private LeaderboardClient()
     {
@@ -153,6 +160,32 @@ public class LeaderboardClient
     public IEnumerator GetGlobalLeaderboard(Action<LeaderboardList> callback, string levelName, int take = 10, int skip = 0)
     {
         AssertValidLevelName(levelName);
+
+        if (IsOffline)
+        {
+            var level = offlineLevels.Find(l => l.name == levelName);
+            if (level == null)
+            {
+                callback.Invoke(new LeaderboardList
+                {
+                    items = Array.Empty<LeaderboardListEntry>(),
+                    totalCount = 0
+                });
+            }
+            else
+            {
+                var items = offlineLeaderboard
+                    .Where(ol => ol.levelId == level.id)
+                    .ToArray();
+                callback.Invoke(new LeaderboardList
+                {
+                    items = items,
+                    totalCount = items.Length
+                });
+            }
+            yield break;
+        }
+
         AssertSession();
 
         yield return Get(callback, $"session/{sessionSecret}/leaderboard?take={take}&skip={skip}&levelName={levelName}");
@@ -162,6 +195,32 @@ public class LeaderboardClient
     public IEnumerator GetLeaderboardNeighbours(Action<LeaderboardList> callback, string levelName, int take = 10, int skip = 0)
     {
         AssertValidLevelName(levelName);
+
+        if (IsOffline)
+        {
+            var level = offlineLevels.Find(l => l.name == levelName);
+            if (level == null)
+            {
+                callback.Invoke(new LeaderboardList
+                {
+                    items = Array.Empty<LeaderboardListEntry>(),
+                    totalCount = 0
+                });
+            }
+            else
+            {
+                var items = offlineLeaderboard
+                    .Where(ol => ol.levelId == level.id)
+                    .ToArray();
+                callback.Invoke(new LeaderboardList
+                {
+                    items = items,
+                    totalCount = items.Length
+                });
+            }
+            yield break;
+        }
+
         AssertSession();
 
         yield return Get(callback, $"session/{sessionSecret}/leaderboard/neighbours?take={take}&skip={skip}&levelName={levelName}");
@@ -170,6 +229,16 @@ public class LeaderboardClient
     /// <returns>All known leaderboard entries for the player (non paged)</returns>
     public IEnumerator GetPersonalRecords(Action<LeaderboardList> callback)
     {
+        if (IsOffline)
+        {
+            callback.Invoke(new LeaderboardList
+            {
+                items = offlineLeaderboard.ToArray(),
+                totalCount = offlineLeaderboard.Count
+            });
+            yield break;
+        }
+
         AssertSession();
 
         yield return Get(callback, $"session/{sessionSecret}/leaderboard/personal");
@@ -181,6 +250,58 @@ public class LeaderboardClient
     public IEnumerator CreateReplay(Action<CreatedReplay> callback, int timeInMilliseconds, string levelName, string data)
     {
         AssertValidLevelName(levelName);
+
+        if (IsOffline)
+        {
+            var level = offlineLevels.Find(l => l.name == levelName);
+            if (level == null)
+            {
+                level = new OfflineLevel
+                {
+                    id = offlineId++,
+                    name = levelName
+                };
+                offlineLevels.Add(level);
+            }
+
+            var replay = offlineReplays.Find(r => r.levelId == level.id);
+            if (replay == null)
+            {
+                replay = new ReplayDownload
+                {
+                    data = data,
+                    levelId = level.id,
+                    levelName = level.name,
+                    playerId = PlayerId,
+                    playerName = PlayerName,
+                    timeInMilliseconds = timeInMilliseconds
+                };
+                offlineReplays.Add(replay);
+            }
+
+            var record = offlineLeaderboard.Find(l => l.levelId == level.id);
+            if (record == null)
+            {
+                record = new LeaderboardListEntry
+                {
+                    gameRevision = 0,
+                    levelId = level.id,
+                    levelName = level.name,
+                    playerId = PlayerId,
+                    playerName = PlayerName,
+                    rank = 1,
+                    replayId = offlineId++
+                };
+                offlineLeaderboard.Add(record);
+            }
+
+            callback.Invoke(new CreatedReplay
+            {
+                id = record.replayId
+            });
+            yield break;
+        }
+
         AssertSession();
 
         yield return Post(
@@ -196,6 +317,23 @@ public class LeaderboardClient
 
     public IEnumerator DownloadReplay(Action<ReplayDownload> callback, int replayId)
     {
+        if (IsOffline)
+        {
+            var record = offlineLeaderboard.Find(r => r.replayId == replayId);
+            if (record == null)
+            {
+                throw new InvalidOperationException("Requested replay has not been stored in the offline storage");
+            }
+            var replay = offlineReplays.Find(r => r.levelId == record.levelId);
+            if (record == null)
+            {
+                throw new InvalidOperationException("Requested replay has not been stored in the offline storage");
+            }
+
+            callback.Invoke(replay);
+            yield break;
+        }
+
         AssertSession();
 
         yield return Get(callback, $"session/{sessionSecret}/replay/{replayId}");
