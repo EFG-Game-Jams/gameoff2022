@@ -10,6 +10,7 @@ public class LeaderboardClient
 
     private readonly string baseApiUrl;
     private ClientState state = ClientState.None;
+    private string playerName;
     private int? playerId;
     private string sessionSecret;
     private bool isServerHealthy;
@@ -39,14 +40,46 @@ public class LeaderboardClient
         playerId = null;
         sessionSecret = null;
 
-        WebFunctions.PersistLeaderboardsEnabled(false);
+        if (!Application.isEditor)
+        {
+            WebFunctions.PersistLeaderboardsEnabled(false);
+        }
     }
 
-    public void EnableOnlineLeaderboard() => WebFunctions.PersistLeaderboardsEnabled(true);
+    public void EnableOnlineLeaderboard()
+    {
+        if (!Application.isEditor)
+        {
+            WebFunctions.PersistLeaderboardsEnabled(true);
+        }
+    }
 
     public bool IsOffline => state == ClientState.Offline;
 
+    public string PlayerName => playerName ?? "AnonymousRocket";
     public int PlayerId => playerId ?? 0;
+
+    public IEnumerator ConnectAsEditor(string secret)
+    {
+        yield return CheckServerHealth();
+
+        if (!isServerHealthy)
+        {
+            DisableOnlineLeaderboard();
+            yield break;
+        }
+
+        if (secret != null)
+        {
+            yield return TryRecoverExistingSession(secret);
+            if (state == ClientState.Online)
+            {
+                yield break; // OK
+            }
+        }
+
+        DisableOnlineLeaderboard();
+    }
 
     // TODO Support offline mode
     // This should be called whenever the player has agreed to use leaderboards
@@ -101,11 +134,17 @@ public class LeaderboardClient
         yield return GetSessionDetails((details) =>
         {
             this.sessionSecret = sessionSecret;
+            playerName = details.playerName;
             playerId = details.playerId;
             state = ClientState.Online;
 
-            WebFunctions.PersistLeaderboardSessionGuid(sessionSecret);
-            WebFunctions.PersistLeaderboardsEnabled(true);
+            if (!Application.isEditor)
+            {
+                WebFunctions.PersistLeaderboardSessionGuid(sessionSecret);
+                WebFunctions.PersistLeaderboardsEnabled(true);
+            }
+
+            Debug.Log($"Succesfully connected to the leaderboard server as {playerName}");
         }, sessionSecret);
     }
 
