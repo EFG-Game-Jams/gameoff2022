@@ -202,11 +202,16 @@ public class GameService
             return replayDatabase.Replays.Where(r => false);
         }
 
+        return GetGlobalLeaderboardQuery(gameRevision, level.Id);
+    }
+
+    public IQueryable<ReplayEntity> GetGlobalLeaderboardQuery(uint gameRevision, int levelId)
+    {
         return replayDatabase.Replays
             .AsNoTracking()
             .Include(r => r.Player)
             .Include(r => r.Level)
-            .Where(r => r.GameRevision == gameRevision && r.LevelId == level.Id);
+            .Where(r => r.GameRevision == gameRevision && r.LevelId == levelId);
     }
 
     public IQueryable<ReplayEntity> GetPersonalLeaderboardQuery(

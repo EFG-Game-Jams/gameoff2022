@@ -40,79 +40,69 @@ public class LeaderboardControllerTests
 
         // Level one
         var list = await client
-            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelOneName}&take=10&skip=0&sortOrder=TimeAscending");
+            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelOneName}&take=10&skip=0");
         list.ShouldNotBeNull();
         list.Items.ShouldNotBeNull();
         list.Items.Length.ShouldBe(3);
 
+        list.Items[0].Rank.ShouldBe(1);
         list.Items[0].LevelName.ShouldBe(levelOneName);
         list.Items[0].PlayerName.ShouldBe(userBravo.UserName);
         list.Items[0].TimeInMilliseconds.ShouldBe(500u);
 
+        list.Items[1].Rank.ShouldBe(2);
         list.Items[1].LevelName.ShouldBe(levelOneName);
         list.Items[1].PlayerName.ShouldBe(userAlpha.UserName);
         list.Items[1].TimeInMilliseconds.ShouldBe(1000u);
 
+        list.Items[2].Rank.ShouldBe(3);
         list.Items[2].LevelName.ShouldBe(levelOneName);
         list.Items[2].PlayerName.ShouldBe(userCharlie.UserName);
         list.Items[2].TimeInMilliseconds.ShouldBe(1500u);
 
         // Level two
         list = await client
-            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelTwoName}&take=10&skip=0&sortOrder=TimeAscending");
+            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelTwoName}&take=10&skip=0");
         list.ShouldNotBeNull();
         list.Items.ShouldNotBeNull();
         list.Items.Length.ShouldBe(3);
 
+        list.Items[0].Rank.ShouldBe(1);
         list.Items[0].LevelName.ShouldBe(levelTwoName);
         list.Items[0].PlayerName.ShouldBe(userAlpha.UserName);
         list.Items[0].TimeInMilliseconds.ShouldBe(500u);
 
+        list.Items[1].Rank.ShouldBe(2);
         list.Items[1].LevelName.ShouldBe(levelTwoName);
         list.Items[1].PlayerName.ShouldBe(userCharlie.UserName);
         list.Items[1].TimeInMilliseconds.ShouldBe(1000u);
 
+        list.Items[2].Rank.ShouldBe(3);
         list.Items[2].LevelName.ShouldBe(levelTwoName);
         list.Items[2].PlayerName.ShouldBe(userBravo.UserName);
         list.Items[2].TimeInMilliseconds.ShouldBe(1500u);
 
         // Level three
         list = await client
-            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelThreeName}&take=10&skip=0&sortOrder=TimeAscending");
+            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelThreeName}&take=10&skip=0");
         list.ShouldNotBeNull();
         list.Items.ShouldNotBeNull();
         list.Items.Length.ShouldBe(3);
 
+        list.Items[0].Rank.ShouldBe(1);
         list.Items[0].LevelName.ShouldBe(levelThreeName);
         list.Items[0].PlayerName.ShouldBe(userCharlie.UserName);
         list.Items[0].TimeInMilliseconds.ShouldBe(500u);
 
+        list.Items[1].Rank.ShouldBe(2);
         list.Items[1].LevelName.ShouldBe(levelThreeName);
         list.Items[1].PlayerName.ShouldBe(userBravo.UserName);
         list.Items[1].TimeInMilliseconds.ShouldBe(1000u);
 
+        list.Items[2].Rank.ShouldBe(3);
         list.Items[2].LevelName.ShouldBe(levelThreeName);
         list.Items[2].PlayerName.ShouldBe(userAlpha.UserName);
         list.Items[2].TimeInMilliseconds.ShouldBe(1500u);
-
-        // Level one (reversed)
-        list = await client
-            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName=gglt_level_one&take=10&skip=0&sortOrder=TimeDescending");
-        list.ShouldNotBeNull();
-        list.Items.ShouldNotBeNull();
-        list.Items.Length.ShouldBe(3);
-
-        list.Items[0].LevelName.ShouldBe(levelOneName);
-        list.Items[0].PlayerName.ShouldBe(userCharlie.UserName);
-        list.Items[0].TimeInMilliseconds.ShouldBe(1500u);
-
-        list.Items[1].LevelName.ShouldBe(levelOneName);
-        list.Items[1].PlayerName.ShouldBe(userAlpha.UserName);
-        list.Items[1].TimeInMilliseconds.ShouldBe(1000u);
-
-        list.Items[2].LevelName.ShouldBe(levelOneName);
-        list.Items[2].PlayerName.ShouldBe(userBravo.UserName);
-        list.Items[2].TimeInMilliseconds.ShouldBe(500u);
     }
 
     [Fact]
@@ -160,18 +150,35 @@ public class LeaderboardControllerTests
             .Count()
             .ShouldBe(10, "All scores should belong to unique players");
 
+        list.Items[0].Rank.ShouldBe(6);
         list.Items[0].TimeInMilliseconds.ShouldBe(500u);
+
+        list.Items[1].Rank.ShouldBe(7);
         list.Items[1].TimeInMilliseconds.ShouldBe(600u);
+
+        list.Items[2].Rank.ShouldBe(8);
         list.Items[2].TimeInMilliseconds.ShouldBe(700u);
+
+        list.Items[3].Rank.ShouldBe(9);
         list.Items[3].TimeInMilliseconds.ShouldBe(800u);
+
+        list.Items[4].Rank.ShouldBe(10);
         list.Items[4].TimeInMilliseconds.ShouldBe(900u);
 
+        list.Items[5].Rank.ShouldBe(11);
         list.Items[5].TimeInMilliseconds.ShouldBe(1000u);
         list.Items[5].PlayerName.ShouldBe(user.UserName);
 
+        list.Items[6].Rank.ShouldBe(12);
         list.Items[6].TimeInMilliseconds.ShouldBe(1100u);
+
+        list.Items[7].Rank.ShouldBe(13);
         list.Items[7].TimeInMilliseconds.ShouldBe(1200u);
+
+        list.Items[8].Rank.ShouldBe(14);
         list.Items[8].TimeInMilliseconds.ShouldBe(1300u);
+
+        list.Items[9].Rank.ShouldBe(15);
         list.Items[9].TimeInMilliseconds.ShouldBe(1400u);
     }
 
@@ -211,18 +218,35 @@ public class LeaderboardControllerTests
             .Count()
             .ShouldBe(10, "All scores should belong to unique players");
 
+        list.Items[0].Rank.ShouldBe(1);
         list.Items[0].TimeInMilliseconds.ShouldBe(900u);
 
+        list.Items[1].Rank.ShouldBe(2);
         list.Items[1].TimeInMilliseconds.ShouldBe(1000u);
         list.Items[1].PlayerName.ShouldBe(user.UserName);
 
+        list.Items[2].Rank.ShouldBe(3);
         list.Items[2].TimeInMilliseconds.ShouldBe(1100u);
+
+        list.Items[3].Rank.ShouldBe(4);
         list.Items[3].TimeInMilliseconds.ShouldBe(1200u);
+
+        list.Items[4].Rank.ShouldBe(5);
         list.Items[4].TimeInMilliseconds.ShouldBe(1300u);
+
+        list.Items[5].Rank.ShouldBe(6);
         list.Items[5].TimeInMilliseconds.ShouldBe(1400u);
+
+        list.Items[6].Rank.ShouldBe(7);
         list.Items[6].TimeInMilliseconds.ShouldBe(1500u);
+
+        list.Items[7].Rank.ShouldBe(8);
         list.Items[7].TimeInMilliseconds.ShouldBe(1600u);
+
+        list.Items[8].Rank.ShouldBe(9);
         list.Items[8].TimeInMilliseconds.ShouldBe(1700u);
+
+        list.Items[9].Rank.ShouldBe(10);
         list.Items[9].TimeInMilliseconds.ShouldBe(1800u);
     }
 
@@ -262,18 +286,35 @@ public class LeaderboardControllerTests
             .Count()
             .ShouldBe(10, "All scores should belong to unique players");
 
+        list.Items[0].Rank.ShouldBe(3);
         list.Items[0].TimeInMilliseconds.ShouldBe(200u);
+
+        list.Items[1].Rank.ShouldBe(4);
         list.Items[1].TimeInMilliseconds.ShouldBe(300u);
+
+        list.Items[2].Rank.ShouldBe(5);
         list.Items[2].TimeInMilliseconds.ShouldBe(400u);
+
+        list.Items[3].Rank.ShouldBe(6);
         list.Items[3].TimeInMilliseconds.ShouldBe(500u);
+
+        list.Items[4].Rank.ShouldBe(7);
         list.Items[4].TimeInMilliseconds.ShouldBe(600u);
+
+        list.Items[5].Rank.ShouldBe(8);
         list.Items[5].TimeInMilliseconds.ShouldBe(700u);
+
+        list.Items[6].Rank.ShouldBe(9);
         list.Items[6].TimeInMilliseconds.ShouldBe(800u);
+
+        list.Items[7].Rank.ShouldBe(10);
         list.Items[7].TimeInMilliseconds.ShouldBe(900u);
 
+        list.Items[8].Rank.ShouldBe(11);
         list.Items[8].PlayerName.ShouldBe(user.UserName);
         list.Items[8].TimeInMilliseconds.ShouldBe(1000u);
 
+        list.Items[9].Rank.ShouldBe(12);
         list.Items[9].TimeInMilliseconds.ShouldBe(1100u);
     }
 

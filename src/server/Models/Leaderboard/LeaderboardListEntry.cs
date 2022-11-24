@@ -1,6 +1,7 @@
 namespace Game.Server.Models.Leaderboard;
 
 public record class LeaderboardListEntry(
+    int Rank,
     int PlayerId,
     string PlayerName,
     int LevelId,

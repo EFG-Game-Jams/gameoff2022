@@ -1,5 +1,4 @@
 using Game.Server.Entities;
-using Game.Server.Enums;
 using Game.Server.Models.Leaderboard;
 using Game.Server.Services;
 using Game.Server.Utils;
@@ -30,8 +29,7 @@ public class LeaderboardController : ControllerBase
         [FromRoute] Guid sessionSecret,
         [FromQuery] string levelName,
         [FromQuery] int? take,
-        [FromQuery] int? skip,
-        [FromQuery] LeaderboardSortOrder? sortOrder)
+        [FromQuery] int? skip)
     {
         if (!await gameService.SessionExists(sessionSecret))
         {
@@ -43,11 +41,11 @@ public class LeaderboardController : ControllerBase
         }
 
         var query = await gameService.GetGlobalLeaderboardQuery(revision, levelName);
-        query = ApplySort(query, sortOrder);
+        query = ApplySort(query);
 
         return new LeaderboardListResponse(
             (await ApplyTakeSkip(query, take, skip).ToArrayAsync())
-                .Select(ToListItem)
+                .Select((e, i) => ToListItem(e, i + 1 + Math.Max(skip ?? 0, 0)))
                 .ToArray(),
             await query.CountAsync());
     }
@@ -80,6 +78,11 @@ public class LeaderboardController : ControllerBase
 
         var takeSkip = new SanitizedTakeSkip(take, skip);
 
+        var playerRank = (await query
+            .Where(e => e.TimeInMilliseconds < playerPerfomance.TimeInMilliseconds)
+            .OrderByDescending(e => e.TimeInMilliseconds)
+            .CountAsync()) + 1;
+
         var fasterRecords = await query
             .Where(e => e.TimeInMilliseconds < playerPerfomance.TimeInMilliseconds)
             .OrderByDescending(e => e.TimeInMilliseconds)
@@ -105,15 +108,18 @@ public class LeaderboardController : ControllerBase
         bool hasEnoughSlower = targetTakeSlower <= slowerRecords.Length;
 
         var items = new List<ReplayEntity>();
+        var playerIndex = 0;
         if (hasEnoughFaster && hasEnoughSlower)
         {
             items.AddRange(fasterRecords.Take(targetTakeFaster).Reverse());
+            playerIndex = items.Count;
             items.Add(playerPerfomance);
             items.AddRange(slowerRecords.Take(targetTakeSlower));
         }
         else if (!hasEnoughFaster && hasEnoughSlower)
         {
             items.AddRange(fasterRecords.Reverse());
+            playerIndex = items.Count;
             items.Add(playerPerfomance);
             items.AddRange(slowerRecords
                 .Take(Math.Min(slowerRecords.Length, targetTakeSlower + (targetTakeFaster - fasterRecords.Length))));
@@ -123,18 +129,21 @@ public class LeaderboardController : ControllerBase
             items.AddRange(fasterRecords
                 .Take(Math.Min(fasterRecords.Length, targetTakeFaster + (targetTakeSlower - slowerRecords.Length)))
                 .Reverse());
+            playerIndex = items.Count;
             items.Add(playerPerfomance);
             items.AddRange(slowerRecords);
         }
         else // not enough from either
         {
             items.AddRange(fasterRecords.Reverse());
+            playerIndex = items.Count;
             items.Add(playerPerfomance);
             items.AddRange(slowerRecords);
         }
 
+        var rankOffset = playerRank - playerIndex;
         return new LeaderboardListResponse(
-            items.Select(ToListItem).ToArray(),
+            items.Select((e, i) => ToListItem(e, i + rankOffset)).ToArray(),
             takeSkip.Take); // The count doesn't really make sense in this context
     }
 
@@ -142,8 +151,7 @@ public class LeaderboardController : ControllerBase
     [Route("/api/game/{revision}/session/{sessionSecret}/leaderboard/personal")]
     public async Task<ActionResult<LeaderboardListResponse>> GetPersonalLeaderboard(
         [FromRoute] uint revision,
-        [FromRoute] Guid sessionSecret,
-        [FromQuery] LeaderboardSortOrder? sortOrder)
+        [FromRoute] Guid sessionSecret)
     {
         var playerId = await gameService.TryGetPlayerIdFor(sessionSecret);
         if (playerId == null)
@@ -152,26 +160,23 @@ public class LeaderboardController : ControllerBase
         }
 
         var query = ApplySort(
-            gameService.GetPersonalLeaderboardQuery(revision, playerId.Value),
-            sortOrder);
+            gameService.GetPersonalLeaderboardQuery(revision, playerId.Value));
 
-        var items = (await query.ToArrayAsync())
-            .Select(ToListItem)
-            .ToArray();
-        return new LeaderboardListResponse(items, items.Length);
-    }
-
-    private static IQueryable<ReplayEntity> ApplySort(
-        IQueryable<ReplayEntity> query,
-        LeaderboardSortOrder? order)
-    {
-        return order switch
+        var entities = await query.ToArrayAsync();
+        var models = new List<LeaderboardListEntry>();
+        foreach (var entity in entities)
         {
-            LeaderboardSortOrder.TimeAscending or null => query.OrderBy(e => e.TimeInMilliseconds),
-            LeaderboardSortOrder.TimeDescending => query.OrderByDescending(e => e.TimeInMilliseconds),
-            _ => throw new ArgumentOutOfRangeException(nameof(order), $"Sort order value {order} is not supported")
-        };
+            var playerRank = (await gameService.GetGlobalLeaderboardQuery(revision, entity.LevelId)
+                .Where(e => e.TimeInMilliseconds < entity.TimeInMilliseconds)
+                .OrderByDescending(e => e.TimeInMilliseconds)
+                .CountAsync()) + 1;
+            models.Add(ToListItem(entity, playerRank));
+        }
+        return new LeaderboardListResponse(models.ToArray(), models.Count);
     }
+
+    private static IQueryable<ReplayEntity> ApplySort(IQueryable<ReplayEntity> query)
+        => query.OrderBy(e => e.TimeInMilliseconds);
 
     private static IQueryable<ReplayEntity> ApplyTakeSkip(
         IQueryable<ReplayEntity> query,
@@ -182,7 +187,8 @@ public class LeaderboardController : ControllerBase
         return query.Skip(takeSkip.Skip).Take(takeSkip.Take);
     }
 
-    private static LeaderboardListEntry ToListItem(ReplayEntity entity) => new(
+    private static LeaderboardListEntry ToListItem(ReplayEntity entity, int rank) => new(
+        rank,
         entity.PlayerId,
         entity.Player.Name,
         entity.LevelId,
