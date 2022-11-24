@@ -33,14 +33,15 @@ public partial class Program
             options.AddDefaultPolicy(config =>
             {
                 config
-                    .SetIsOriginAllowed(origin => true) // TODO add itch host here
+                    .SetIsOriginAllowed(origin => true)
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });
             options.AddPolicy(Policies.HostOnly, config =>
             {
+                var serverHost = builder.Configuration["Server:Host"];
                 config
-                    .SetIsOriginAllowed(origin => true) // TODO add hosted domain here
+                    .SetIsOriginAllowed(origin => new Uri(origin).Host.Equals(serverHost, StringComparison.CurrentCultureIgnoreCase))
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });
@@ -52,14 +53,21 @@ public partial class Program
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+            // On production nginx takes care of this
+            app.UseHsts();
+            app.UseHttpsRedirection();
+        }
+        else if (app.Environment.IsProduction())
+        {
+            using var scope = app.Services.CreateScope();
+            using var db = scope.ServiceProvider.GetRequiredService<ReplayDatabase>();
+
+            db.Database.EnsureCreated();
         }
 
         app.UseCors();
 
         app.UseHealthChecks("/health");
-
-        app.UseHsts();
-        app.UseHttpsRedirection();
 
         // Don't use app.UseStaticFiles(): the database lives there and we do not want
         // to serve that

@@ -37,7 +37,7 @@ public class ItchService : Abstractions.IItchService
                 },
                 {
                     "redirect_uri",
-                    $"{configuration["Self:HostingUrl"] ?? throw new InvalidOperationException("Incomplete self configuration: missing HostingUrl field")}/login-callback" }
+                    $"{configuration["Server:Url"] ?? throw new InvalidOperationException("Incomplete Server configuration: missing Url field")}/login-callback" }
             });
     }
 

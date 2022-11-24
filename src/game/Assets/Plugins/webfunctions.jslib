@@ -50,6 +50,8 @@ var plugin = {
 
   ExtractSessionGuidFromFragment: function () {
     const parts = location.hash.split("=");
+    window.location.replace("#");
+
     if (
       parts.length === 2 &&
       parts[0] === "#session_secret" &&
