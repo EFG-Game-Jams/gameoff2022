@@ -35,11 +35,11 @@ public abstract class HubRaceEntranceScreenLeaderboard : HubRaceEntranceScreen
         this.levelName = levelName;
 
         var client = LeaderboardClient.GetClient();
-        if (client.IsOffline)
+        /*if (client.IsOffline)
         {
             DisplayOffline();
         }
-        else if (!refreshing)
+        else*/ if (!refreshing)
         {
             refreshing = true;
             DisplayRefreshing();
