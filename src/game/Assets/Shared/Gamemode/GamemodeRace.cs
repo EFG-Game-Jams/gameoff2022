@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Util.EnumeratorExtensions;
 
 public class GamemodeRace : MonoBehaviour
 {
@@ -143,49 +144,20 @@ public class GamemodeRace : MonoBehaviour
         }
         else
         {
-            var request = LeaderboardClient.GetClient().CreateReplay(
-                replay => Debug.Log($"Replay {replay.id} uploaded to server"),
-                timeMs, levelName, replayData);
-
-            var safeRequest = RunThrowingIterator(request, e =>
-            {
-                if (e != null)
+            yield return LeaderboardClient.GetClient()
+                .CreateReplay(
+                    replay => {
+                        Debug.Log($"Replay {replay.id} uploaded to server");
+                    },
+                    timeMs, levelName, replayData)
+                .OnException(e => {
                     Debug.LogWarning($"Replay upload error: {e.Message}");
-            });
-
-            //Debug.LogWarning("Replay uploading disabled");
-            yield return safeRequest;
+                });
         }
 
         yield return new WaitForSeconds(postFinishDelay);
 
         GamemodeHub.SetRaceLastTime(levelName, timeMs);
         GamemodeHub.ReturnFromRace();
-    }
-
-    private static IEnumerator RunThrowingIterator(
-        IEnumerator enumerator,
-        Action<Exception> done
-    )
-    {
-        while (true)
-        {
-            object current;
-            try
-            {
-                if (enumerator.MoveNext() == false)
-                {
-                    break;
-                }
-                current = enumerator.Current;
-            }
-            catch (Exception ex)
-            {
-                done(ex);
-                yield break;
-            }
-            yield return current;
-        }
-        done(null);
     }
 }

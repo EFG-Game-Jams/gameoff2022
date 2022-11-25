@@ -13,8 +13,8 @@ public class HubSceneRaceEntrance : MonoBehaviour
     [Header("References")]
     [SerializeField] TMPro.TextMeshPro nameLabel;
     [SerializeField] HubRaceEntranceScreenInfo screenFront;
-    [SerializeField] HubRaceEntranceScreenLeaderboard screenLeft;
-    [SerializeField] Transform screenRight;
+    [SerializeField] HubRaceEntranceScreenLeaderboardWorld screenLeft;
+    [SerializeField] HubRaceEntranceScreenLeaderboardNear screenRight;
     [SerializeField] PlayerTrigger playerTriggerFloor;
     [SerializeField] PlayerTrigger playerTriggerCeiling;
 
@@ -43,7 +43,13 @@ public class HubSceneRaceEntrance : MonoBehaviour
         screenFront.SetTimeLast(GamemodeHub.GetRaceLastTimeString(LevelName));
         screenFront.SetTimeBest("N/A");
 
-        screenTransforms = new Transform[] { screenFront.transform, screenLeft.transform, screenRight };
+        screenRight.onRefreshComplete.AddListener(() =>
+        {
+            string bestTime = screenRight.GetLocalPlayerTime();
+            screenFront.SetTimeBest(bestTime);
+        });
+
+        screenTransforms = new Transform[] { screenFront.transform, screenLeft.transform, screenRight.transform };
         UpdateScreenAnimation();
     }
 
@@ -67,6 +73,7 @@ public class HubSceneRaceEntrance : MonoBehaviour
         this.player = player;
 
         screenLeft.Refresh(LevelName);
+        screenRight.Refresh(LevelName);
     }
 
     private void AnimateScreens(float direction)
@@ -106,6 +113,7 @@ public class HubSceneRaceEntrance : MonoBehaviour
         float opacity = Mathf.Pow(Mathf.Clamp01(screenAnimCurrent), 4);
         screenFront.Opacity = opacity;
         screenLeft.Opacity = opacity;
+        screenRight.Opacity = opacity;
     }
 
     private IEnumerator CoDeactivateScreensOnPlayerLeave()

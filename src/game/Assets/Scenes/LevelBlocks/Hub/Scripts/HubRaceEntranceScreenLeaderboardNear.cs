@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Util.EnumeratorExtensions;
 
-public class HubRaceEntranceScreenLeaderboardWorld : HubRaceEntranceScreenLeaderboard
+public class HubRaceEntranceScreenLeaderboardNear : HubRaceEntranceScreenLeaderboard
 {
     private void OnValidate()
     {
@@ -21,7 +21,7 @@ public class HubRaceEntranceScreenLeaderboardWorld : HubRaceEntranceScreenLeader
         };
         for (int i = 0; i < demoList.items.Length; ++i)
         {
-            demoList.items[i].rank = i + 1;
+            demoList.items[i].rank = i * i * 9345 + 1;
             demoList.items[i].playerId = i;
         }
         DisplayLeaderboard(demoList);
@@ -30,14 +30,31 @@ public class HubRaceEntranceScreenLeaderboardWorld : HubRaceEntranceScreenLeader
     public override void Refresh(string levelName, bool force = false)
     {
         if (LeaderboardClient.GetClient().IsOffline)
-            textTitle.text = "Offline Leaderboard";
+            textTitle.text = "Offline Ranking";
         else
-            textTitle.text = "Global Leaderboard";
+            textTitle.text = "Global Ranking";
 
         base.Refresh(levelName, force);
     }
     protected override IEnumerator GetRefreshRequest(LeaderboardClient client)
     {
-        return client.GetGlobalLeaderboard(DisplayLeaderboard, levelName, take: 10);
+        return client.GetLeaderboardNeighbours(DisplayLeaderboard, levelName, take: 10);
+    }
+
+    public string GetLocalPlayerTime()
+    {
+        if (LeaderboardClient.GetClient().IsOffline)
+            return "offline";
+
+        int playerId = LeaderboardClient.GetClient().PlayerId;
+        foreach (var record in records)
+        {
+            if (!record.gameObject.activeSelf)
+                break;
+            if (record.Record.playerId == playerId)
+                return GamemodeHub.FormatTime(record.Record.timeInMilliseconds / 1000.0);
+        }
+
+        return "N/A";
     }
 }

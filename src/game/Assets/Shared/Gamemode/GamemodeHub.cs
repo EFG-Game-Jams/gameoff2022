@@ -125,7 +125,7 @@ public class GamemodeHub : MonoBehaviour
             uiData.levelTimerText = "";
     }
 
-    private static string FormatTime(double time)
+    public static string FormatTime(double time)
     {
         System.TimeSpan timeSpan = System.TimeSpan.FromSeconds(time);
         return string.Format("{0:D2}:{1:D2}.{2:D3}", timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
