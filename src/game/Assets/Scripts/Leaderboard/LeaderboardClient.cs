@@ -360,7 +360,7 @@ public class LeaderboardClient
 
     private static void AssertValidLevelName(string levelName)
     {
-        if (!System.Text.RegularExpressions.Regex.IsMatch(levelName, "^[a-z-]+$"))
+        if (!System.Text.RegularExpressions.Regex.IsMatch(levelName, "^[a-z0-9-]+$"))
         {
             throw new InvalidOperationException($"Level names may only use the lower case ASCII alphabet and dashes (-). The level name {levelName} does not adhere to this.");
         }
