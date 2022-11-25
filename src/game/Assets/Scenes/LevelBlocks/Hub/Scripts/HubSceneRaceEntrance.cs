@@ -16,13 +16,15 @@ public class HubSceneRaceEntrance : MonoBehaviour
     [SerializeField] HubRaceEntranceScreenLeaderboard screenLeft;
     [SerializeField] Transform screenRight;
     [SerializeField] PlayerTrigger playerTriggerFloor;
+    [SerializeField] PlayerTrigger playerTriggerCeiling;
 
     private Transform[] screenTransforms;
     private GameObject player;
     private float screenAnimCurrent;
-    [SerializeField] private float screenAnimDirection;
+    private float screenAnimDirection;
 
-    private string LevelName => gameObject.name;
+    private string SceneName => gameObject.name;
+    private string LevelName => gameObject.name.ToLowerInvariant();
 
     private void OnValidate()
     {
@@ -35,11 +37,23 @@ public class HubSceneRaceEntrance : MonoBehaviour
         nameLabel.text = LevelName;
 
         playerTriggerFloor.onTriggerEnter.AddListener(OnPlayerEnter);
+        playerTriggerCeiling.onTriggerEnter.AddListener(EnterRace);
 
-        screenFront.Configure(LevelName, "N/A", "N/A");
+        screenFront.SetTitle(LevelName);
+        screenFront.SetTimeLast(GamemodeHub.GetRaceLastTimeString(LevelName));
+        screenFront.SetTimeBest("N/A");
 
         screenTransforms = new Transform[] { screenFront.transform, screenLeft.transform, screenRight };
         UpdateScreenAnimation();
+    }
+
+    private void EnterRace(GameObject player, double fixedTime)
+    {
+        var snapshot = new SatriProtoPlayer.TransformSnapshot();
+        snapshot.cameraHeading = transform.eulerAngles.y;
+        snapshot.cameraPitch = 0;
+        snapshot.position = transform.TransformPoint(new Vector3(1.5f, 6f, 1.5f));
+        GamemodeHub.BeginRace(SceneName, snapshot);
     }
 
     private void OnPlayerEnter(GameObject player, double fixedTime)
@@ -48,12 +62,11 @@ public class HubSceneRaceEntrance : MonoBehaviour
 
         if (this.player == null)
         {
-            //Debug.Log("StartCoroutine(CoDeactivateScreensOnPlayerLeave())");
             StartCoroutine(CoDeactivateScreensOnPlayerLeave());
         }
         this.player = player;
 
-        //screenLeft.Refresh(LevelName);
+        screenLeft.Refresh(LevelName);
     }
 
     private void AnimateScreens(float direction)

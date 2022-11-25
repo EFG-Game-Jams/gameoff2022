@@ -30,6 +30,9 @@ public class SatriProtoPlayer : MonoBehaviour
 
     private SatriProtoPlayerMovement.ControlState controlStateMove;
 
+    private bool movementLocked;
+    private bool aimLocked;
+
     private float cameraHeading;
     private float cameraPitch;
     private Vector3 prevPosition;
@@ -38,20 +41,44 @@ public class SatriProtoPlayer : MonoBehaviour
 
     public Vector3 Velocity => velocity;
 
+    public struct TransformSnapshot
+    {
+        public float cameraHeading;
+        public float cameraPitch;
+        public Vector3 position;
+    }
+
     public void Teleport(Vector3 pos, Quaternion rot)
     {
         Debug.Assert(replayable.Mode == ReplaySystem.ReplayMode.None);
-
         Vector3 euler = rot.eulerAngles;
-        cameraHeading = euler.y;
-        cameraPitch = euler.x;
+        SetTransform(new TransformSnapshot { cameraHeading = euler.y, cameraPitch = euler.x, position = pos });
+    }
+    public void SetTransform(TransformSnapshot snapshot)
+    {
+        Debug.Assert(replayable.Mode == ReplaySystem.ReplayMode.None);
+        cameraHeading = snapshot.cameraHeading;
+        cameraPitch = snapshot.cameraPitch;
 
-        prevPosition = pos;
-        position = pos;
+        position = snapshot.position;
+        prevPosition = position;
         velocity = Vector3.zero;
 
         ApplyAim(cameraHeading, cameraPitch);
-        transform.position = pos;
+        transform.position = position;
+    }
+    public TransformSnapshot GetTransform()
+    {
+        return new TransformSnapshot { cameraHeading = cameraHeading, cameraPitch = cameraPitch, position = position };
+    }
+
+    public void SetLocks(bool movement, bool aim)
+    {
+        movementLocked = movement;
+        aimLocked = aim;
+
+        if (movementLocked)
+            velocity = Vector3.zero;
     }
 
     private void OnInputMove(InputValue value)
@@ -65,6 +92,9 @@ public class SatriProtoPlayer : MonoBehaviour
 
     private void OnInputAim(InputValue value)
     {
+        if (aimLocked)
+            return;
+
         Vector2 delta = value.Get<Vector2>();
 
         cameraHeading = Mathf.DeltaAngle(0, cameraHeading + delta.x);
@@ -128,12 +158,15 @@ public class SatriProtoPlayer : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         movement = GetComponent<SatriProtoPlayerMovement>();
         collision = GetComponent<SatriProtoPlayerCollision>();
-
         replayable = GetComponent<Replay.Replayable>();
+    }
+
+    private void Start()
+    {
         if (replayable.ShouldRecord)
         {
             replayWriterPosition = replayable.GetWriter("position");
@@ -146,6 +179,7 @@ public class SatriProtoPlayer : MonoBehaviour
         }
 
         position = transform.position;
+        prevPosition = position;
         velocity = Vector3.zero;
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -167,8 +201,11 @@ public class SatriProtoPlayer : MonoBehaviour
             collision.ApplyCollisionResponse(position, ref newPosition, ref newVelocity, deltaTime);
 
             prevPosition = position;
-            position = newPosition;
-            velocity = newVelocity;
+            if (!movementLocked)
+            {
+                position = newPosition;
+                velocity = newVelocity;
+            }
 
             replayWriterPosition.Write(position);
             replayWriterAim.Write(new Vector2(cameraHeading, cameraPitch));

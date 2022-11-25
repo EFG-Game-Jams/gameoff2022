@@ -12,13 +12,26 @@ public class SceneBase : MonoBehaviour
     // scene-switch helper
     private static System.Action onSceneChangeAction;
 
+    // active scene info
+    public static string ActiveSceneName => SceneManager.GetActiveScene().name;
+    public static SceneBase Current { get; private set; }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void ClearSceneChangeAction() => onSceneChangeAction = null;
+    private static void InnitialiseOnLoad()
+    {
+        onSceneChangeAction = null;
+        Current = null;
+    }
 
     public static void SwitchScene(int sceneBuildIndex, System.Action onSwitched = null)
     {
         onSceneChangeAction = onSwitched;
         SceneManager.LoadScene(sceneBuildIndex);
+    }
+    public static void SwitchScene(string sceneName, System.Action onSwitched = null)
+    {
+        onSceneChangeAction = onSwitched;
+        SceneManager.LoadScene(sceneName);
     }
     public static void ReloadScene(System.Action onSwitched = null)
     {
@@ -27,7 +40,13 @@ public class SceneBase : MonoBehaviour
 
     private void Awake()
     {
+        Current = this;
         onSceneChangeAction?.Invoke();
         onSceneChangeAction = null;
+    }
+
+    private void OnDestroy()
+    {
+        Current = null;
     }
 }

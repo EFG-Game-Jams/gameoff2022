@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,7 @@ public class GamemodeHub : MonoBehaviour
     [SerializeField] PlayerTrigger gtTriggerFinish;
     [SerializeField] TMPro.TextMeshProUGUI gtGuiLastTime;
     [SerializeField] TMPro.TextMeshProUGUI gtGuiBestTime;
-
+   
     private enum TimerType
     {
         None,
@@ -30,6 +31,25 @@ public class GamemodeHub : MonoBehaviour
     private PersistentData persistentData;
     private string PersistentDataPath => System.IO.Path.Combine(Application.persistentDataPath, "data_hub");
 
+    private static Dictionary<string, int> raceLastTimes;
+    public static void SetRaceLastTime(string name, int timeMs)
+    {
+        raceLastTimes ??= new Dictionary<string, int>();
+        raceLastTimes[name.ToLowerInvariant()] = timeMs;
+    }
+    public static bool TryGetRaceLastTime(string name, out int timeMs)
+    {
+        timeMs = 0;
+        return (raceLastTimes != null && raceLastTimes.TryGetValue(name.ToLowerInvariant(), out timeMs));
+    }
+    public static string GetRaceLastTimeString(string name)
+    {
+        if (TryGetRaceLastTime(name, out int timeMs))
+            return FormatTime(timeMs / 1000.0);
+        else
+            return "N/A";
+    }
+
     public void EventSetLauncherEnabled(bool enabled) => player.GetComponent<SatriProtoPlayerLauncher>().IsEnabled = enabled;
 
     void Start()
@@ -43,7 +63,17 @@ public class GamemodeHub : MonoBehaviour
 
         SetupTriggers();
 
-        EventSetLauncherEnabled(false);
+        if (playerReturnFromRaceSnapshot.HasValue)
+        {
+            // returning from race
+            player.SetTransform(playerReturnFromRaceSnapshot.Value);
+            playerReturnFromRaceSnapshot = null;
+        }
+        else
+        {
+            // starting fresh
+            EventSetLauncherEnabled(false);
+        }
     }
 
     void Update()
@@ -95,12 +125,12 @@ public class GamemodeHub : MonoBehaviour
             uiData.levelTimerText = "";
     }
 
-    private string FormatTime(double time)
+    private static string FormatTime(double time)
     {
         System.TimeSpan timeSpan = System.TimeSpan.FromSeconds(time);
         return string.Format("{0:D2}:{1:D2}.{2:D3}", timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
     }
-    private string FormatMonoText(string text)
+    private static string FormatMonoText(string text)
     {
         return $"<mspace=.15>{text}</mspace>";
     }
@@ -150,5 +180,25 @@ public class GamemodeHub : MonoBehaviour
         {
             Debug.LogWarning($"GamemodeHub.PersistentDataDelete exception : {e.Message}");
         }
+    }
+
+    private static SatriProtoPlayer.TransformSnapshot? playerReturnFromRaceSnapshot;
+    public static void ReturnFromRace()
+    {
+        SceneBase.SwitchScene("HubScene");
+    }
+    public static void BeginRace(string name, SatriProtoPlayer.TransformSnapshot returnTransform)
+    {
+        playerReturnFromRaceSnapshot = returnTransform;
+        SceneBase.SwitchScene(name);
+    }
+    public static void BeginReplay(ReplayDownload replay, SatriProtoPlayer.TransformSnapshot returnTransform)
+    {
+        playerReturnFromRaceSnapshot = returnTransform;
+        SceneBase.SwitchScene(replay.levelName, () =>
+        {
+            FindObjectOfType<SceneBase>().ReplaySystem.Playback(replay.data);
+            FindObjectOfType<GamemodeRace>().SetReplay(replay);
+        });
     }
 }

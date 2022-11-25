@@ -15,6 +15,10 @@ public class HubRaceEntranceScreenInfo : HubRaceEntranceScreen
         textTimeBest.text = FormatMonoText(timeBest);
     }
 
+    public void SetTitle(string s) => textTitle.text = s;
+    public void SetTimeLast(string s) => textTimeLast.text = FormatMonoText(s);
+    public void SetTimeBest(string s) => textTimeBest.text = FormatMonoText(s);
+
     /*protected override void Start()
     {
         base.Start();

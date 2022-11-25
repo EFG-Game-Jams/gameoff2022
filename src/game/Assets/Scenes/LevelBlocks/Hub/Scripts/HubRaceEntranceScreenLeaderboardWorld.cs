@@ -155,9 +155,17 @@ public class HubRaceEntranceScreenLeaderboardWorld : HubRaceEntranceScreenLeader
         downloadingReplay = false;
     }
 
+    private SatriProtoPlayer.TransformSnapshot GetPlayerReturnSnapshot()
+    {
+        SatriProtoPlayer player = FindObjectOfType<SatriProtoPlayer>();
+        var snapshot = player.GetTransform();
+        snapshot.cameraPitch = 0;
+        snapshot.position += Vector3.up * 5;
+        return snapshot;
+    }
+
     private void BeginReplay(ReplayDownload replay)
     {
-        GamemodeHub gamemode = FindObjectOfType<GamemodeHub>();
-        throw new NotImplementedException();
+        GamemodeHub.BeginReplay(replay, GetPlayerReturnSnapshot());
     }
 }

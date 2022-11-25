@@ -20,9 +20,4 @@ public class LeaderboardInitializer : MonoBehaviour
             StartCoroutine(client.Connect());
         }
     }
-
-    // Update is called once per frame
-    public void Update()
-    {
-    }
 }
