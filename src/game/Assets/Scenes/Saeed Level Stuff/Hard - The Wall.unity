@@ -22438,6 +22438,17 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!114 &1733495605 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4648809316914195276, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
+  m_PrefabInstance: {fileID: 587032338}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c4c2cc6db74e0a4bb1f1fc09f2506f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &1735218602
 Mesh:
   m_ObjectHideFlags: 0
@@ -24058,7 +24069,7 @@ PrefabInstance:
     - target: {fileID: 5745570014154971152, guid: ba7217e7bfa8acd478dbe24db32391b8, type: 3}
       propertyPath: replaySystem
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1733495605}
     - target: {fileID: 5745570014154971157, guid: ba7217e7bfa8acd478dbe24db32391b8, type: 3}
       propertyPath: m_Name
       value: ProtoGamemode
