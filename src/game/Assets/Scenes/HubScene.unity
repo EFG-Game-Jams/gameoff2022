@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1803319, g: 0.21769822, b: 0.2789213, a: 1}
+  m_IndirectSpecularColor: {r: 0.08069378, g: 0.120896086, b: 0.18916824, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -9685,7 +9685,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh519806
+  m_Name: pb_Mesh1520814
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -14481,7 +14481,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.38268375
+      value: -0.38268313
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalRotation.x
@@ -14489,7 +14489,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.9238794
+      value: -0.92387974
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalRotation.z
@@ -14501,7 +14501,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -135
+      value: -225
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -15753,7 +15753,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.38268355
+      value: 0.3826829
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalRotation.x
@@ -15761,7 +15761,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.92387956
+      value: -0.9238798
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalRotation.z
@@ -15773,7 +15773,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -225
+      value: -135
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7bda8336d49aec44e826958b2efce9e7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -32022,8 +32022,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1160839987}
-  m_LocalRotation: {x: 0.024445748, y: 0.4461688, z: -0.012164811, w: 0.8945322}
-  m_LocalPosition: {x: -2, y: 1, z: -48}
+  m_LocalRotation: {x: 0.04054442, y: 0.5787638, z: -0.02630813, w: 0.8140618}
+  m_LocalPosition: {x: -8.5, y: 1, z: -46.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -32768,7 +32768,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-777976
+  m_Name: pb_Mesh1521100
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -40279,9 +40279,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Tain''t Rocket
-
-    <size=50%>I<b><i>t ain''t rocket</i></b> science</size>'
+  m_text: "Tain't Rocket\n<size=50%>I<b><i>t ain't rocket</i></b> science</size>\n<size=25%>\n<-
+    Options                                                     Rocket Tutorial ->
+    \n</size>"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: af3bdca72bb6c154eaf9d65f5309251a, type: 2}
   m_sharedMaterial: {fileID: 7089790426533463769, guid: af3bdca72bb6c154eaf9d65f5309251a, type: 2}
@@ -40309,9 +40309,9 @@ MonoBehaviour:
     serializedVersion: 2
     rgba: 4294967295
   m_fontSize: 0.6
-  m_fontSizeBase: 0.5
+  m_fontSizeBase: 0.6
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 0.1
   m_fontSizeMax: 72
   m_fontStyle: 0
@@ -40324,7 +40324,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 0
+  m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 3
   m_linkedTextComponent: {fileID: 0}
