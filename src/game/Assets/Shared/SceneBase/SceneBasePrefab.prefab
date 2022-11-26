@@ -190,6 +190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   replaySystem: {fileID: 4648809316914195276}
+  audioMixer: {fileID: 24100000, guid: ced275d192268b848934c4f3871a567b, type: 2}
 --- !u!1 &4519942959320730665
 GameObject:
   m_ObjectHideFlags: 0

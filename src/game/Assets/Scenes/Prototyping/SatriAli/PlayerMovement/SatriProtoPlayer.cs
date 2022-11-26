@@ -183,6 +183,8 @@ public class SatriProtoPlayer : MonoBehaviour
         velocity = Vector3.zero;
 
         Cursor.lockState = CursorLockMode.Locked;
+
+        cameraTransform.GetComponent<Camera>().fieldOfView = OptionsManager.GetOrCreate().Options.fieldOfView;
     }
 
     private void FixedUpdate()

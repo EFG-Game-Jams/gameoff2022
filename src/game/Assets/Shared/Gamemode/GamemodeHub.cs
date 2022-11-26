@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Util;
 
 public class GamemodeHub : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class GamemodeHub : MonoBehaviour
         public double groundTutorialBestTime;
     }
     private PersistentData persistentData;
-    private string PersistentDataPath => System.IO.Path.Combine(Application.persistentDataPath, "data_hub");
+    private const string PersistentDataName = "data_hub";
 
     private static Dictionary<string, int> raceLastTimes;
     public static void SetRaceLastTime(string name, int timeMs)
@@ -58,8 +59,7 @@ public class GamemodeHub : MonoBehaviour
         uiData.levelNumberText = "";
 
         PersistentDataLoad();
-        gtGuiLastTime.text = FormatMonoText("N/A");
-        gtGuiBestTime.text = FormatMonoText(persistentData.groundTutorialBestTime > 0 ? FormatTime(persistentData.groundTutorialBestTime) : "N/A");
+        gtGuiLastTime.text = FormatMonoText("N/A");        
 
         SetupTriggers();
 
@@ -135,51 +135,22 @@ public class GamemodeHub : MonoBehaviour
         return $"<mspace=.15>{text}</mspace>";
     }
 
+    [ContextMenu("Persistent data load")]
     private void PersistentDataLoad()
     {
-        persistentData = default;
-        try
-        {
-            string json = System.IO.File.ReadAllText(PersistentDataPath);
-            persistentData = JsonUtility.FromJson<PersistentData>(json);
-            Debug.Log($"GamemodeHub.PersistentDataLoad {PersistentDataPath}");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning($"GamemodeHub.PersistentDataLoad exception : {e.Message}");
-        }
+        PersistentDataUtil.TryLoad(PersistentDataName, out persistentData, e => Debug.LogWarning($"GamemodeHub.PersistentDataLoad exception : {e.Message}"));
+        gtGuiBestTime.text = FormatMonoText(persistentData.groundTutorialBestTime > 0 ? FormatTime(persistentData.groundTutorialBestTime) : "N/A");
     }
+    [ContextMenu("Persistent data save")]
     private void PersistentDataSave()
     {
-        try
-        {
-            string json = JsonUtility.ToJson(persistentData, false);
-            System.IO.File.WriteAllText(PersistentDataPath, json);
-            Application.ExternalEval("_JS_FileSystem_Sync();");
-            Debug.Log($"GamemodeHub.PersistentDataSave {PersistentDataPath} {json}");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning($"GamemodeHub.PersistentDataSave exception : {e.Message}");
-        }
+        PersistentDataUtil.TrySave(PersistentDataName, persistentData, e => Debug.LogWarning($"GamemodeHub.PersistentDataSave exception : {e.Message}"));
     }
-
-    [ContextMenu("Delete persistent data")]
+    [ContextMenu("Persistent data delete")]
     private void PersistentDataDelete()
     {
-        try
-        {
-            string path = PersistentDataPath;
-            if (System.IO.File.Exists(path))
-            {
-                System.IO.File.Delete(path);
-                Debug.Log($"GamemodeHub.PersistentDataDelete {PersistentDataPath}");
-            }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning($"GamemodeHub.PersistentDataDelete exception : {e.Message}");
-        }
+        PersistentDataUtil.TryDelete(PersistentDataName, e => Debug.LogWarning($"GamemodeHub.PersistentDataSave exception : {e.Message}"));
+        gtGuiBestTime.text = FormatMonoText("N/A");
     }
 
     private static SatriProtoPlayer.TransformSnapshot? playerReturnFromRaceSnapshot;
