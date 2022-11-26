@@ -24,7 +24,6 @@ namespace Util
         }
         public static bool TryLoad(string relPath, object data, Action<Exception> onException = null)
         {
-            data = default;
             try
             {
                 string path = MakePath(relPath);

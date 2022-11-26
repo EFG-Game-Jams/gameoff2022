@@ -8,7 +8,7 @@ public class OptionsManager : MonoBehaviour
     private const string PersistentDataName = "data_options";
     private const float SaveTimeout = 5;
 
-    public GameOptions Options;// { get; private set; }    
+    public GameOptions Options { get; private set; }    
 
     private static OptionsManager instance;
     private float nextScheduledSave = 0;
@@ -34,7 +34,8 @@ public class OptionsManager : MonoBehaviour
 
     public void Save()
     {
-        if (nextScheduledSave == 0)
+        Options.Validate();
+        if (nextScheduledSave <= 0)
             StartCoroutine(CoScheduledSave());
         nextScheduledSave = Time.realtimeSinceStartup + SaveTimeout;
     }
