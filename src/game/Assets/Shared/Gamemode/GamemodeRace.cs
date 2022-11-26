@@ -133,18 +133,15 @@ public class GamemodeRace : MonoBehaviour
         UpdateTimerDisplay();
 
         if (!DevModeActive)
-        {
-            var replayData = SceneBase.Current.ReplaySystem.Data.ToJson();
-            StartCoroutine(CoUploadReplayAndExit(replayData));
-        }
+            StartCoroutine(CoUploadReplayAndExit());
 
         player.SetLocks(true, false);
         playerLauncher.IsEnabled = false;
     }
 
-    private IEnumerator CoUploadReplayAndExit(string replayData)
+    private IEnumerator CoUploadReplayAndExit()
     {
-        yield return null;
+        yield return new WaitForSeconds(postFinishDelay);
 
         float timeS = (float)(timerEnd - timerStart);
         int timeMs = Mathf.CeilToInt(timeS * 1000);
@@ -156,6 +153,8 @@ public class GamemodeRace : MonoBehaviour
         }
         else
         {
+            string replayData = SceneBase.Current.ReplaySystem.Data.ToJson();
+
             yield return LeaderboardClient.GetClient()
                 .CreateReplay(
                     replay => {
@@ -166,8 +165,6 @@ public class GamemodeRace : MonoBehaviour
                     Debug.LogWarning($"Replay upload error: {e.Message}");
                 });
         }
-
-        yield return new WaitForSeconds(postFinishDelay);
 
         GamemodeHub.SetRaceLastTime(levelName, timeMs);
         GamemodeHub.ReturnFromRace();
