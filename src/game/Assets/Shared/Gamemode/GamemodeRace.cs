@@ -59,7 +59,13 @@ public class GamemodeRace : MonoBehaviour
             playerLauncher.IsEnabled = false;
         }
 
-        timeUntilUnlock = countdownTime + countdownDelay;                
+        timeUntilUnlock = countdownTime + countdownDelay;
+
+        if (activeReplay != null)
+        {
+            Debug.Assert(replayable.ShouldPlayback);
+            StartCoroutine(CoReplay());
+        }
     }
 
     void FixedUpdate()
@@ -101,12 +107,18 @@ public class GamemodeRace : MonoBehaviour
         uiData.levelTimerText = timeText;
     }
     private void UpdateTimerDisplay()
+    {        
+        SetTimerDisplay(GetRaceTime());
+    }
+    private double GetRaceTime()
     {
+        if (timeUntilUnlock > 0)
+            return 0;
         double endTime = timerEnd > 0 ? timerEnd : Time.fixedTimeAsDouble;
         double raceTime = endTime - timerStart;
         if (activeReplay != null)
             raceTime = Math.Min(raceTime, activeReplay.timeInMilliseconds / 1000.0);
-        SetTimerDisplay(raceTime);
+        return raceTime;
     }
 
     private void OnPlayerOutOfBounds(GameObject playerGo, double fixedTime)
@@ -121,18 +133,15 @@ public class GamemodeRace : MonoBehaviour
         UpdateTimerDisplay();
 
         if (!DevModeActive)
-        {
-            var replayData = SceneBase.Current.ReplaySystem.Data.ToJson();
-            StartCoroutine(CoUploadReplayAndExit(replayData));
-        }
+            StartCoroutine(CoUploadReplayAndExit());
 
         player.SetLocks(true, false);
         playerLauncher.IsEnabled = false;
     }
 
-    private IEnumerator CoUploadReplayAndExit(string replayData)
+    private IEnumerator CoUploadReplayAndExit()
     {
-        yield return null;
+        yield return new WaitForSeconds(postFinishDelay);
 
         float timeS = (float)(timerEnd - timerStart);
         int timeMs = Mathf.CeilToInt(timeS * 1000);
@@ -144,6 +153,8 @@ public class GamemodeRace : MonoBehaviour
         }
         else
         {
+            string replayData = SceneBase.Current.ReplaySystem.Data.ToJson();
+
             yield return LeaderboardClient.GetClient()
                 .CreateReplay(
                     replay => {
@@ -155,9 +166,16 @@ public class GamemodeRace : MonoBehaviour
                 });
         }
 
-        yield return new WaitForSeconds(postFinishDelay);
-
         GamemodeHub.SetRaceLastTime(levelName, timeMs);
+        GamemodeHub.ReturnFromRace();
+    }
+
+    private IEnumerator CoReplay()
+    {
+        double raceTime = activeReplay.timeInMilliseconds / 1000.0;
+        while (GetRaceTime() < raceTime)
+            yield return null;
+        yield return new WaitForSeconds(postFinishDelay);
         GamemodeHub.ReturnFromRace();
     }
 }

@@ -279,6 +279,10 @@ PrefabInstance:
       propertyPath: DopplerLevel
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 136168842684345051, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 6017246129994845863, guid: ced275d192268b848934c4f3871a567b, type: 2}
     - target: {fileID: 323248439922596483, guid: 5269dd52fdc50ea429c6b6a65cc1161e, type: 3}
       propertyPath: m_RootOrder
       value: 0

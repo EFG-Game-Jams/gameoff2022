@@ -229,7 +229,9 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         if (hoveredRocketButton != null && !hoveredRocketButton.ShouldConsumeRocket)
         {
             Debug.Assert(replayable.Mode == ReplaySystem.ReplayMode.None);
-            hoveredRocketButton.OnTrigger(Vector3.zero);
+
+            if (GetHoveredUi(out RaycastHit hitInfo) == hoveredRocketButton)
+                hoveredRocketButton.OnTrigger(hitInfo.point);
             chargeTimer = -1;
         }
         else if (ShotLoaded)
@@ -247,7 +249,7 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
 
     private RocketButtonBase GetHoveredUi(out RaycastHit hitInfo)
     {
-        const float MaxDistance = 2f;
+        const float MaxDistance = 5f;
         if (Physics.Raycast(muzzle.position, muzzle.forward, out hitInfo, MaxDistance, uiLayer, QueryTriggerInteraction.Collide))
             return RocketButtonBase.FromCollider(hitInfo.collider);
         return null;

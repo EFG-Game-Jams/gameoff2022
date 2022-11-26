@@ -50,6 +50,8 @@ public partial class Program
         var app = builder
             .Build();
 
+        app.UseHttpLogging();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();

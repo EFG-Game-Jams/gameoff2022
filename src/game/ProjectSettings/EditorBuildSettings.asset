@@ -6,7 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Prototyping/SatriAli/PlayerMovement/SatriProtoPlayerMovementScene.unity
-    guid: 766c0faacd29b2e4f91ad133436f8f3f
+    path: Assets/Scenes/HubScene.unity
+    guid: 26c3a2b9e413f3643b71eacb29e0b65d
+  - enabled: 1
+    path: Assets/Scenes/Races/E1.unity
+    guid: d5159a16758cec949927f8e536e6dba9
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 80501e074efcb0b479f9554c00f62e54, type: 2}

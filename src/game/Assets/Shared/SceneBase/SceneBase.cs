@@ -1,5 +1,6 @@
 using Replay;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 [DefaultExecutionOrder(int.MinValue)]
@@ -7,6 +8,9 @@ public class SceneBase : MonoBehaviour
 {
     // we want stuff to be accessible even within Awake callbacks, so make sure everything is serialised
     [SerializeField] ReplaySystem replaySystem;
+    [SerializeField] AudioMixer audioMixer;
+
+    // public accessors
     public ReplaySystem ReplaySystem => replaySystem;
 
     // scene-switch helper
@@ -48,5 +52,20 @@ public class SceneBase : MonoBehaviour
     private void OnDestroy()
     {
         Current = null;
+    }
+
+    private float VolumeToAttenuation(float volume)
+    {
+        volume = Mathf.Clamp(volume, 0.0001f, 1f);
+        return Mathf.Log10(volume) * 20f;
+    }
+
+    private void Update()
+    {
+        // apply audio settings
+        GameOptions options = OptionsManager.GetOrCreate().Options;
+        audioMixer.SetFloat("VolumeMaster", VolumeToAttenuation(options.volumeMaster));
+        audioMixer.SetFloat("VolumeEffects", VolumeToAttenuation(options.volumeEffects));
+        audioMixer.SetFloat("VolumeMusic", VolumeToAttenuation(options.volumeMusic));
     }
 }

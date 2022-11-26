@@ -53,14 +53,6 @@ public class LeaderboardClient
         }
     }
 
-    public void EnableOnlineLeaderboard()
-    {
-        if (!Application.isEditor)
-        {
-            WebFunctions.PersistLeaderboardsEnabled(true);
-        }
-    }
-
     public bool IsOffline => state == ClientState.Offline;
 
     public string PlayerName => playerName ?? "AnonymousRocket";
@@ -68,6 +60,8 @@ public class LeaderboardClient
 
     public IEnumerator ConnectAsEditor(string secret)
     {
+        Debug.Log("Initializing leaderboard client for Unity editor");
+
         yield return CheckServerHealth();
 
         if (!isServerHealthy)
@@ -93,8 +87,11 @@ public class LeaderboardClient
     // This may cause a redirect event, i.e. nuke your current state
     public IEnumerator Connect()
     {
+        Debug.Log("Initializing leaderboard client");
+
         if (state != ClientState.None)
         {
+            Debug.Log("Client is already initialized, aborting.");
             yield break;
         }
 
@@ -102,6 +99,7 @@ public class LeaderboardClient
 
         if (!isServerHealthy)
         {
+            Debug.Log("Leaderboard server is not well, going offline.");
             DisableOnlineLeaderboard();
             yield break;
         }
@@ -116,6 +114,7 @@ public class LeaderboardClient
             }
             else
             {
+                Debug.Log("Received session UID from fragment is invalid, going offline.");
                 // TODO Notify the player of this failure?
                 DisableOnlineLeaderboard();
                 yield break;
@@ -138,8 +137,11 @@ public class LeaderboardClient
 
     private IEnumerator TryRecoverExistingSession(string sessionSecret)
     {
+        Debug.Log($"Attempting session recovery for {sessionSecret}");
         yield return GetSessionDetails((details) =>
         {
+            Debug.Log($"Session recovery for {sessionSecret} was succesful");
+
             this.sessionSecret = sessionSecret;
             playerName = details.playerName;
             playerId = details.playerId;
@@ -278,6 +280,11 @@ public class LeaderboardClient
                 };
                 offlineReplays.Add(replay);
             }
+            else
+            {
+                replay.timeInMilliseconds = timeInMilliseconds;
+                replay.data = data;
+            }
 
             var record = offlineLeaderboard.Find(l => l.levelId == level.id);
             if (record == null)
@@ -401,7 +408,9 @@ public class LeaderboardClient
 
     private IEnumerator Post<T>(Action<T> callback, string path, object model)
     {
-        var request = UnityWebRequest.Post($"{baseApiUrl}/{path}", JsonUtility.ToJson(model));
+        // The UnityWebRequest.Post method is borked, use PUT and correct it afterwards
+        var request = UnityWebRequest.Put($"{baseApiUrl}/{path}", JsonUtility.ToJson(model));
+        request.method = "POST";
         request.SetRequestHeader("Content-Type", "application/json");
         yield return request.SendWebRequest();
 
