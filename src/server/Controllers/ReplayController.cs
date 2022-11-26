@@ -20,7 +20,7 @@ public class ReplayController : ControllerBase
     }
 
     [HttpPost]
-    [Route("/api/game/{revision}/session/{sessionSecret}/replay/create")]
+    [Route("/api/game/{revision}/session/{sessionSecret}/replay")]
     public async Task<ActionResult<ReplayCreatedResponse>> CreateReplay(
         [FromRoute] uint revision,
         [FromRoute] Guid sessionSecret,
