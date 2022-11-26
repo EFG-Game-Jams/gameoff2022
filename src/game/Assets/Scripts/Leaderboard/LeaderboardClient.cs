@@ -278,6 +278,11 @@ public class LeaderboardClient
                 };
                 offlineReplays.Add(replay);
             }
+            else
+            {
+                replay.timeInMilliseconds = timeInMilliseconds;
+                replay.data = data;
+            }
 
             var record = offlineLeaderboard.Find(l => l.levelId == level.id);
             if (record == null)
