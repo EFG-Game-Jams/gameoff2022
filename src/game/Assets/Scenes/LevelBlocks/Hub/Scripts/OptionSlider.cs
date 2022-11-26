@@ -41,12 +41,12 @@ public class OptionSlider : MonoBehaviour
     private void OnHoverEnter()
     {
         imageOutline.color = Color.HSVToRGB(0, 0, 1f);
-        imageOutline.color = Color.HSVToRGB(0, 0, 1f);
+        imageFill.color = Color.HSVToRGB(0, 0, 1f);
     }
     private void OnHoverExit()
     {
         imageOutline.color = Color.HSVToRGB(0, 0, .75f);
-        imageOutline.color = Color.HSVToRGB(0, 0, .75f);
+        imageFill.color = Color.HSVToRGB(0, 0, .75f);
     }
     private void OnTrigger(Vector3 lpos)
     {
