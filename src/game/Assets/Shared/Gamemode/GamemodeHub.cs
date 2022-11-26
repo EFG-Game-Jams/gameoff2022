@@ -74,6 +74,9 @@ public class GamemodeHub : MonoBehaviour
             // starting fresh
             EventSetLauncherEnabled(false);
         }
+
+        MusicPlayer musicPlayerPrefab = Resources.Load<MusicPlayer>("MusicPlayer");
+        Instantiate(musicPlayerPrefab);
     }
 
     void Update()

@@ -9,7 +9,7 @@ public class GameOptions
 
     public float volumeMaster = .5f;
     public float volumeEffects = 1f;
-    public float volumeMusic = .5f;
+    public float volumeMusic = .05f;
 
     public void Validate()
     {
