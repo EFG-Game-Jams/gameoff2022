@@ -20,9 +20,13 @@ public class HubPlayerTeleporter : MonoBehaviour
 
     private IEnumerator CoTeleportPlayer(GameObject playerGo)
     {
-        yield return null;
         SatriProtoPlayer player = playerGo.GetComponent<SatriProtoPlayer>();
+        player.SetLocks(true, false);
+
+        yield return new WaitForSeconds(1);
+
         player.Teleport(transform.position, transform.rotation);
+        player.SetLocks(false, false);
 
         yield return null;
         foreach (var trigger in triggers)
