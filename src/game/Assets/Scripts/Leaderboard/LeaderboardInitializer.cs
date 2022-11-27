@@ -11,7 +11,7 @@ public class LeaderboardInitializer : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
-        if (Application.isEditor)
+        if (!Application.isEditor)
         {
             throw new InvalidProgramException("This script is editor only");
         }
