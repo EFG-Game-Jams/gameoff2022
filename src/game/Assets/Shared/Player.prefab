@@ -6050,7 +6050,7 @@ AudioSource:
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
-  Pan2D: -0.1
+  Pan2D: -0.2
   rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 0
@@ -6146,7 +6146,7 @@ AudioSource:
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
-  Pan2D: 0.1
+  Pan2D: 0.2
   rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 0
@@ -6237,8 +6237,10 @@ MonoBehaviour:
   - {fileID: 6453059205490818871}
   playerCollision: {fileID: 6453059204940380654}
   clipsSoft:
-  - {fileID: 8300000, guid: 4d11813f5983ce047873c94858e6a6c1, type: 3}
-  - {fileID: 8300000, guid: 4544cd1f9b0d00a498e3602ecfffcacc, type: 3}
+  - {fileID: 8300000, guid: 6154d2d90f91ac743a30a16a58f9fa32, type: 3}
+  - {fileID: 8300000, guid: 2921c47b0bdded540b5b813c1e60001c, type: 3}
+  - {fileID: 8300000, guid: df0f02816989a0348b801669beb67362, type: 3}
+  - {fileID: 8300000, guid: 90f0af26cb589f64eaae4a27d022a1d3, type: 3}
   clipsHard:
   - {fileID: 8300000, guid: b8da35185c17df440a0d9e0309ac22a3, type: 3}
   - {fileID: 8300000, guid: 7250925503d24ac4184011ccade045dd, type: 3}
@@ -6260,10 +6262,10 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 6
+      time: 7
       value: 0
       inSlope: -0
-      outSlope: 0.05263158
+      outSlope: 0.055555556
       tangentMode: 69
       weightedMode: 0
       inWeight: 0.33333334
@@ -6271,8 +6273,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 25
       value: 1
-      inSlope: 0.05263158
-      outSlope: 0.05263158
+      inSlope: 0.055555556
+      outSlope: 0.055555556
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
