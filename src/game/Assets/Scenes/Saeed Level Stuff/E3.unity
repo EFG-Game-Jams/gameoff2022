@@ -9917,7 +9917,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1895501921116991328, guid: f2a2c5a5ec72eb5418b178f14006ad84, type: 3}
       propertyPath: devMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1895501921116991328, guid: f2a2c5a5ec72eb5418b178f14006ad84, type: 3}
       propertyPath: finishTriggers.Array.size
