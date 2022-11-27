@@ -47,9 +47,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disableLauncher: 0
   countdownTime: 3
-  countdownDelay: 2
+  countdownDelay: 0.5
   postFinishDelay: 3
   finishTriggers: []
+  devMode: 0
   uiData: {fileID: 11400000, guid: e3225c47847774ddfb645633d7789ca0, type: 2}
 --- !u!114 &7086981356654881090
 MonoBehaviour:
