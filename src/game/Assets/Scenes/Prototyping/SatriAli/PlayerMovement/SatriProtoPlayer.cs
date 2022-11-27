@@ -163,6 +163,8 @@ public class SatriProtoPlayer : MonoBehaviour
         movement = GetComponent<SatriProtoPlayerMovement>();
         collision = GetComponent<SatriProtoPlayerCollision>();
         replayable = GetComponent<Replay.Replayable>();
+
+        cameraHeading = transform.rotation.eulerAngles.y;
     }
 
     private void Start()
