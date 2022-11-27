@@ -64,6 +64,10 @@ var plugin = {
 
     return null;
   },
+  
+  SyncIndexedDB: function() {
+    FS.syncfs(false, function (err) {});
+  },
 };
 
 autoAddDeps(plugin, "$constants");

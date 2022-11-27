@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace Util
@@ -81,7 +82,11 @@ namespace Util
 
         private static void FlushWrite()
         {
-            Application.ExternalEval("_JS_FileSystem_Sync();");
+            //Application.ExternalEval("_JS_FileSystem_Sync();");
+            SyncIndexedDB();
         }
+
+        [DllImport("__Internal")]
+        private static extern void SyncIndexedDB();
     }
 }
