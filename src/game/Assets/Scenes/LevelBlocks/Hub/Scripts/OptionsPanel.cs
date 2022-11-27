@@ -57,6 +57,7 @@ public class OptionsPanel : MonoBehaviour
         buttonGoOnline.onTrigger.AddListener(v =>
         {
             client.ResetLeaderboardEnabledUserChoice();
+            LeaderboardClient.DiscardExistingClient();
             SceneBase.SwitchScene("StartupScene");
         });
     }

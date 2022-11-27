@@ -52,6 +52,11 @@ public class LeaderboardClient
         return leaderboardClient;
     }
 
+    public static void DiscardExistingClient()
+    {
+        leaderboardClient = null;
+    }
+
     public bool IsLeaderboardEnabledByUser => leaderboardEnabledByUser == true;
     public bool IsLeaderboardDisabledByUser => leaderboardEnabledByUser == false;
     public bool IsServerHealthy => isServerHealthy;
