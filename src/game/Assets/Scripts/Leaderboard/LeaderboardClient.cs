@@ -162,6 +162,7 @@ public class LeaderboardClient
         state = ClientState.Offline;
         playerId = null;
         sessionSecret = null;
+        leaderboardEnabledByUser = false;
 
         if (!Application.isEditor)
         {
@@ -180,6 +181,7 @@ public class LeaderboardClient
             playerName = details.playerName;
             playerId = details.playerId;
             state = ClientState.Online;
+            leaderboardEnabledByUser = true;
 
             if (!Application.isEditor)
             {

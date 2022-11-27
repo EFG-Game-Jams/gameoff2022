@@ -61,7 +61,7 @@ namespace Util
             try
             {
                 string path = MakePath(relPath);
-                if (!File.Exists(path))
+                if (File.Exists(path))
                 {
                     File.Delete(path);
                     FlushWrite();

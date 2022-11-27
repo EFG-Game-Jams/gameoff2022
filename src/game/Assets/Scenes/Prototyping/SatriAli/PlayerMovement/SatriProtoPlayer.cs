@@ -194,6 +194,11 @@ public class SatriProtoPlayer : MonoBehaviour
         cameraTransform.GetComponent<Camera>().fieldOfView = OptionsManager.GetOrCreate().Options.fieldOfView;
     }
 
+    private void OnDestroy()
+    {
+        Cursor.lockState = CursorLockMode.None;
+    }
+
     private void FixedUpdate()
     {
         float deltaTime = Time.fixedDeltaTime;

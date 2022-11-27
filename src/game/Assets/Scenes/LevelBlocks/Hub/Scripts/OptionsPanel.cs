@@ -8,6 +8,8 @@ public class OptionsPanel : MonoBehaviour
     [SerializeField] OptionSlider volumeMaster;
     [SerializeField] OptionSlider volumeEffects;
     [SerializeField] OptionSlider volumeMusic;
+    [SerializeField] RocketButtonBase buttonResetDefaults;
+    [SerializeField] RocketButtonBase buttonGoOnline;
 
     void Start()
     {
@@ -39,5 +41,23 @@ public class OptionsPanel : MonoBehaviour
         volumeEffects.SetValue(optionsManager.Options.volumeEffects);
         volumeMusic.SetValue(optionsManager.Options.volumeMusic);
         fieldOfView.SetValue(optionsManager.Options.fieldOfView);
+
+        buttonResetDefaults.onTrigger.AddListener(v =>
+        {
+            OptionsManager.GetOrCreate().ResetToDefaults();
+            volumeMaster.SetValue(optionsManager.Options.volumeMaster);
+            volumeEffects.SetValue(optionsManager.Options.volumeEffects);
+            volumeMusic.SetValue(optionsManager.Options.volumeMusic);
+            fieldOfView.SetValue(optionsManager.Options.fieldOfView);
+            FindObjectOfType<SatriProtoPlayer>().RefreshFieldOfView();
+        });
+
+        LeaderboardClient client = LeaderboardClient.GetClient();
+        buttonGoOnline.gameObject.SetActive(client.IsServerHealthy && client.IsLeaderboardDisabledByUser);
+        buttonGoOnline.onTrigger.AddListener(v =>
+        {
+            client.ResetLeaderboardEnabledUserChoice();
+            SceneBase.SwitchScene("StartupScene");
+        });
     }
 }
