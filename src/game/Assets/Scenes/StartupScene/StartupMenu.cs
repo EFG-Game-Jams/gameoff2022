@@ -15,6 +15,8 @@ public class StartupMenu : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
+        Cursor.lockState = CursorLockMode.None;
+
         var client = LeaderboardClient.GetClient();
 
         StartCoroutine(client.CheckServerHealth((healthy) =>
