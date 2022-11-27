@@ -64,6 +64,7 @@ public class GamemodeRace : MonoBehaviour
         if (activeReplay != null)
         {
             Debug.Assert(replayable.ShouldPlayback);
+            uiData.levelNumberText += $" - replay\n<size=50%>player: {activeReplay.playerName}</size>";
             StartCoroutine(CoReplay());
         }
     }
