@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0
   maxSpeed: 30
-  rocketReadyCount: 3
+  rocketReadyCount: 0
   rocketRegenTime: 0
   rocketReloadTime: 0
-  isRocketLoaded: 1
-  levelNumberText: H3
-  levelTimerText: 00:00.123
+  isRocketLoaded: 0
+  levelNumberText: E2
+  levelTimerText: 00:03.000
