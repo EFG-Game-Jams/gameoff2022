@@ -1,1 +1,13 @@
-<p>Hello world!</p>
+@inject IConfiguration configuration;
+
+@{
+    var gameUrl = configuration["Game:Url"];
+}
+
+<h2>
+    Snooping around, are we?
+</h2>
+
+<p>
+    There is nothing to see here. Click <a href="@gameUrl">here</a> to return to the game.
+</p>
