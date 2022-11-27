@@ -331,7 +331,8 @@ public class LeaderboardClient
                     playerId = PlayerId,
                     playerName = PlayerName,
                     rank = 1,
-                    replayId = offlineId++
+                    replayId = offlineId++,
+                    timeInMilliseconds = timeInMilliseconds
                 };
                 offlineLeaderboard.Add(record);
             }
@@ -429,12 +430,19 @@ public class LeaderboardClient
                 Debug.LogError($"{path} HTTP Error: {request.error}");
                 break;
             case UnityWebRequest.Result.Success:
-                var model = JsonUtility.FromJson<T>(request.downloadHandler.text);
-                if (model == null)
+                if (request.responseCode >= 200 && request.responseCode < 300)
                 {
-                    throw new InvalidOperationException($"Response model was null for {request.downloadHandler.text}");
+                    var model = JsonUtility.FromJson<T>(request.downloadHandler.text);
+                    if (model == null)
+                    {
+                        throw new InvalidOperationException($"Response model was null for {request.downloadHandler.text}");
+                    }
+                    callback.Invoke(model);
                 }
-                callback.Invoke(model);
+                else
+                {
+                    Debug.Log($"GET request to {path} failed with status code {request.responseCode}");
+                }
                 break;
             default:
                 throw new InvalidOperationException("Unknown unity web request result type");
@@ -457,12 +465,19 @@ public class LeaderboardClient
                 Debug.LogError($"{path} HTTP Error: {request.error}");
                 break;
             case UnityWebRequest.Result.Success:
-                var responseModel = JsonUtility.FromJson<T>(request.downloadHandler.text);
-                if (responseModel == null)
+                if (request.responseCode >= 200 && request.responseCode < 300)
                 {
-                    throw new InvalidOperationException($"Response model was null for {request.downloadHandler.text}");
+                    var responseModel = JsonUtility.FromJson<T>(request.downloadHandler.text);
+                    if (responseModel == null)
+                    {
+                        throw new InvalidOperationException($"Response model was null for {request.downloadHandler.text}");
+                    }
+                    callback.Invoke(responseModel);
                 }
-                callback.Invoke(responseModel);
+                else
+                {
+                    Debug.Log($"POST request to {path} failed with status code {request.responseCode}");
+                }
                 break;
             default:
                 throw new InvalidOperationException("Unknown unity web request result type");
