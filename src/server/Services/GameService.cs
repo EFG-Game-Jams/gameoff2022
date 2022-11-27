@@ -145,26 +145,15 @@ public class GameService
         }
     }
 
-    public async Task<ReplayResponse> DownloadReplay(Guid secret, int replayId)
+    public async Task<ReplayResponse> DownloadReplay(int replayId)
     {
-        var session = await replayDatabase.Sessions
-            .AsNoTracking()
-            .Select(s => new { s.Secret, s.PlayerId, PlayerName = s.Player.Name })
-            .SingleOrDefaultAsync(s => s.Secret == secret);
-        if (session == null)
-        {
-            logger.LogWarning(
-                "Session with unknown secret {SessionSecret} attempted to download replay with ID {ReplayId}",
-                secret,
-                replayId);
-            throw new InvalidOperationException("Nonexisting sessions are not allowed to download replays");
-        }
-
         var replay = await replayDatabase.Replays
             .AsNoTracking()
             .Select(r => new
             {
                 r.Id,
+                r.PlayerId,
+                PlayerName = r.Player.Name,
                 r.FileName,
                 r.LevelId,
                 LevelName = r.Level.Name,
@@ -174,8 +163,8 @@ public class GameService
             .SingleAsync(r => r.Id == replayId);
 
         return new ReplayResponse(
-            session.PlayerId,
-            session.PlayerName,
+            replay.PlayerId,
+            replay.PlayerName,
             replay.LevelId,
             replay.LevelName,
             replay.GameRevision,

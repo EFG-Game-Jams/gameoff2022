@@ -53,7 +53,7 @@ internal class ReplayBuilder
 
         var response = await client
             .PostAsJsonAsync(
-                $"/api/game/{gameRevision}/session/{sessionSecret}/replay/create",
+                $"/api/game/{gameRevision}/session/{sessionSecret}/replay",
                 new CreateReplayRequest
                 {
                     TimeInMilliseconds = timeInMilliseconds.Value,

@@ -26,6 +26,12 @@ public class ReplayController : ControllerBase
         [FromRoute] Guid sessionSecret,
         [FromBody] CreateReplayRequest request)
     {
+        var player = await gameService.TryGetPlayerIdFor(sessionSecret);
+        if (!player.HasValue)
+        {
+            return Unauthorized();
+        }
+
         try
         {
             return new ReplayCreatedResponse(await gameService.SaveReplay(
@@ -48,9 +54,15 @@ public class ReplayController : ControllerBase
         [FromRoute] Guid sessionSecret,
         [FromRoute] int replayId)
     {
+        var player = await gameService.TryGetPlayerIdFor(sessionSecret);
+        if (!player.HasValue)
+        {
+            return Unauthorized();
+        }
+
         try
         {
-            return await gameService.DownloadReplay(sessionSecret, replayId);
+            return await gameService.DownloadReplay(replayId);
         }
         catch (InvalidOperationException)
         {

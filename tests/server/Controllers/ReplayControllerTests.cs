@@ -24,7 +24,7 @@ public class ReplayControllerTests
 
         var response = await client
             .PostAsJsonAsync(
-                $"/api/game/42/session/{sessionSecret}/replay/create",
+                $"/api/game/42/session/{sessionSecret}/replay",
                 new CreateReplayRequest
                 {
                     TimeInMilliseconds = 1234,
@@ -32,13 +32,19 @@ public class ReplayControllerTests
                     Data = "{\"blerp\":420}"
                 });
 
+        response.EnsureSuccessStatusCode();
         var createdReplay = await response.Content.ReadFromJsonAsync<ReplayCreatedResponse>();
         createdReplay.ShouldNotBeNull();
         createdReplay.ReplayId.ShouldNotBe(0);
 
+        // Switch user to verify user details returned are not from the session
+        // but from the replay
+        sessionSecret = await SessionBuilder.ForUser(applicationFactory, ItchUserBuilder.BuildRandom());
+
         var replayResponse = await client
             .GetFromJsonAsync<ReplayResponse>($"/api/game/42/session/{sessionSecret}/replay/{createdReplay.ReplayId}");
         replayResponse.ShouldNotBeNull();
+        replayResponse.PlayerId.ShouldBe(user.Id);
         replayResponse.PlayerName.ShouldBe(user.UserName);
         replayResponse.LevelName.ShouldBe("create_replay_level");
         replayResponse.GameRevision.ShouldBe(42u);
@@ -54,7 +60,7 @@ public class ReplayControllerTests
 
         var response = await client
             .PostAsJsonAsync(
-                $"/api/game/42/session/{sessionSecret}/replay/create",
+                $"/api/game/42/session/{sessionSecret}/replay",
                 new CreateReplayRequest
                 {
                     TimeInMilliseconds = 1234,
@@ -72,7 +78,7 @@ public class ReplayControllerTests
 
         response = await client
             .PostAsJsonAsync(
-                $"/api/game/42/session/{sessionSecret}/replay/create",
+                $"/api/game/42/session/{sessionSecret}/replay",
                 new CreateReplayRequest
                 {
                     TimeInMilliseconds = 102,
