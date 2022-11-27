@@ -19,9 +19,7 @@ public class LeaderboardClient
     private bool isServerHealthy = false;
 
     private int offlineId = 1;
-    private readonly List<OfflineLevel> offlineLevels = new List<OfflineLevel>();
-    private readonly List<LeaderboardListEntry> offlineLeaderboard = new List<LeaderboardListEntry>();
-    private readonly List<ReplayDownload> offlineReplays = new List<ReplayDownload>();
+    private readonly List<OfflineReplay> offlineReplays = new List<OfflineReplay>();
 
     private LeaderboardClient()
     {
@@ -91,7 +89,7 @@ public class LeaderboardClient
             yield break;
         }
 
-        if (secret != null)
+        if (!string.IsNullOrWhiteSpace(secret))
         {
             yield return TryRecoverExistingSession(secret);
             if (state == ClientState.Online)
@@ -206,26 +204,7 @@ public class LeaderboardClient
 
         if (IsOffline)
         {
-            var level = offlineLevels.Find(l => l.name == levelName);
-            if (level == null)
-            {
-                callback.Invoke(new LeaderboardList
-                {
-                    items = Array.Empty<LeaderboardListEntry>(),
-                    totalCount = 0
-                });
-            }
-            else
-            {
-                var items = offlineLeaderboard
-                    .Where(ol => ol.levelId == level.id)
-                    .ToArray();
-                callback.Invoke(new LeaderboardList
-                {
-                    items = items,
-                    totalCount = items.Length
-                });
-            }
+            callback.Invoke(GetOfflineLeaderboardlistFor(levelName));
             yield break;
         }
 
@@ -241,32 +220,37 @@ public class LeaderboardClient
 
         if (IsOffline)
         {
-            var level = offlineLevels.Find(l => l.name == levelName);
-            if (level == null)
-            {
-                callback.Invoke(new LeaderboardList
-                {
-                    items = Array.Empty<LeaderboardListEntry>(),
-                    totalCount = 0
-                });
-            }
-            else
-            {
-                var items = offlineLeaderboard
-                    .Where(ol => ol.levelId == level.id)
-                    .ToArray();
-                callback.Invoke(new LeaderboardList
-                {
-                    items = items,
-                    totalCount = items.Length
-                });
-            }
+            callback.Invoke(GetOfflineLeaderboardlistFor(levelName));
             yield break;
         }
 
         AssertSession();
 
         yield return Get(callback, $"session/{sessionSecret}/leaderboard/neighbours?take={take}&skip={skip}&levelName={levelName}");
+    }
+
+    private LeaderboardList GetOfflineLeaderboardlistFor(string levelName)
+    {
+        var replay = offlineReplays.Find(r => r.levelName == levelName);
+        if (replay == null)
+        {
+            return new LeaderboardList
+            {
+                items = Array.Empty<LeaderboardListEntry>(),
+                totalCount = 0
+            };
+        }
+        else
+        {
+            return new LeaderboardList
+            {
+                items = new[]
+                {
+                    OfflineReplayToLeaderboardListEntry(replay)
+                },
+                totalCount = 1
+            };
+        }
     }
 
     /// <returns>All known leaderboard entries for the player (non paged)</returns>
@@ -276,8 +260,10 @@ public class LeaderboardClient
         {
             callback.Invoke(new LeaderboardList
             {
-                items = offlineLeaderboard.ToArray(),
-                totalCount = offlineLeaderboard.Count
+                items = offlineReplays
+                    .Select(OfflineReplayToLeaderboardListEntry)
+                    .ToArray(),
+                totalCount = offlineReplays.Count
             });
             yield break;
         }
@@ -288,6 +274,21 @@ public class LeaderboardClient
     }
     #endregion
 
+    private LeaderboardListEntry OfflineReplayToLeaderboardListEntry(OfflineReplay offlineReplay)
+    {
+        return new LeaderboardListEntry
+        {
+            gameRevision = LeaderboardConfig.GameRevision,
+            levelId = -1,
+            levelName = offlineReplay.levelName,
+            playerId = PlayerId,
+            playerName = PlayerName,
+            rank = 1,
+            replayId = offlineReplay.replayId,
+            timeInMilliseconds = offlineReplay.timeInMilliseconds
+        };
+    }
+
     #region Replays
     /// <returns>The ID of the created replay</returns>
     public IEnumerator CreateReplay(Action<CreatedReplay> callback, int timeInMilliseconds, string levelName, string data)
@@ -296,57 +297,30 @@ public class LeaderboardClient
 
         if (IsOffline)
         {
-            var level = offlineLevels.Find(l => l.name == levelName);
-            if (level == null)
-            {
-                level = new OfflineLevel
-                {
-                    id = offlineId++,
-                    name = levelName
-                };
-                offlineLevels.Add(level);
-            }
-
-            var replay = offlineReplays.Find(r => r.levelId == level.id);
+            var replay = offlineReplays.Find(r => r.levelName == levelName);
             if (replay == null)
             {
-                replay = new ReplayDownload
+                replay = new OfflineReplay
                 {
+                    replayId = ++offlineId,
                     data = data,
-                    levelId = level.id,
-                    levelName = level.name,
+                    levelId = -1,
+                    levelName = levelName,
                     playerId = PlayerId,
                     playerName = PlayerName,
-                    timeInMilliseconds = timeInMilliseconds
+                    timeInMilliseconds = timeInMilliseconds,
                 };
                 offlineReplays.Add(replay);
             }
-            else
+            else if (timeInMilliseconds < replay.timeInMilliseconds)
             {
                 replay.timeInMilliseconds = timeInMilliseconds;
                 replay.data = data;
             }
 
-            var record = offlineLeaderboard.Find(l => l.levelId == level.id);
-            if (record == null)
-            {
-                record = new LeaderboardListEntry
-                {
-                    gameRevision = 0,
-                    levelId = level.id,
-                    levelName = level.name,
-                    playerId = PlayerId,
-                    playerName = PlayerName,
-                    rank = 1,
-                    replayId = offlineId++,
-                    timeInMilliseconds = timeInMilliseconds
-                };
-                offlineLeaderboard.Add(record);
-            }
-
             callback.Invoke(new CreatedReplay
             {
-                id = record.replayId
+                id = replay.replayId
             });
             yield break;
         }
@@ -368,13 +342,8 @@ public class LeaderboardClient
     {
         if (IsOffline)
         {
-            var record = offlineLeaderboard.Find(r => r.replayId == replayId);
-            if (record == null)
-            {
-                throw new InvalidOperationException("Requested replay has not been stored in the offline storage");
-            }
-            var replay = offlineReplays.Find(r => r.levelId == record.levelId);
-            if (record == null)
+            var replay = offlineReplays.Find(r => r.replayId == replayId);
+            if (replay == null)
             {
                 throw new InvalidOperationException("Requested replay has not been stored in the offline storage");
             }

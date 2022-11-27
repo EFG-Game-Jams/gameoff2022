@@ -19,14 +19,7 @@ public class LeaderboardInitializer : MonoBehaviour
         client = LeaderboardClient.GetClient();
         StartCoroutine(client.CheckServerHealth((isHealthy) =>
         {
-            if (isHealthy && !string.IsNullOrWhiteSpace(SessionSecret))
-            {
-                StartCoroutine(client.ConnectAsEditor(SessionSecret.Trim(), null));
-            }
-            else
-            {
-                StartCoroutine(client.Connect(null));
-            }
+            StartCoroutine(client.ConnectAsEditor(SessionSecret?.Trim(), null));
         }));
     }
 }
