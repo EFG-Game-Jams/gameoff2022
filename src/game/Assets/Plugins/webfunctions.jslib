@@ -17,7 +17,15 @@ var plugin = {
     return (
       localStorage.getItem(
         constants.taintRocketLeaderboardEnabledStorageKey
-      ) === "false"
+      ) === "0"
+    );
+  },
+
+  GetLeaderboardsEnabled: function () {
+    return (
+      localStorage.getItem(
+        constants.taintRocketLeaderboardEnabledStorageKey
+      ) === "1"
     );
   },
 
@@ -26,6 +34,10 @@ var plugin = {
       constants.taintRocketLeaderboardEnabledStorageKey,
       enabled.toString()
     );
+  },
+
+  UnsetPersistedLeaderboardsEnabled: function () {
+    localStorage.removeItem(constants.taintRocketLeaderboardEnabledStorageKey);
   },
 
   GetLeaderboardSessionGuid: function () {

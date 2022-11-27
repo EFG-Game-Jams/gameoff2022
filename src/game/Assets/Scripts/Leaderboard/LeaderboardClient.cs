@@ -12,10 +12,11 @@ public class LeaderboardClient
 
     private readonly string baseApiUrl;
     private ClientState state = ClientState.None;
-    private string playerName;
-    private int? playerId;
-    private string sessionSecret;
-    private bool isServerHealthy;
+    private string playerName = null;
+    private int? playerId = null;
+    private string sessionSecret = null;
+    private bool? leaderboardEnabledByUser = null;
+    private bool isServerHealthy = false;
 
     private int offlineId = 1;
     private readonly List<OfflineLevel> offlineLevels = new List<OfflineLevel>();
@@ -32,13 +33,128 @@ public class LeaderboardClient
         if (leaderboardClient == null)
         {
             leaderboardClient = new LeaderboardClient();
-            if (Application.isEditor || WebFunctions.GetLeaderboardsDisabled())
+            if (!Application.isEditor)
             {
-                leaderboardClient.state = ClientState.Offline;
+                var leaderboardDisabled = WebFunctions.GetLeaderboardsDisabled();
+                var leaderboardEnabled = WebFunctions.GetLeaderboardsEnabled();
+
+                if (leaderboardDisabled)
+                {
+                    leaderboardClient.leaderboardEnabledByUser = false;
+                }
+                else if (leaderboardEnabled)
+                {
+                    leaderboardClient.leaderboardEnabledByUser = true;
+                }
             }
         }
 
         return leaderboardClient;
+    }
+
+    public bool IsLeaderboardEnabledByUser => leaderboardEnabledByUser == true;
+    public bool IsLeaderboardDisabledByUser => leaderboardEnabledByUser == false;
+    public bool IsServerHealthy => isServerHealthy;
+
+    public void ResetLeaderboardEnabledUserChoice()
+    {
+        if (!Application.isEditor)
+        {
+            leaderboardEnabledByUser = null;
+            WebFunctions.UnsetPersistedLeaderboardsEnabled();
+        }
+        else
+        {
+            Debug.LogWarning("Cannot reset offline choice for Unity Editor");
+        }
+    }
+
+    public bool IsOffline => state == ClientState.Offline;
+
+    public string PlayerName => playerName ?? "AnonymousRocket";
+    public int PlayerId => playerId ?? 0;
+
+    public IEnumerator ConnectAsEditor(string secret, Action<LeaderboardClient> callback)
+    {
+        Debug.Log("Initializing leaderboard client for Unity editor");
+
+        if (!isServerHealthy)
+        {
+            Debug.Log("Server health is bad or has not been checked yet, going offline.");
+            DisableOnlineLeaderboard();
+            callback?.Invoke(this);
+            yield break;
+        }
+
+        if (secret != null)
+        {
+            yield return TryRecoverExistingSession(secret);
+            if (state == ClientState.Online)
+            {
+                callback?.Invoke(this);
+                yield break; // OK
+            }
+        }
+
+        DisableOnlineLeaderboard();
+        callback?.Invoke(this);
+    }
+
+    // TODO Support offline mode
+    // This should be called whenever the player has agreed to use leaderboards
+    // This may cause a redirect event, i.e. nuke your current state
+    public IEnumerator Connect(Action<LeaderboardClient> callback)
+    {
+        Debug.Log("Initializing leaderboard client");
+
+        if (state != ClientState.None)
+        {
+            Debug.Log("Client is already initialized, aborting.");
+            callback?.Invoke(this);
+            yield break;
+        }
+        if (isServerHealthy == false)
+        {
+            Debug.Log("Server health is bad or has not been checked yet, going offline.");
+            DisableOnlineLeaderboard();
+            callback?.Invoke(this);
+            yield break;
+        }
+
+        WebFunctions.PersistLeaderboardsEnabled(true);
+
+        var sessionSecret = WebFunctions.ExtractSessionGuidFromFragment();
+        if (sessionSecret != null)
+        {
+            yield return TryRecoverExistingSession(sessionSecret);
+            if (state == ClientState.Online)
+            {
+                callback?.Invoke(this);
+                yield break; // OK
+            }
+            else
+            {
+                Debug.Log("Received session UID from fragment is invalid, going offline.");
+                // TODO Notify the player of this failure?
+                DisableOnlineLeaderboard();
+                callback?.Invoke(this);
+                yield break;
+            }
+        }
+
+        sessionSecret = WebFunctions.GetLeaderboardSessionGuid();
+        if (sessionSecret != null)
+        {
+            yield return TryRecoverExistingSession(sessionSecret);
+            if (state == ClientState.Online)
+            {
+                callback?.Invoke(this);
+                yield break; // OK
+            }
+        }
+
+        // New player or session expired
+        WebFunctions.RedirectToItchAuthorizationPage(LeaderboardConfig.LeaderboardUrl);
     }
 
     public void DisableOnlineLeaderboard()
@@ -51,88 +167,6 @@ public class LeaderboardClient
         {
             WebFunctions.PersistLeaderboardsEnabled(false);
         }
-    }
-
-    public bool IsOffline => state == ClientState.Offline;
-
-    public string PlayerName => playerName ?? "AnonymousRocket";
-    public int PlayerId => playerId ?? 0;
-
-    public IEnumerator ConnectAsEditor(string secret)
-    {
-        Debug.Log("Initializing leaderboard client for Unity editor");
-
-        yield return CheckServerHealth();
-
-        if (!isServerHealthy)
-        {
-            DisableOnlineLeaderboard();
-            yield break;
-        }
-
-        if (secret != null)
-        {
-            yield return TryRecoverExistingSession(secret);
-            if (state == ClientState.Online)
-            {
-                yield break; // OK
-            }
-        }
-
-        DisableOnlineLeaderboard();
-    }
-
-    // TODO Support offline mode
-    // This should be called whenever the player has agreed to use leaderboards
-    // This may cause a redirect event, i.e. nuke your current state
-    public IEnumerator Connect()
-    {
-        Debug.Log("Initializing leaderboard client");
-
-        if (state != ClientState.None)
-        {
-            Debug.Log("Client is already initialized, aborting.");
-            yield break;
-        }
-
-        yield return CheckServerHealth();
-
-        if (!isServerHealthy)
-        {
-            Debug.Log("Leaderboard server is not well, going offline.");
-            DisableOnlineLeaderboard();
-            yield break;
-        }
-
-        var sessionSecret = WebFunctions.ExtractSessionGuidFromFragment();
-        if (sessionSecret != null)
-        {
-            yield return TryRecoverExistingSession(sessionSecret);
-            if (state == ClientState.Online)
-            {
-                yield break; // OK
-            }
-            else
-            {
-                Debug.Log("Received session UID from fragment is invalid, going offline.");
-                // TODO Notify the player of this failure?
-                DisableOnlineLeaderboard();
-                yield break;
-            }
-        }
-
-        sessionSecret = WebFunctions.GetLeaderboardSessionGuid();
-        if (sessionSecret != null)
-        {
-            yield return TryRecoverExistingSession(sessionSecret);
-            if (state == ClientState.Online)
-            {
-                yield break; // OK
-            }
-        }
-
-        // New player or session expired
-        WebFunctions.RedirectToItchAuthorizationPage(LeaderboardConfig.LeaderboardUrl);
     }
 
     private IEnumerator TryRecoverExistingSession(string sessionSecret)
@@ -355,13 +389,14 @@ public class LeaderboardClient
     #endregion
 
     #region Health
-    private IEnumerator CheckServerHealth()
+    public IEnumerator CheckServerHealth(Action<bool> callback)
     {
         var request = UnityWebRequest.Get($"{LeaderboardConfig.LeaderboardUrl}/health");
         request.timeout = 1;
         yield return request.SendWebRequest();
 
         isServerHealthy = request.responseCode == 200;
+        callback?.Invoke(isServerHealthy);
     }
     #endregion
 

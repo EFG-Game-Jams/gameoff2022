@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class LeaderboardInitializer : MonoBehaviour
@@ -10,14 +11,22 @@ public class LeaderboardInitializer : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
+        if (Application.isEditor)
+        {
+            throw new InvalidProgramException("This script is editor only");
+        }
+
         client = LeaderboardClient.GetClient();
-        if (Application.isEditor && !string.IsNullOrWhiteSpace(SessionSecret))
+        StartCoroutine(client.CheckServerHealth((isHealthy) =>
         {
-            StartCoroutine(client.ConnectAsEditor(SessionSecret.Trim()));
-        }
-        else if (!client.IsOffline)
-        {
-            StartCoroutine(client.Connect());
-        }
+            if (isHealthy && !string.IsNullOrWhiteSpace(SessionSecret))
+            {
+                StartCoroutine(client.ConnectAsEditor(SessionSecret.Trim(), null));
+            }
+            else
+            {
+                StartCoroutine(client.Connect(null));
+            }
+        }));
     }
 }
