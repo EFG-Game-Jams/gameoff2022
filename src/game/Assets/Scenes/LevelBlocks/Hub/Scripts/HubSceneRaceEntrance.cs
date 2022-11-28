@@ -17,6 +17,7 @@ public class HubSceneRaceEntrance : MonoBehaviour
     [SerializeField] HubRaceEntranceScreenLeaderboardNear screenRight;
     [SerializeField] PlayerTrigger playerTriggerFloor;
     [SerializeField] PlayerTrigger playerTriggerCeiling;
+    [SerializeField] AudioSource screenMoveSound;
 
     private Transform[] screenTransforms;
     private GameObject player;
@@ -85,6 +86,8 @@ public class HubSceneRaceEntrance : MonoBehaviour
     }
     private IEnumerator CoAnimateScreens()
     {
+        screenMoveSound.Play();
+
         UpdateScreenAnimation();
 
         while (screenAnimCurrent >= 0f && screenAnimCurrent <= 1f)
