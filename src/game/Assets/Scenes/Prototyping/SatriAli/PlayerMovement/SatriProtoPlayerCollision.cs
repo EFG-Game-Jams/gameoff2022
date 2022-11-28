@@ -116,4 +116,9 @@ public class SatriProtoPlayerCollision : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position + Vector3.up * sphereHigh, sphereRadius);
         Gizmos.DrawWireSphere(transform.position + Vector3.up * sphereLow, sphereRadius);
     }
+
+    internal void UpdateInReplay(Vector3 prevPosition, Vector3 position, Vector3 velocity, float deltaTime)
+    {
+        ApplyCollisionResponse(prevPosition, ref position, ref velocity, deltaTime);
+    }
 }
