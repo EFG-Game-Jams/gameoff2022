@@ -51,6 +51,8 @@ public class GamemodeRace : MonoBehaviour
         player = FindObjectOfType<SatriProtoPlayer>();
         playerLauncher = player.GetComponent<SatriProtoPlayerLauncher>();
 
+        Cursor.lockState = CursorLockMode.Locked;
+
         var levelBounds = FindObjectOfType<LevelBounds>();
         Debug.Assert(levelBounds != null, "LevelBounds not found in scene");
         if (replayable.ShouldRecord)
