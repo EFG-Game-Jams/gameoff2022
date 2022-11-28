@@ -40,7 +40,7 @@ public class UIManager : MonoBehaviour
     void Update()
     {
         // Speed indicator calculation
-        speedText.text = playerData.speed.ToString("0.0") + " m/s";
+        speedText.text = $"<mspace=18>{playerData.speed.ToString("0.0") + " m/s"}</mspace>";;
         float speedCircleFillAmount =
             Mathf.Clamp01(playerData.speed / playerData.maxSpeed);
         speedCircle.fillAmount = speedCircleFillAmount;
