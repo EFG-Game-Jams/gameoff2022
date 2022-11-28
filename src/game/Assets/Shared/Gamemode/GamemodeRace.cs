@@ -25,7 +25,7 @@ public class GamemodeRace : MonoBehaviour
 
     private SatriProtoPlayer player;
     private SatriProtoPlayerLauncher playerLauncher;
-
+    
     private float timeUntilUnlock;
     private double timerStart;
     private double timerEnd;
@@ -35,6 +35,14 @@ public class GamemodeRace : MonoBehaviour
     public void SetReplay(ReplayDownload replay)
     {
         activeReplay = replay;
+    }
+
+    public void OnInputExit(UnityEngine.InputSystem.InputValue value)
+    {
+        if (activeReplay != null || timeUntilUnlock > 0f)
+            GamemodeHub.ReturnFromRace(); // exit
+        else
+            SceneBase.ReloadScene(); // reset
     }
 
     void Start()
@@ -51,8 +59,10 @@ public class GamemodeRace : MonoBehaviour
         foreach (var trigger in finishTriggers)
             trigger.onTriggerEnter.AddListener(OnFinishTriggerEntered);
 
-        uiData.levelNumberText = SceneBase.ActiveSceneName;
+        timeUntilUnlock = countdownTime + countdownDelay;
+        //uiData.levelNumberText = SceneBase.ActiveSceneName;
         uiData.levelTimerText = "";
+        UpdateLevelTextDisplay();
 
         if (replayable.ShouldRecord)
         {
@@ -60,15 +70,13 @@ public class GamemodeRace : MonoBehaviour
             playerLauncher.IsEnabled = false;
         }
 
-        timeUntilUnlock = countdownTime + countdownDelay;
-
         if (activeReplay != null)
         {
             Debug.Assert(replayable.ShouldPlayback);
-            uiData.levelNumberText += $" - replay\n<size=50%>player: {activeReplay.playerName}</size>";
+            //uiData.levelNumberText += $" - replay\n<size=50%>player: {activeReplay.playerName}</size>";
             StartCoroutine(CoReplay());
         }
-    }
+    }    
 
     void FixedUpdate()
     {
@@ -94,6 +102,7 @@ public class GamemodeRace : MonoBehaviour
                 timerStart = Time.fixedTimeAsDouble;
                 player.SetLocks(false, false);
                 playerLauncher.IsEnabled = !disableLauncher;
+                UpdateLevelTextDisplay();
             }
             else if (timeUntilUnlock <= countdownTime)
             {
@@ -105,6 +114,15 @@ public class GamemodeRace : MonoBehaviour
         // race
         if (timeUntilUnlock <= 0f)
             UpdateTimerDisplay();
+    }
+
+    private void UpdateLevelTextDisplay()
+    {
+        string text = SceneBase.ActiveSceneName;
+        if (activeReplay != null)
+            text += $" - replay\n<size=50%>player - {activeReplay.playerName}</size>";
+        text += $"<size=25%>\nPress <i>Backspace</i> to {(timeUntilUnlock <= 0f && activeReplay == null ? "Restart" : "Return To HUB")}</size>";
+        uiData.levelNumberText = text;
     }
 
     private void SetTimerDisplay(double time)
