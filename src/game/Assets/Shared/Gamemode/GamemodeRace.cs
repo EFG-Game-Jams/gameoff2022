@@ -16,6 +16,7 @@ public class GamemodeRace : MonoBehaviour
     [SerializeField] PlayerTrigger[] finishTriggers;
     [SerializeField, Tooltip("Prevents replay uploads and returning to HUB in the editor")] bool devMode;
     [SerializeField] PlayerData uiData;
+    [SerializeField] AudioSource countdownSfx;
 
     private Replayable replayable;
     //private ReplayEventList replayTimerEvent;
@@ -77,7 +78,12 @@ public class GamemodeRace : MonoBehaviour
             float prevTime = timeUntilUnlock;
             float newTime = prevTime - Time.fixedDeltaTime;
 
-            // todo: countdown sounnd effect
+            if (Mathf.Floor(prevTime) != Mathf.Floor(newTime))
+            {
+                if (newTime <= 0f)
+                    countdownSfx.pitch = 1.31f;
+                countdownSfx.Play();
+            }                
 
             timeUntilUnlock = newTime;
             SetTimerDisplay(Mathf.Min(timeUntilUnlock, countdownTime));
