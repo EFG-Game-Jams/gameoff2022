@@ -5687,7 +5687,7 @@ MonoBehaviour:
   warnIterations: 5
   collisionMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 576
   triggerMask:
     serializedVersion: 2
     m_Bits: 128
