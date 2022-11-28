@@ -25,7 +25,7 @@ public class GameService
     /// Returns the secret for the client to store locally to identify itself
     /// with in API calls
     /// </summary>
-    public async Task<Guid> CreateSession(string name, int itchIdentifier)
+    public async Task<Guid> CreateSession(Guid secret, string name, int itchIdentifier)
     {
         var player = await replayDatabase.Players
             .SingleOrDefaultAsync(p => p.ItchIdentifier == itchIdentifier);
@@ -45,7 +45,7 @@ public class GameService
         {
             CreatedUtc = DateTime.UtcNow,
             Player = player,
-            Secret = Guid.NewGuid()
+            Secret = secret
         };
         replayDatabase.Add(session);
         await replayDatabase.SaveChangesAsync();

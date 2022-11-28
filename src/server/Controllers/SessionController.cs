@@ -21,16 +21,21 @@ public class SessionController : ControllerBase
         this.gameService = gameService;
     }
 
+    [HttpGet]
+    [Route("/api/game/{revision}/session/guid")]
+    public ActionResult<SessionSecretResponse> GenerateSecret([FromRoute] uint revision) => new SessionSecretResponse(Guid.NewGuid().ToString());
+
     [HttpPost]
-    [Route("/api/game/{revision}/session/create/{accessToken}")]
+    [Route("/api/game/{revision}/session/{sessionSecret}/create/{accessToken}")]
     public async Task<ActionResult<CreateSessionResponse>> Register(
         [FromRoute] uint revision,
+        [FromRoute] Guid sessionSecret,
         [FromRoute] string accessToken)
     {
         try
         {
             var itchProfile = await itchService.FetchProfile(accessToken);
-            var sessionSecret = await gameService.CreateSession(itchProfile.User.Username, itchProfile.User.Id);
+            await gameService.CreateSession(sessionSecret, itchProfile.User.Username, itchProfile.User.Id);
             return new CreateSessionResponse(sessionSecret, itchProfile.User.Username);
         }
         catch (HttpRequestException)

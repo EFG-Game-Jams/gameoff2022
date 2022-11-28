@@ -20,9 +20,10 @@ internal class SessionBuilder
     /// <returns>The secret of the created session</returns>
     public async static Task<Guid> ForUser(DefaultWebApplicationFactory applicationFactory, MockItchUser user)
     {
+        var secret = Guid.NewGuid();
         var response = await applicationFactory
             .CreateClient()
-            .PostAsync($"/api/game/42/session/create/{user.AccessToken}", null);
+            .PostAsync($"/api/game/42/session/{secret}/create/{user.AccessToken}", null);
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<CreateSessionResponse>();

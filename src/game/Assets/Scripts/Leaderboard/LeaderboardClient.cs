@@ -103,9 +103,6 @@ public class LeaderboardClient
         callback?.Invoke(this);
     }
 
-    // TODO Support offline mode
-    // This should be called whenever the player has agreed to use leaderboards
-    // This may cause a redirect event, i.e. nuke your current state
     public IEnumerator Connect(Action<LeaderboardClient> callback)
     {
         Debug.Log("Initializing leaderboard client");
@@ -126,38 +123,50 @@ public class LeaderboardClient
 
         WebFunctions.PersistLeaderboardsEnabled(true);
 
-        var sessionSecret = WebFunctions.ExtractSessionGuidFromFragment();
-        if (sessionSecret != null)
+        var persistedSessionSecret = WebFunctions.GetLeaderboardSessionGuid();
+        if (persistedSessionSecret != null)
         {
-            yield return TryRecoverExistingSession(sessionSecret);
+            yield return TryRecoverExistingSession(persistedSessionSecret);
             if (state == ClientState.Online)
             {
                 callback?.Invoke(this);
                 yield break; // OK
-            }
-            else
-            {
-                Debug.Log("Received session UID from fragment is invalid, going offline.");
-                // TODO Notify the player of this failure?
-                DisableOnlineLeaderboard();
-                callback?.Invoke(this);
-                yield break;
             }
         }
 
-        sessionSecret = WebFunctions.GetLeaderboardSessionGuid();
-        if (sessionSecret != null)
+        var newSessionSecret = string.Empty;
+        yield return GenerateSessionSecret((response) =>
         {
-            yield return TryRecoverExistingSession(sessionSecret);
-            if (state == ClientState.Online)
-            {
-                callback?.Invoke(this);
-                yield break; // OK
-            }
+            newSessionSecret = response.secret;
+        });
+
+        if (string.IsNullOrWhiteSpace(newSessionSecret))
+        {
+            Debug.Log("Server session secret response is unusable, going offline.");
+            DisableOnlineLeaderboard();
+            callback?.Invoke(this);
+            yield break;
         }
 
         // New player or session expired
-        WebFunctions.RedirectToItchAuthorizationPage(LeaderboardConfig.LeaderboardUrl);
+        WebFunctions.RedirectToItchAuthorizationPage(LeaderboardConfig.LeaderboardUrl, newSessionSecret);
+
+        while (state == ClientState.None)
+        {
+            yield return new WaitForSecondsRealtime(2f);
+            yield return TryRecoverExistingSession(newSessionSecret);
+            if (state == ClientState.Online)
+            {
+                callback?.Invoke(this);
+                yield break; // OK
+            }
+        }
+
+        // This should never be reached, but if it is just go offline
+        Debug.Log("Session was not created succesfully, going offline.");
+        DisableOnlineLeaderboard();
+        callback?.Invoke(this);
+        yield break;
     }
 
     public void DisableOnlineLeaderboard()
@@ -359,6 +368,11 @@ public class LeaderboardClient
     #endregion
 
     #region Session
+    private IEnumerator GenerateSessionSecret(Action<SessionSecret> callback)
+    {
+        yield return Get(callback, $"session/guid");
+    }
+
     private IEnumerator GetSessionDetails(Action<SessionDetails> callback, string sessionSecret)
     {
         yield return Get(callback, $"session/{sessionSecret}/details");

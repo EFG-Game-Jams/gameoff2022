@@ -12,6 +12,8 @@ public class StartupMenu : MonoBehaviour
     [SerializeField]
     private string editorSessionSecret = string.Empty;
 
+    private Coroutine onlineCoroutine = null;
+
     // Start is called before the first frame update
     public void Start()
     {
@@ -45,6 +47,11 @@ public class StartupMenu : MonoBehaviour
 
     public void GoOnline()
     {
+        if (onlineCoroutine != null)
+        {
+            return;
+        }
+
         var client = LeaderboardClient.GetClient();
         if (Application.isEditor)
         {
@@ -54,17 +61,22 @@ public class StartupMenu : MonoBehaviour
                 return;
             }
 
-            StartCoroutine(client.ConnectAsEditor(editorSessionSecret, (_) => GotoNextScene()));
+            onlineCoroutine = StartCoroutine(client.ConnectAsEditor(editorSessionSecret, (_) => GotoNextScene()));
             return;
         }
         else
         {
-            StartCoroutine(client.Connect((_) => GotoNextScene()));
+            onlineCoroutine = StartCoroutine(client.Connect((_) => GotoNextScene()));
         }
     }
 
     public void GoOffline()
     {
+        if (onlineCoroutine != null)
+        {
+            StopCoroutine(onlineCoroutine);
+        }
+
         var client = LeaderboardClient.GetClient();
         client.DisableOnlineLeaderboard();
         GotoNextScene();
