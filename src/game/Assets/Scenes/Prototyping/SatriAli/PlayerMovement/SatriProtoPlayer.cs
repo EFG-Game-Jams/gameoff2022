@@ -227,6 +227,9 @@ public class SatriProtoPlayer : MonoBehaviour
             prevPosition = position;
             position = replayReaderPosition.ReadVector3();
             velocity = (position - prevPosition) / Time.fixedDeltaTime;
+
+            Vector3 gravityDisplacement = Vector3.up * -.2f;
+            collision.UpdateInReplay(prevPosition, position + gravityDisplacement, velocity, deltaTime);
         }
 
         uiData.speed = Vector3.Scale(velocity, new Vector3(1, 0, 1)).magnitude;

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 public static class WebFunctions
 {
     [DllImport("__Internal")]
-    public static extern void RedirectToItchAuthorizationPage(string leaderboardBaseUrl);
+    public static extern void RedirectToItchAuthorizationPage(string leaderboardBaseUrl, string sessionSecret);
 
     [DllImport("__Internal")]
     public static extern bool GetLeaderboardsDisabled();
@@ -22,7 +22,4 @@ public static class WebFunctions
 
     [DllImport("__Internal")]
     public static extern void PersistLeaderboardSessionGuid(string guid);
-
-    [DllImport("__Internal")]
-    public static extern string ExtractSessionGuidFromFragment();
 }

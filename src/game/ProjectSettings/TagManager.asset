@@ -14,7 +14,7 @@ TagManager:
   - LevelStatic
   - PlayerTrigger
   - RocketCollide
-  - 
+  - PlayerCollide
   - 
   - 
   - 

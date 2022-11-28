@@ -9,8 +9,16 @@ var plugin = {
     },
   },
 
-  RedirectToItchAuthorizationPage: function (leaderboardBaseUrl) {
-    location.replace(`${Pointer_stringify(leaderboardBaseUrl)}/login`);
+  RedirectToItchAuthorizationPage: function (
+    leaderboardBaseUrl,
+    sessionSecret
+  ) {
+    window.open(
+      `${UTF8ToString(leaderboardBaseUrl)}/login#session_secret=${UTF8ToString(
+        sessionSecret
+      )}`,
+      "_blank"
+    );
   },
 
   GetLeaderboardsDisabled: function () {
@@ -56,28 +64,11 @@ var plugin = {
   PersistLeaderboardSessionGuid: function (guid) {
     localStorage.setItem(
       constants.taintRocketSessionIdStorageKey,
-      Pointer_stringify(guid)
+      UTF8ToString(guid)
     );
   },
 
-  ExtractSessionGuidFromFragment: function () {
-    const parts = location.hash.split("=");
-    window.location.replace("#");
-
-    if (
-      parts.length === 2 &&
-      parts[0] === "#session_secret" &&
-      constants.isGuid(parts[1])
-    ) {
-      var buffer = _malloc(lengthBytesUTF8(parts[1]) + 1);
-      writeStringToMemory(parts[1], buffer);
-      return buffer;
-    }
-
-    return null;
-  },
-  
-  SyncIndexedDB: function() {
+  SyncIndexedDB: function () {
     FS.syncfs(false, function (err) {});
   },
 };

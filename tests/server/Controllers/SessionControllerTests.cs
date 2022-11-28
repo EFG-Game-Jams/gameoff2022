@@ -17,12 +17,34 @@ public class SessionControllerTests
     }
 
     [Fact]
+    public async Task CreateGuid_returns_unique_guids()
+    {
+        var firstResponse = await applicationFactory
+            .CreateClient()
+            .GetFromJsonAsync<SessionSecretResponse>($"/api/game/42/session/guid");
+
+        firstResponse.ShouldNotBeNull();
+        firstResponse.Secret.ShouldNotBeNull();
+        firstResponse.Secret.ShouldNotBe(Guid.Empty.ToString());
+
+        var secondResponse = await applicationFactory
+            .CreateClient()
+            .GetFromJsonAsync<SessionSecretResponse>($"/api/game/42/session/guid");
+
+        secondResponse.ShouldNotBeNull();
+        secondResponse.Secret.ShouldNotBeNull();
+        secondResponse.Secret.ShouldNotBe(Guid.Empty.ToString());
+        secondResponse.Secret.ShouldNotBe(firstResponse.Secret);
+    }
+
+    [Fact]
     public async Task Register_should_return_session_guid()
     {
+        var secret = Guid.NewGuid();
         var user = ItchUserBuilder.BuildRandom();
         var response = await applicationFactory
             .CreateClient()
-            .PostAsync($"/api/game/42/session/create/{user.AccessToken}", null);
+            .PostAsync($"/api/game/42/session/{secret}/create/{user.AccessToken}", null);
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<CreateSessionResponse>();
@@ -45,10 +67,11 @@ public class SessionControllerTests
     [Fact]
     public async Task Register_allows_duplicate_user_names()
     {
+        var secretOne = Guid.NewGuid();
         var userOne = ItchUserBuilder.Build("duplicate_name");
         var response = await applicationFactory
             .CreateClient()
-            .PostAsync($"/api/game/42/session/create/{userOne.AccessToken}", null);
+            .PostAsync($"/api/game/42/session/{secretOne}/create/{userOne.AccessToken}", null);
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<CreateSessionResponse>();
@@ -66,10 +89,11 @@ public class SessionControllerTests
         userOneSessionEntity.Player.Name.ShouldBe(userOne.UserName);
         userOneSessionEntity.Player.ItchIdentifier.ShouldBe(userOne.Id);
 
+        var secretTwo = Guid.NewGuid();
         var userTwo = ItchUserBuilder.Build("duplicate_name");
         response = await applicationFactory
             .CreateClient()
-            .PostAsync($"/api/game/42/session/create/{userTwo.AccessToken}", null);
+            .PostAsync($"/api/game/42/session/{secretTwo}/create/{userTwo.AccessToken}", null);
         response.EnsureSuccessStatusCode();
 
         result = await response.Content.ReadFromJsonAsync<CreateSessionResponse>();
@@ -92,11 +116,12 @@ public class SessionControllerTests
     [Fact]
     public async Task GetSessionDetails_should_return_player_name()
     {
+        var secret = Guid.NewGuid();
         var user = ItchUserBuilder.BuildRandom();
         var client = applicationFactory.CreateClient();
 
         var response = await client
-            .PostAsync($"/api/game/42/session/create/{user.AccessToken}", null);
+            .PostAsync($"/api/game/42/session/{secret}/create/{user.AccessToken}", null);
         response.EnsureSuccessStatusCode();
 
         var createdSession = await response.Content.ReadFromJsonAsync<CreateSessionResponse>();
