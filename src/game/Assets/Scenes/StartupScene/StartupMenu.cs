@@ -22,14 +22,13 @@ public class StartupMenu : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.None;
 
-        var client = LeaderboardClient.GetClient();
-
         if (!Application.isEditor && !WebFunctions.HasLocalStorage())
         {
             StartCoroutine(AnimateMenuIn(errorMenu));
         }
         else
         {
+            var client = LeaderboardClient.GetClient();
             StartCoroutine(client.CheckServerHealth((healthy) =>
             {
                 if (healthy)
