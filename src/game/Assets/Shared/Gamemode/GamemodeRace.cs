@@ -39,6 +39,9 @@ public class GamemodeRace : MonoBehaviour
 
     public void OnInputExit(UnityEngine.InputSystem.InputValue value)
     {
+        if (timeUntilUnlock > countdownTime)
+            return; // starting delay
+
         if (activeReplay != null || timeUntilUnlock > 0f)
             GamemodeHub.ReturnFromRace(); // exit
         else
@@ -98,6 +101,9 @@ public class GamemodeRace : MonoBehaviour
             timeUntilUnlock = newTime;
             SetTimerDisplay(Mathf.Min(timeUntilUnlock, countdownTime));
 
+            if (prevTime > countdownTime && newTime <= countdownTime)
+                UpdateLevelTextDisplay();
+
             if (timeUntilUnlock <= 0)
             {
                 // start
@@ -123,7 +129,8 @@ public class GamemodeRace : MonoBehaviour
         string text = SceneBase.ActiveSceneName;
         if (activeReplay != null)
             text += $" - replay\n<size=50%>player - {activeReplay.playerName}</size>";
-        text += $"<size=25%>\nPress <i>Backspace</i> to {(timeUntilUnlock <= 0f && activeReplay == null ? "Restart" : "Return To HUB")}</size>";
+        if (timeUntilUnlock <= countdownTime)
+            text += $"<size=25%>\nPress <i>Backspace</i> to {(timeUntilUnlock <= 0f && activeReplay == null ? "Restart" : "Return To HUB")}</size>";
         uiData.levelNumberText = text;
     }
 

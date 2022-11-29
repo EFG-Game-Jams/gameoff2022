@@ -7,6 +7,9 @@ public class StartupMenu : MonoBehaviour
     private CanvasGroup menu;
 
     [SerializeField]
+    private CanvasGroup errorMenu;
+
+    [SerializeField]
     private AnimationCurve animationCurve;
 
     [SerializeField]
@@ -21,28 +24,35 @@ public class StartupMenu : MonoBehaviour
 
         var client = LeaderboardClient.GetClient();
 
-        StartCoroutine(client.CheckServerHealth((healthy) =>
+        if (!Application.isEditor && !WebFunctions.HasLocalStorage())
         {
-            if (healthy)
+            StartCoroutine(AnimateMenuIn(errorMenu));
+        }
+        else
+        {
+            StartCoroutine(client.CheckServerHealth((healthy) =>
             {
-                if (client.IsLeaderboardEnabledByUser)
+                if (healthy)
                 {
-                    GoOnline();
-                }
-                else if (client.IsLeaderboardDisabledByUser)
-                {
-                    GoOffline();
+                    if (client.IsLeaderboardEnabledByUser)
+                    {
+                        GoOnline();
+                    }
+                    else if (client.IsLeaderboardDisabledByUser)
+                    {
+                        GoOffline();
+                    }
+                    else
+                    {
+                        StartCoroutine(AnimateMenuIn(menu));
+                    }
                 }
                 else
                 {
-                    StartCoroutine(AnimateMenuIn());
+                    GoOffline();
                 }
-            }
-            else
-            {
-                GoOffline();
-            }
-        }));
+            }));
+        }
     }
 
     public void GoOnline()
@@ -84,18 +94,19 @@ public class StartupMenu : MonoBehaviour
 
     private void GotoNextScene() => SceneBase.SwitchScene("HubScene");
 
-    private IEnumerator AnimateMenuIn()
+    private IEnumerator AnimateMenuIn(CanvasGroup group)
     {
         float elapsed = 0f;
-        while (menu.alpha < animationCurve[animationCurve.length - 1].time)
+        while (group.alpha < animationCurve[animationCurve.length - 1].time)
         {
-            menu.alpha = animationCurve.Evaluate(elapsed);
+            group.alpha = animationCurve.Evaluate(elapsed);
             elapsed += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
 
-        menu.enabled = true;
-        menu.alpha = 1f;
+        group.enabled = true;
+        group.alpha = 1f;
+        group.blocksRaycasts = true;
         yield break;
     }
 }

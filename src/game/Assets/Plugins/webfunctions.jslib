@@ -71,6 +71,17 @@ var plugin = {
   SyncIndexedDB: function () {
     FS.syncfs(false, function (err) {});
   },
+
+  HasLocalStorage: function () {
+    try {
+      const randomValue = "42";
+      localStorage.setItem("test", randomValue);
+      return localStorage.getItem("test") === randomValue;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
 };
 
 autoAddDeps(plugin, "$constants");
