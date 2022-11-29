@@ -21,6 +21,8 @@ public class PlayerData : ScriptableObject {
     public float rocketReloadTime;
     // Rocket loaded
     public bool isRocketLoaded;
+    // Shot charge state [0; 1]
+    public float shotCharge;
 
     [Header("Level number")]
     // Level number

@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour
     public Sprite rocketLauncherLoaded;
     public Image rocketReloadCircle;
     public Image rocketLauncher;
+    public Image rocketLauncherCharge;
 
     [Header("LevelNumber")] 
     public TMP_Text levelNumberText;
@@ -56,6 +57,9 @@ public class UIManager : MonoBehaviour
             Mathf.Clamp01(playerData.rocketReloadTime);
         rocketReloadCircle.fillAmount = rockerReloadFillAmount;
         rocketLauncher.sprite = playerData.isRocketLoaded ? rocketLauncherLoaded : rocketLauncherEmtpy;
+
+        // Shot charge
+        rocketLauncherCharge.fillAmount = Mathf.Clamp01(playerData.shotCharge);
         
         // Level number
         levelNumberHolder.SetActive(!string.IsNullOrEmpty(playerData.levelNumberText));

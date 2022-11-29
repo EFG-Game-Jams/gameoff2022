@@ -13,6 +13,7 @@ public class GamemodeHub : MonoBehaviour
     [Header("Ground tutorial")]
     [SerializeField] PlayerTrigger gtTriggerStart;
     [SerializeField] PlayerTrigger gtTriggerFinish;
+    [SerializeField] PlayerTrigger gtTriggerCancel;
     [SerializeField] TMPro.TextMeshProUGUI gtGuiLastTime;
     [SerializeField] TMPro.TextMeshProUGUI gtGuiBestTime;
    
@@ -52,6 +53,7 @@ public class GamemodeHub : MonoBehaviour
     }
 
     public void EventSetLauncherEnabled(bool enabled) => player.GetComponent<SatriProtoPlayerLauncher>().IsEnabled = enabled;
+    public void EventFullyRegenLauncher() =>  player.GetComponent<SatriProtoPlayerLauncher>().RegenFully();
 
     void Start()
     {
@@ -120,6 +122,20 @@ public class GamemodeHub : MonoBehaviour
             activeTimer = TimerType.None;
             activeTimerStart = 0;
             StartCoroutine(CoHideHudTimer());
+        });
+        gtTriggerCancel.onTriggerEnter.AddListener((GameObject gameObject, double fixedTime) =>
+        {
+            gtTriggerStart.ResetTrigger();
+            gtTriggerFinish.ResetTrigger();
+
+            if (activeTimer != TimerType.GroundTutorial)
+                return;
+
+            uiData.levelTimerText = "";
+            uiData.levelNumberText = "";
+
+            activeTimer = TimerType.None;
+            activeTimerStart = 0;
         });
     }
 

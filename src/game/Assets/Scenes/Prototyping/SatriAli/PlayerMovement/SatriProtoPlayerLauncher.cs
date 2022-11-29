@@ -99,6 +99,15 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
     private bool Reloading => (generatedShots > 0 && reloadTimer > 0);
     private bool ShotLoaded => (generatedShots > 0 && !Reloading);
 
+    public void RegenFully()
+    {
+        if (generatedShots == 0 && reloadTimer == 0)
+            sfxReload.Play();
+
+        generatedShots = maxGeneratedShots;
+        regenTimer = shotRegenTime;            
+    }
+
     private Vector3 ChargedMuzzleVelocity
     {
         get
@@ -221,6 +230,7 @@ public class SatriProtoPlayerLauncher : MonoBehaviour
         uiData.rocketRegenTime = isEnabled && generatedShots < maxGeneratedShots ? Mathf.Clamp01(1f - regenTimer / shotRegenTime) : 0f;
         uiData.rocketReloadTime = reloadTimer <= 0 ? 0f : Mathf.Clamp01(1f - reloadTimer / launcherReloadTime);
         uiData.isRocketLoaded = ShotLoaded;
+        uiData.shotCharge = (Mathf.Clamp01(chargeTimer / chargeShotTime));
     }
 
     private void TryFire()
