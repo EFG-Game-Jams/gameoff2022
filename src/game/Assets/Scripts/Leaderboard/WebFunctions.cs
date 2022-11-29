@@ -22,4 +22,7 @@ public static class WebFunctions
 
     [DllImport("__Internal")]
     public static extern void PersistLeaderboardSessionGuid(string guid);
+
+    [DllImport("__Internal")]
+    public static extern bool HasLocalStorage();
 }
