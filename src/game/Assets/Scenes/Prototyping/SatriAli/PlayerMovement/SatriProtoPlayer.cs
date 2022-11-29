@@ -234,6 +234,7 @@ public class SatriProtoPlayer : MonoBehaviour
 
         uiData.speed = Vector3.Scale(velocity, new Vector3(1, 0, 1)).magnitude;
         uiData.maxSpeed = rocketFinalSpeedMax;
+        uiData.altitude = position.y - 1f;
     }
 
     private void Update()

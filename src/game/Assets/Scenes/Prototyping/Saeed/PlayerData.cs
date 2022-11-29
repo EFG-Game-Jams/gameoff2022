@@ -4,11 +4,13 @@ using System.Collections;
 [CreateAssetMenu(fileName = "PlayerData", menuName = "ScriptableObjects/PlayerData", order = 1)]
 public class PlayerData : ScriptableObject {
 
-    [Header("Speed")]
+    [Header("Player")]
     // Shows the speed of player (can be the magnitude)
     public float speed;
     // Max speed which player can reach. Used to scale the speed on UI
     public float maxSpeed;
+    // Altitude of player
+    public float altitude;
 
     [Header("Rockets")]
     // How many rockets player has ready
