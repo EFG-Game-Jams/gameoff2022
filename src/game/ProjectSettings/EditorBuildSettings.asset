@@ -27,7 +27,13 @@ EditorBuildSettings:
     path: Assets/Scenes/Races/M2.unity
     guid: 667f536562b1be642807bc7dd8a6318c
   - enabled: 1
+    path: Assets/Scenes/Saeed Level Stuff/M3.unity
+    guid: 76df080da3110224688a76396786817f
+  - enabled: 1
     path: Assets/Scenes/Saeed Level Stuff/H2.unity
     guid: def043abe795cec48bf07201a6bfb14c
+  - enabled: 1
+    path: Assets/Scenes/Races/H3.unity
+    guid: 44bf0f15fae724e46b926b648fac1ba2
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 80501e074efcb0b479f9554c00f62e54, type: 2}

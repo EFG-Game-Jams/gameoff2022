@@ -9,9 +9,10 @@ public class UIManager : MonoBehaviour
 {
     public PlayerData playerData;
     
-    [Header("Speed")]
+    [Header("Player")]
     public TMP_Text speedText;
     public Image speedCircle;
+    public RawImage altitudeImage;
 
     [Header("Rockets")] 
     public TMP_Text rocketCount;
@@ -45,6 +46,12 @@ public class UIManager : MonoBehaviour
         float speedCircleFillAmount =
             Mathf.Clamp01(playerData.speed / playerData.maxSpeed);
         speedCircle.fillAmount = speedCircleFillAmount;
+
+        // Altitude image UV offset
+        Rect altUvRect = altitudeImage.uvRect;
+        altUvRect.y = altUvRect.height * .5f;
+        altUvRect.y += playerData.altitude * .1f;
+        altitudeImage.uvRect = altUvRect;
 
         // Rocket count indicator calculation
         rocketCount.text = playerData.rocketReadyCount.ToString();
