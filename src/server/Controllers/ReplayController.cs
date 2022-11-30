@@ -21,6 +21,7 @@ public class ReplayController : ControllerBase
 
     [HttpPost]
     [Route("/api/game/{revision}/session/{sessionSecret}/replay")]
+    [RequestSizeLimit(1024 * 120)]
     public async Task<ActionResult<ReplayCreatedResponse>> CreateReplay(
         [FromRoute] uint revision,
         [FromRoute] Guid sessionSecret,
