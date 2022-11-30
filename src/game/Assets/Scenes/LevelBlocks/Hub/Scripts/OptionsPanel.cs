@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class OptionsPanel : MonoBehaviour
@@ -10,6 +11,7 @@ public class OptionsPanel : MonoBehaviour
     [SerializeField] OptionSlider volumeMusic;
     [SerializeField] RocketButtonBase buttonResetDefaults;
     [SerializeField] RocketButtonBase buttonGoOnline;
+    [SerializeField] TextMeshProUGUI textOnlineStatus;
 
     void Start()
     {
@@ -53,12 +55,38 @@ public class OptionsPanel : MonoBehaviour
         });
 
         LeaderboardClient client = LeaderboardClient.GetClient();
-        buttonGoOnline.gameObject.SetActive(client.IsServerHealthy && client.IsLeaderboardDisabledByUser);
+
+        bool clientStateSwitch = client.IsServerHealthy && client.IsLeaderboardDisabledByUser;
+        buttonGoOnline.gameObject.SetActive(clientStateSwitch);
+        textOnlineStatus.gameObject.SetActive(!clientStateSwitch);
+
         buttonGoOnline.onTrigger.AddListener(v =>
         {
             client.ResetLeaderboardEnabledUserChoice();
             LeaderboardClient.DiscardExistingClient();
             SceneBase.SwitchScene("StartupScene");
         });
+
+        StartCoroutine(CoUpdateOnlineStatus());
+    }
+
+    IEnumerator CoUpdateOnlineStatus()
+    {
+        if (!textOnlineStatus.gameObject.activeSelf)
+            yield break;
+
+        LeaderboardClient client = LeaderboardClient.GetClient();
+
+        textOnlineStatus.text = $"Leaderboard Status : Connecting...";
+        yield return new WaitForSeconds(10);
+
+        string onlineStatus = null;
+        if (!client.IsServerHealthy)
+            onlineStatus = "Offline";
+        else if (client.IsOffline)
+            onlineStatus = "Connection Error";
+        else
+            onlineStatus = "Online";
+        textOnlineStatus.text = $"Leaderboard Status : {onlineStatus}";
     }
 }
