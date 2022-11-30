@@ -9893,7 +9893,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh4547464
+  m_Name: pb_Mesh5019756
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -24526,7 +24526,7 @@ MonoBehaviour:
     Move
     forwards at <b>6 m/s</b> or more
 
-    Tap <i>Left Mouse</i> to <b>go flying</b>'
+    Tap <i>Left Mouse</i>'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: af3bdca72bb6c154eaf9d65f5309251a, type: 2}
   m_sharedMaterial: {fileID: 7089790426533463769, guid: af3bdca72bb6c154eaf9d65f5309251a, type: 2}
