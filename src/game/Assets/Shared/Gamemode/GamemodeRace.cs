@@ -69,11 +69,8 @@ public class GamemodeRace : MonoBehaviour
         uiData.levelTimerText = "";
         UpdateLevelTextDisplay();
 
-        if (replayable.ShouldRecord)
-        {
-            player.SetLocks(true, true);
-            playerLauncher.IsEnabled = false;
-        }
+        player.SetLocks(true, true);
+        playerLauncher.IsEnabled = false;
 
         if (activeReplay != null)
         {
