@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Util.EnumeratorExtensions;
 
 public class OptionsPanel : MonoBehaviour
 {
@@ -58,7 +59,6 @@ public class OptionsPanel : MonoBehaviour
 
         bool clientStateSwitch = client.IsServerHealthy && client.IsLeaderboardDisabledByUser;
         buttonGoOnline.gameObject.SetActive(clientStateSwitch);
-        textOnlineStatus.gameObject.SetActive(!clientStateSwitch);
 
         buttonGoOnline.onTrigger.AddListener(v =>
         {
@@ -67,21 +67,25 @@ public class OptionsPanel : MonoBehaviour
             SceneBase.SwitchScene("StartupScene");
         });
 
-        if (textOnlineStatus.gameObject.activeSelf)
+        textOnlineStatus.gameObject.SetActive(!clientStateSwitch);
+        if (!clientStateSwitch)
         {
             // perform a health when (re)entering the hub
             textOnlineStatus.text = $"Leaderboard Status : Checking...";
-            client.CheckServerHealth(healthy =>
-            {
-                string onlineStatus = null;
-                if (!healthy)
-                    onlineStatus = "Offline";
-                else if (client.IsOffline)
-                    onlineStatus = "Connection Error";
-                else
-                    onlineStatus = "Online";
-                textOnlineStatus.text = $"Leaderboard Status : {onlineStatus}";
-            });
+            StartCoroutine(
+                client.CheckServerHealth(healthy =>
+                {
+                    string onlineStatus = null;
+                    if (!healthy)
+                        onlineStatus = "Offline";
+                    else if (client.IsOffline)
+                        onlineStatus = "Error";
+                    else
+                        onlineStatus = "Online";
+                    textOnlineStatus.text = $"Leaderboard Status : {onlineStatus}";
+                })
+                .OnException(e => textOnlineStatus.text = $"Leaderboard Status : Network Error")
+            );
         }
     }
 }
