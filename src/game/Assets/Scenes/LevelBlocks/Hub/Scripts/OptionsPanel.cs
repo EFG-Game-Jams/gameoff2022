@@ -67,26 +67,21 @@ public class OptionsPanel : MonoBehaviour
             SceneBase.SwitchScene("StartupScene");
         });
 
-        StartCoroutine(CoUpdateOnlineStatus());
-    }
-
-    IEnumerator CoUpdateOnlineStatus()
-    {
-        if (!textOnlineStatus.gameObject.activeSelf)
-            yield break;
-
-        LeaderboardClient client = LeaderboardClient.GetClient();
-
-        textOnlineStatus.text = $"Leaderboard Status : Connecting...";
-        yield return new WaitForSeconds(10);
-
-        string onlineStatus = null;
-        if (!client.IsServerHealthy)
-            onlineStatus = "Offline";
-        else if (client.IsOffline)
-            onlineStatus = "Connection Error";
-        else
-            onlineStatus = "Online";
-        textOnlineStatus.text = $"Leaderboard Status : {onlineStatus}";
+        if (textOnlineStatus.gameObject.activeSelf)
+        {
+            // perform a health when (re)entering the hub
+            textOnlineStatus.text = $"Leaderboard Status : Checking...";
+            client.CheckServerHealth(healthy =>
+            {
+                string onlineStatus = null;
+                if (!healthy)
+                    onlineStatus = "Offline";
+                else if (client.IsOffline)
+                    onlineStatus = "Connection Error";
+                else
+                    onlineStatus = "Online";
+                textOnlineStatus.text = $"Leaderboard Status : {onlineStatus}";
+            });
+        }
     }
 }
