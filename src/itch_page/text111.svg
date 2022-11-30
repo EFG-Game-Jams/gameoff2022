@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210.00624mm"
+   height="17.78134mm"
+   viewBox="0 0 210.00624 17.78134"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
+   sodipodi:docname="drawing.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.64693625"
+     inkscape:cx="23.18621"
+     inkscape:cy="-170.80508"
+     inkscape:window-width="1934"
+     inkscape:window-height="1236"
+     inkscape:window-x="157"
+     inkscape:window-y="121"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <rect
+       x="71.986458"
+       y="392.50958"
+       width="655.12982"
+       height="209.83167"
+       id="rect113" />
+    <rect
+       x="71.986458"
+       y="392.50958"
+       width="655.12982"
+       height="209.83167"
+       id="rect113-3" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g1629"
+       transform="matrix(8.9557116,0,0,8.9557116,-170.57391,-939.54258)"
+       inkscape:export-filename="../Downloads/text111.svg"
+       inkscape:export-xdpi="100"
+       inkscape:export-ydpi="100">
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,0,-0.52916667)"
+         id="text111"
+         style="white-space:pre;shape-inside:url(#rect113);display:inline;fill:#000000"
+         inkscape:export-filename="../Downloads/text111.svg"
+         inkscape:export-xdpi="1000"
+         inkscape:export-ydpi="1000"><tspan
+           x="71.986328"
+           y="406.00977"
+           id="tspan1819"><tspan
+             style="font-family:'Kenney Future Narrow';-inkscape-font-specification:'Kenney Future Narrow';fill:#ffffff"
+             id="tspan1817">Tain't r</tspan></tspan></text>
+      <g
+         id="g1497"
+         transform="translate(0.13883957,-0.54133934)">
+        <circle
+           style="fill:none;stroke:#ffffff;stroke-width:0.4;stroke-dasharray:none;stroke-opacity:1"
+           id="path324"
+           cx="32.989792"
+           cy="106.48644"
+           r="0.70800817" />
+        <path
+           style="fill:#faab00;fill-opacity:1;stroke:#faab00;stroke-width:0.05;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+           d="m 33.006704,106.55462 0.733113,-0.93014 -0.821991,0.86141 z"
+           id="path1059" />
+        <rect
+           style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.0434632;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+           id="rect1277"
+           width="0.36173123"
+           height="0.36173123"
+           x="32.81002"
+           y="105.50796" />
+      </g>
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,15.524322,-0.52806671)"
+         id="text111-6"
+         style="white-space:pre;shape-inside:url(#rect113-3);display:inline;fill:#000000"
+         inkscape:export-filename="../Downloads/text111.png"
+         inkscape:export-xdpi="1000"
+         inkscape:export-ydpi="1000"><tspan
+           x="71.986328"
+           y="406.00977"
+           id="tspan1823"><tspan
+             style="font-family:'Kenney Future Narrow';-inkscape-font-specification:'Kenney Future Narrow';fill:#ffffff"
+             id="tspan1821">cket</tspan></tspan></text>
+    </g>
+  </g>
+</svg>
