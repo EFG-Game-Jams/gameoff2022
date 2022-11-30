@@ -4470,14 +4470,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1008133585594567965, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -77.51611
-      objectReference: {fileID: 0}
-    - target: {fileID: 1008133585594567965, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -25.907227
-      objectReference: {fileID: 0}
     - target: {fileID: 2274355555347744192, guid: b176474817ec4b54fb49bbe7db5455a7, type: 3}
       propertyPath: m_Name
       value: SceneBasePrefab
