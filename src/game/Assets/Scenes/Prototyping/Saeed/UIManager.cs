@@ -74,6 +74,6 @@ public class UIManager : MonoBehaviour
 
         // Level timer
         levelTimerHolder.SetActive(!string.IsNullOrEmpty(playerData.levelTimerText));
-        levelTimerText.text = $"<mspace=30>{playerData.levelTimerText}</mspace>";
+        levelTimerText.text = $"<mspace=30>{playerData.levelTimerText}</mspace>\n<size=25%>{playerData.levelTimerExtraInfo}</size>";
     }
 }

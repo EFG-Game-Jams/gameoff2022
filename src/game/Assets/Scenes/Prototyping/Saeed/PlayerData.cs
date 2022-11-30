@@ -33,5 +33,6 @@ public class PlayerData : ScriptableObject {
     [Header("Timer")]
     // Timer
     public string levelTimerText;
-
+    // Extra info below timer
+    public string levelTimerExtraInfo;
 }

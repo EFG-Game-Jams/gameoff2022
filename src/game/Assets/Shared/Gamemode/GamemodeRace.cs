@@ -127,7 +127,7 @@ public class GamemodeRace : MonoBehaviour
         if (activeReplay != null)
             text += $" - replay\n<size=50%>player - {activeReplay.playerName}</size>";
         if (timeUntilUnlock <= countdownTime)
-            text += $"<size=25%>\nPress <i>Backspace</i> to {(timeUntilUnlock <= 0f && activeReplay == null ? "Restart" : "Return To HUB")}</size>";
+            text += $"\n<size=25%>Press <i>Backspace</i> to {(timeUntilUnlock <= 0f && activeReplay == null ? "Restart" : "Return To HUB")}</size>";
         uiData.levelNumberText = text;
     }
 
@@ -136,6 +136,20 @@ public class GamemodeRace : MonoBehaviour
         TimeSpan timeSpan = TimeSpan.FromSeconds(time);
         string timeText = string.Format("{0:D2}:{1:D2}.{2:D3}", timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);        
         uiData.levelTimerText = timeText;
+
+        if (time > MaxAllowedReplayTime)
+        {
+            if (string.IsNullOrEmpty(uiData.levelTimerExtraInfo))
+            {
+                TimeSpan timeSpanMax = TimeSpan.FromSeconds(MaxAllowedReplayTime);
+                string timeTextMax = string.Format("{0:D2}:{1:D2}", timeSpanMax.Minutes, timeSpanMax.Seconds);
+                uiData.levelTimerExtraInfo = $"Times above {timeTextMax} will not be\nadded to the leaderboard!";
+            }
+        }
+        else
+        {
+            uiData.levelTimerExtraInfo = "";
+        }
     }
     private void UpdateTimerDisplay()
     {        
@@ -189,7 +203,7 @@ public class GamemodeRace : MonoBehaviour
             yield return LeaderboardClient.GetClient()
                 .CreateReplay(
                     replay => {
-                        Debug.Log($"Replay {replay.id} uploaded to server");
+                        Debug.Log($"Replay {replay.id} (json length: {replayData.Length}) uploaded to server");
                     },
                     timeMs, levelName, replayData)
                 .OnException(e => {

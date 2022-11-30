@@ -60,6 +60,7 @@ public class GamemodeHub : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         uiData.levelTimerText = "";
+        uiData.levelTimerExtraInfo = "";
         uiData.levelNumberText = "";
 
         PersistentDataLoad();
