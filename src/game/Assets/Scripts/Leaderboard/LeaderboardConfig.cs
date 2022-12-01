@@ -3,5 +3,5 @@
 public static class LeaderboardConfig
 {
     public static string LeaderboardUrl => "https://taintrocket.krekhuis.nl";
-    public static int GameRevision => 2;
+    public static int GameRevision => 3;
 }

@@ -5584,7 +5584,7 @@ MonoBehaviour:
   rocketImpulseMax: 15
   rocketRadiusMin: 4
   rocketRadiusMax: 8
-  rocketLimitFinalSpeed: 1
+  rocketLimitFinalSpeed: 0
   rocketFinalSpeedMax: 30
 --- !u!114 &6453059204940380689
 MonoBehaviour:
