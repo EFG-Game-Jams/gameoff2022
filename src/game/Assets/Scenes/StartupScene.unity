@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12732331, g: 0.13415194, b: 0.12107967, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1100,7 +1100,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7337993176399503264, guid: 1d6cedc3df5826fcdb210d69621d0f60, type: 3}
       propertyPath: m_text
-      value: Login via itch.io
+      value: 'Login via itch.io
+
+        <size=25%>If you get stuck after logging
+        into itch, refresh this page</size>'
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337993176399503264, guid: 1d6cedc3df5826fcdb210d69621d0f60, type: 3}
+      propertyPath: m_fontSize
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337993176399503264, guid: 1d6cedc3df5826fcdb210d69621d0f60, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337993176399503264, guid: 1d6cedc3df5826fcdb210d69621d0f60, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337993176399503264, guid: 1d6cedc3df5826fcdb210d69621d0f60, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d6cedc3df5826fcdb210d69621d0f60, type: 3}
