@@ -17,21 +17,38 @@
     </div>
 </div>
 
-@foreach (var level in Model.LevelStatistics)
-{
-    <p class="fs-2">@level.LevelName</p>
-    <table class="table mb-3">
-    <tr>
-        <th>Player name</th>
-        <th>Time (ms)</th>
-    </tr>
+<div class="d-flex flex-column">
+    @foreach (var group in Model.LevelStatistics.GroupBy(s => s.LevelName[0]))
+    {
+        <div class="mt-3">
+            @await Html.PartialAsync("LevelStatisticsPartial", group.ToArray())
+        </div>
+    }
+</div>
 
-    @foreach (var record in level.TopTen)
-        {
-            <tr>
-                <td>@record.PlayerName</td>
-                <td>@record.TimeInMilliseconds</td>
-            </tr>
+<script>
+function reveal(levelName) {
+    const levelNames = [
+    @foreach(var level in Model.LevelStatistics)
+    {
+        <text>"@level.LevelName",</text>
+    }
+    ];
+
+    for(let i = 0; i < levelNames.length; ++i) {
+        if (!levelNames[i].startsWith(levelName[0])) {
+            continue;
         }
-    </table>
+
+        const button = document.getElementById(`btn-${levelNames[i]}`);
+        const table = document.getElementById(`table-${levelNames[i]}`);
+        if (levelName === levelNames[i]) {
+            button.classList.add('active');
+            table.style.display = 'block';
+        } else {
+            button.classList.remove('active');
+            table.style.display = 'none';
+        }
+    }
 }
+</script>

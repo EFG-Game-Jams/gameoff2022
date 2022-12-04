@@ -1,0 +1,42 @@
+@using Game.Server.Models.Admin;
+@model LevelStatistics[];
+
+<div class="btn-group w-100" role="group">
+    @foreach (var level in Model)
+    {
+        <button id="btn-@level.LevelName" type="button" class="btn btn-outline-primary"
+        onclick="reveal('@level.LevelName')">
+            @level.LevelName
+        </button>
+    }
+</div>
+
+@foreach (var level in Model)
+{
+    <div id="table-@level.LevelName" style="display: none;">
+    <table class="table mb-3">
+        <tr>
+            <th>Player name</th>
+            <th>Time (ms)</th>
+        </tr>
+
+        @foreach (var record in level.TopTen)
+            {
+                <tr>
+                    <td>@record.PlayerName</td>
+                    <td>@record.TimeInMilliseconds</td>
+                </tr>
+            }
+        </table>
+
+        <div class="d-flex justify-content-center fw-lighter">
+            Total records: @level.RecordCount
+        </div>
+    </div>
+}
+
+<script>
+    window.addEventListener('load', () => {
+        reveal('@Model[0].LevelName');
+    });
+</script>

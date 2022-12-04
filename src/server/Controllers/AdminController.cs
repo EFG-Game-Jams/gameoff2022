@@ -25,7 +25,7 @@ public class AdminController : Controller
         var playerCount = await replayDatabase.Players.CountAsync();
         var sessionCount = await replayDatabase.Sessions.CountAsync();
         var levels = await replayDatabase.Levels
-            .Select(l => new { l.Name, l.Id })
+            .Select(l => new { l.Name, l.Id, RecordCount = l.Replays.Count() })
             .OrderBy(l => l.Name)
             .ToArrayAsync();
 
@@ -41,6 +41,7 @@ public class AdminController : Controller
 
             levelRecords.Add(new LevelStatistics(
                 level.Name,
+                level.RecordCount,
                 records
                     .Select(r => new LevelStatisticsRecord(r.Name, (int)r.TimeInMilliseconds))
                     .ToArray()));
