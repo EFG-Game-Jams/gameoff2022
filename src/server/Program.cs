@@ -47,6 +47,8 @@ public partial class Program
             });
         });
 
+        builder.Services.AddHttpLogging(config => { });
+
         var app = builder
             .Build();
 
