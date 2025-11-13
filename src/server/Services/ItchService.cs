@@ -1,7 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using Game.Server.Services.Models;
-using Game.Server.Utils;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace Game.Server.Services;
@@ -81,7 +80,7 @@ public class ItchService : Abstractions.IItchService
         new()
         {
             AllowTrailingCommas = true,
-            PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
             PropertyNameCaseInsensitive = true,
         };
 }
