@@ -32,15 +32,31 @@ public class LeaderboardControllerTests
         var levelTwoName = "gglt_level_two";
         var levelThreeName = "gglt_level_three";
 
-        await CreateReplays(sessionAlpha, (levelOneName, 1000), (levelTwoName, 500), (levelThreeName, 1500));
-        await CreateReplays(sessionBravo, (levelOneName, 500), (levelTwoName, 1500), (levelThreeName, 1000));
-        await CreateReplays(sessionCharlie, (levelOneName, 1500), (levelTwoName, 1000), (levelThreeName, 500));
+        await CreateReplays(
+            sessionAlpha,
+            (levelOneName, 1000),
+            (levelTwoName, 500),
+            (levelThreeName, 1500)
+        );
+        await CreateReplays(
+            sessionBravo,
+            (levelOneName, 500),
+            (levelTwoName, 1500),
+            (levelThreeName, 1000)
+        );
+        await CreateReplays(
+            sessionCharlie,
+            (levelOneName, 1500),
+            (levelTwoName, 1000),
+            (levelThreeName, 500)
+        );
 
         var client = applicationFactory.CreateClient();
 
         // Level one
-        var list = await client
-            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelOneName}&take=10&skip=0");
+        var list = await client.GetFromJsonAsync<LeaderboardListResponse>(
+            $"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelOneName}&take=10&skip=0"
+        );
         list.ShouldNotBeNull();
         list.Items.ShouldNotBeNull();
         list.Items.Length.ShouldBe(3);
@@ -61,8 +77,9 @@ public class LeaderboardControllerTests
         list.Items[2].TimeInMilliseconds.ShouldBe(1500u);
 
         // Level two
-        list = await client
-            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelTwoName}&take=10&skip=0");
+        list = await client.GetFromJsonAsync<LeaderboardListResponse>(
+            $"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelTwoName}&take=10&skip=0"
+        );
         list.ShouldNotBeNull();
         list.Items.ShouldNotBeNull();
         list.Items.Length.ShouldBe(3);
@@ -83,8 +100,9 @@ public class LeaderboardControllerTests
         list.Items[2].TimeInMilliseconds.ShouldBe(1500u);
 
         // Level three
-        list = await client
-            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelThreeName}&take=10&skip=0");
+        list = await client.GetFromJsonAsync<LeaderboardListResponse>(
+            $"/api/game/{gameRevision}/session/{sessionAlpha}/leaderboard?levelName={levelThreeName}&take=10&skip=0"
+        );
         list.ShouldNotBeNull();
         list.Items.ShouldNotBeNull();
         list.Items.Length.ShouldBe(3);
@@ -137,15 +155,15 @@ public class LeaderboardControllerTests
 
         var client = applicationFactory.CreateClient();
 
-        var list = await client
-            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{session}/leaderboard/neighbours?levelName={levelName}&take=10&skip=0");
+        var list = await client.GetFromJsonAsync<LeaderboardListResponse>(
+            $"/api/game/{gameRevision}/session/{session}/leaderboard/neighbours?levelName={levelName}&take=10&skip=0"
+        );
         list.ShouldNotBeNull();
         list.Items.ShouldNotBeNull();
         list.Items.Length.ShouldBe(10);
 
         list.Items.ShouldAllBe(i => i.LevelName == levelName);
-        list.Items
-            .Select(i => i.PlayerId)
+        list.Items.Select(i => i.PlayerId)
             .Distinct()
             .Count()
             .ShouldBe(10, "All scores should belong to unique players");
@@ -205,15 +223,15 @@ public class LeaderboardControllerTests
 
         var client = applicationFactory.CreateClient();
 
-        var list = await client
-            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{session}/leaderboard/neighbours?levelName={levelName}&take=10&skip=0");
+        var list = await client.GetFromJsonAsync<LeaderboardListResponse>(
+            $"/api/game/{gameRevision}/session/{session}/leaderboard/neighbours?levelName={levelName}&take=10&skip=0"
+        );
         list.ShouldNotBeNull();
         list.Items.ShouldNotBeNull();
         list.Items.Length.ShouldBe(10);
 
         list.Items.ShouldAllBe(i => i.LevelName == levelName);
-        list.Items
-            .Select(i => i.PlayerId)
+        list.Items.Select(i => i.PlayerId)
             .Distinct()
             .Count()
             .ShouldBe(10, "All scores should belong to unique players");
@@ -273,15 +291,15 @@ public class LeaderboardControllerTests
 
         var client = applicationFactory.CreateClient();
 
-        var list = await client
-            .GetFromJsonAsync<LeaderboardListResponse>($"/api/game/{gameRevision}/session/{session}/leaderboard/neighbours?levelName={levelName}&take=10&skip=0");
+        var list = await client.GetFromJsonAsync<LeaderboardListResponse>(
+            $"/api/game/{gameRevision}/session/{session}/leaderboard/neighbours?levelName={levelName}&take=10&skip=0"
+        );
         list.ShouldNotBeNull();
         list.Items.ShouldNotBeNull();
         list.Items.Length.ShouldBe(10);
 
         list.Items.ShouldAllBe(i => i.LevelName == levelName);
-        list.Items
-            .Select(i => i.PlayerId)
+        list.Items.Select(i => i.PlayerId)
             .Distinct()
             .Count()
             .ShouldBe(10, "All scores should belong to unique players");
@@ -318,7 +336,9 @@ public class LeaderboardControllerTests
         list.Items[9].TimeInMilliseconds.ShouldBe(1100u);
     }
 
-    private async Task CreateRandomUserReplays(params (string levelName, int timeInMilliseconds)[] replays)
+    private async Task CreateRandomUserReplays(
+        params (string levelName, int timeInMilliseconds)[] replays
+    )
     {
         var sessionSecret = await SessionBuilder.ForRandomUser(applicationFactory);
         foreach (var replay in replays)
@@ -332,7 +352,10 @@ public class LeaderboardControllerTests
         }
     }
 
-    private async Task CreateReplays(Guid sessionSecret, params (string levelName, int timeInMilliseconds)[] replays)
+    private async Task CreateReplays(
+        Guid sessionSecret,
+        params (string levelName, int timeInMilliseconds)[] replays
+    )
     {
         foreach (var replay in replays)
         {

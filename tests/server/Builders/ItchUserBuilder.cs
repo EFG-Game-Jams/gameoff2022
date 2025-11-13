@@ -13,9 +13,7 @@ internal class ItchUserBuilder
     private string userName = string.Empty;
     private string accessToken = string.Empty;
 
-    private ItchUserBuilder()
-    {
-    }
+    private ItchUserBuilder() { }
 
     public ItchUserBuilder WithId()
     {
@@ -31,10 +29,7 @@ internal class ItchUserBuilder
 
     public ItchUserBuilder WithAccessToken()
     {
-        accessToken = Guid.NewGuid()
-            .ToString()
-            .Replace("-", string.Empty)
-            .ToLower();
+        accessToken = Guid.NewGuid().ToString().Replace("-", string.Empty).ToLower();
         return this;
     }
 
@@ -48,18 +43,12 @@ internal class ItchUserBuilder
 
     public static MockItchUser BuildRandom()
     {
-        return new ItchUserBuilder()
-            .WithId()
-            .WithName()
-            .WithAccessToken()
-            .Build();
+        return new ItchUserBuilder().WithId().WithName().WithAccessToken().Build();
     }
 
     public static MockItchUser Build(string name)
     {
-        var builer = new ItchUserBuilder()
-            .WithId()
-            .WithAccessToken();
+        var builer = new ItchUserBuilder().WithId().WithAccessToken();
 
         builer.userName = name;
 

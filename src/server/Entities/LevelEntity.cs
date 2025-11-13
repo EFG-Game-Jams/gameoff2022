@@ -12,5 +12,4 @@ public class LevelEntity
     public string Name { get; set; }
 
     public List<ReplayEntity> Replays { get; set; }
-
 }

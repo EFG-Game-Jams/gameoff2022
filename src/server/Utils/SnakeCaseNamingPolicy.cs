@@ -1,5 +1,5 @@
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace Game.Server.Utils;
 
@@ -14,7 +14,7 @@ public class SnakeCaseNamingPolicy : JsonNamingPolicy
             Start,
             Lower,
             Upper,
-            NewWord
+            NewWord,
         }
 
         public static string ToSnakeCase(string s) => ToSeparatedCase(s, '_');

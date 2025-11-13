@@ -8,4 +8,5 @@ public record class LeaderboardListEntry(
     string LevelName,
     uint GameRevision,
     uint TimeInMilliseconds,
-    int ReplayId);
+    int ReplayId
+);

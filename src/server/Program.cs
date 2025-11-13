@@ -32,25 +32,29 @@ public partial class Program
         {
             options.AddDefaultPolicy(config =>
             {
-                config
-                    .SetIsOriginAllowed(origin => true)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
+                config.SetIsOriginAllowed(origin => true).AllowAnyHeader().AllowAnyMethod();
             });
-            options.AddPolicy(Policies.HostOnly, config =>
-            {
-                var serverHost = builder.Configuration["Server:Host"];
-                config
-                    .SetIsOriginAllowed(origin => new Uri(origin).Host.Equals(serverHost, StringComparison.CurrentCultureIgnoreCase))
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
+            options.AddPolicy(
+                Policies.HostOnly,
+                config =>
+                {
+                    var serverHost = builder.Configuration["Server:Host"];
+                    config
+                        .SetIsOriginAllowed(origin =>
+                            new Uri(origin).Host.Equals(
+                                serverHost,
+                                StringComparison.CurrentCultureIgnoreCase
+                            )
+                        )
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                }
+            );
         });
 
         builder.Services.AddHttpLogging(config => { });
 
-        var app = builder
-            .Build();
+        var app = builder.Build();
 
         app.UseHttpLogging();
 

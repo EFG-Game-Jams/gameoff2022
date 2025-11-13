@@ -7,4 +7,5 @@ public record class ReplayResponse(
     string LevelName,
     uint GameRevision,
     uint TimeInMilliseconds,
-    string Data);
+    string Data
+);

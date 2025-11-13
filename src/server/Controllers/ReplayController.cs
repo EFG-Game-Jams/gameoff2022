@@ -25,7 +25,8 @@ public class ReplayController : ControllerBase
     public async Task<ActionResult<ReplayCreatedResponse>> CreateReplay(
         [FromRoute] uint revision,
         [FromRoute] Guid sessionSecret,
-        [FromBody] CreateReplayRequest request)
+        [FromBody] CreateReplayRequest request
+    )
     {
         var player = await gameService.TryGetPlayerIdFor(sessionSecret);
         if (!player.HasValue)
@@ -35,12 +36,15 @@ public class ReplayController : ControllerBase
 
         try
         {
-            return new ReplayCreatedResponse(await gameService.SaveReplay(
-                sessionSecret,
-                revision,
-                (uint)request.TimeInMilliseconds.Value,
-                request.LevelName,
-                request.Data));
+            return new ReplayCreatedResponse(
+                await gameService.SaveReplay(
+                    sessionSecret,
+                    revision,
+                    (uint)request.TimeInMilliseconds.Value,
+                    request.LevelName,
+                    request.Data
+                )
+            );
         }
         catch (InvalidOperationException)
         {
@@ -53,7 +57,8 @@ public class ReplayController : ControllerBase
     public async Task<ActionResult<ReplayResponse>> DownloadReplay(
         [FromRoute] uint revision,
         [FromRoute] Guid sessionSecret,
-        [FromRoute] int replayId)
+        [FromRoute] int replayId
+    )
     {
         var player = await gameService.TryGetPlayerIdFor(sessionSecret);
         if (!player.HasValue)

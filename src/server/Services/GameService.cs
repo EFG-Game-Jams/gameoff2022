@@ -14,7 +14,8 @@ public class GameService
     public GameService(
         FileService fileService,
         ReplayDatabase replayDatabase,
-        ILogger<GameService> logger)
+        ILogger<GameService> logger
+    )
     {
         this.fileService = fileService;
         this.replayDatabase = replayDatabase;
@@ -27,17 +28,14 @@ public class GameService
     /// </summary>
     public async Task<Guid> CreateSession(Guid secret, string name, int itchIdentifier)
     {
-        var player = await replayDatabase.Players
-            .SingleOrDefaultAsync(p => p.ItchIdentifier == itchIdentifier);
+        var player = await replayDatabase.Players.SingleOrDefaultAsync(p =>
+            p.ItchIdentifier == itchIdentifier
+        );
 
         if (player == null)
         {
             logger.LogInformation("Creating new player for {Name}", name);
-            player = new()
-            {
-                ItchIdentifier = itchIdentifier,
-                Name = name,
-            };
+            player = new() { ItchIdentifier = itchIdentifier, Name = name };
         }
 
         logger.LogInformation("Creating new session for player with name {Name}", name);
@@ -45,7 +43,7 @@ public class GameService
         {
             CreatedUtc = DateTime.UtcNow,
             Player = player,
-            Secret = secret
+            Secret = secret,
         };
         replayDatabase.Add(session);
         await replayDatabase.SaveChangesAsync();
@@ -55,20 +53,26 @@ public class GameService
 
     public async Task<(int Id, string Name)> GetPlayerFor(Guid secret)
     {
-        var player = await replayDatabase.Sessions
-            .AsNoTracking()
-            .Select(s => new { s.Secret, s.PlayerId, s.Player.Name })
+        var player = await replayDatabase
+            .Sessions.AsNoTracking()
+            .Select(s => new
+            {
+                s.Secret,
+                s.PlayerId,
+                s.Player.Name,
+            })
             .SingleAsync(s => s.Secret == secret);
         return (player.PlayerId, player.Name);
     }
 
     public async Task<int?> TryGetPlayerIdFor(Guid secret)
     {
-        return (await replayDatabase.Sessions
-            .AsNoTracking()
-            .Select(s => new { s.Secret, s.Player.Id })
-            .SingleOrDefaultAsync(s => s.Secret == secret))
-            ?.Id;
+        return (
+            await replayDatabase
+                .Sessions.AsNoTracking()
+                .Select(s => new { s.Secret, s.Player.Id })
+                .SingleOrDefaultAsync(s => s.Secret == secret)
+        )?.Id;
     }
 
     public async Task<int> SaveReplay(
@@ -76,7 +80,8 @@ public class GameService
         uint gameRevision,
         uint timeInMilliseconds,
         string levelName,
-        string data)
+        string data
+    )
     {
         var player = await GetSessionPlayer(secret);
         var level = await GetOrCreateLevel(levelName);
@@ -86,16 +91,15 @@ public class GameService
             player.Name,
             player.Id,
             secret,
-            levelName);
+            levelName
+        );
 
         var (fileId, fileSize) = await fileService.StoreReplayData(data);
         try
         {
-            var replay = await replayDatabase.Replays
-                .FirstOrDefaultAsync(r =>
-                    r.GameRevision == gameRevision &&
-                    r.LevelId == level.Id &&
-                    r.PlayerId == player.Id);
+            var replay = await replayDatabase.Replays.FirstOrDefaultAsync(r =>
+                r.GameRevision == gameRevision && r.LevelId == level.Id && r.PlayerId == player.Id
+            );
             Guid? previousReplayFileIdToDelete = null;
             if (replay == null)
             {
@@ -106,7 +110,7 @@ public class GameService
                     GameRevision = gameRevision,
                     Level = level,
                     Player = player,
-                    TimeInMilliseconds = timeInMilliseconds
+                    TimeInMilliseconds = timeInMilliseconds,
                 };
                 replayDatabase.Add(replay);
             }
@@ -119,7 +123,8 @@ public class GameService
                     secret,
                     levelName,
                     timeInMilliseconds,
-                    replay.TimeInMilliseconds);
+                    replay.TimeInMilliseconds
+                );
                 return replay.Id;
             }
             else
@@ -147,8 +152,8 @@ public class GameService
 
     public async Task<ReplayResponse> DownloadReplay(int replayId)
     {
-        var replay = await replayDatabase.Replays
-            .AsNoTracking()
+        var replay = await replayDatabase
+            .Replays.AsNoTracking()
             .Select(r => new
             {
                 r.Id,
@@ -158,7 +163,7 @@ public class GameService
                 r.LevelId,
                 LevelName = r.Level.Name,
                 r.GameRevision,
-                r.TimeInMilliseconds
+                r.TimeInMilliseconds,
             })
             .SingleAsync(r => r.Id == replayId);
 
@@ -169,23 +174,28 @@ public class GameService
             replay.LevelName,
             replay.GameRevision,
             replay.TimeInMilliseconds,
-            await fileService.ReadReplay(replay.FileName));
+            await fileService.ReadReplay(replay.FileName)
+        );
     }
 
-    public async Task<bool> SessionExists(Guid secret) => await replayDatabase.Sessions
-        .AnyAsync(s => s.Secret == secret);
+    public async Task<bool> SessionExists(Guid secret) =>
+        await replayDatabase.Sessions.AnyAsync(s => s.Secret == secret);
 
-    public async Task<IQueryable<ReplayEntity>> GetGlobalLeaderboardQuery(uint gameRevision, string levelName)
+    public async Task<IQueryable<ReplayEntity>> GetGlobalLeaderboardQuery(
+        uint gameRevision,
+        string levelName
+    )
     {
-        var level = await replayDatabase.Levels
-            .AsNoTracking()
+        var level = await replayDatabase
+            .Levels.AsNoTracking()
             .FirstOrDefaultAsync(l => l.Name == levelName);
 
         if (level == null)
         {
             logger.LogInformation(
                 "Requesting leaderboard query for non-existing level {LevelName}",
-                levelName);
+                levelName
+            );
             // This will always yield an empty set whilst supporting async LINQ
             // EF extension method calls
             return replayDatabase.Replays.Where(r => false);
@@ -196,19 +206,17 @@ public class GameService
 
     public IQueryable<ReplayEntity> GetGlobalLeaderboardQuery(uint gameRevision, int levelId)
     {
-        return replayDatabase.Replays
-            .AsNoTracking()
+        return replayDatabase
+            .Replays.AsNoTracking()
             .Include(r => r.Player)
             .Include(r => r.Level)
             .Where(r => r.GameRevision == gameRevision && r.LevelId == levelId);
     }
 
-    public IQueryable<ReplayEntity> GetPersonalLeaderboardQuery(
-        uint gameRevision,
-        int playerId)
+    public IQueryable<ReplayEntity> GetPersonalLeaderboardQuery(uint gameRevision, int playerId)
     {
-        return replayDatabase.Replays
-            .AsNoTracking()
+        return replayDatabase
+            .Replays.AsNoTracking()
             .Include(r => r.Player)
             .Include(r => r.Level)
             .Where(r => r.GameRevision == gameRevision && r.PlayerId == playerId);
@@ -216,21 +224,18 @@ public class GameService
 
     private async Task<PlayerEntity> GetSessionPlayer(Guid secret)
     {
-        return await replayDatabase.Players
-            .SingleAsync(p => p.Sessions.Any(s => s.Secret == secret));
+        return await replayDatabase.Players.SingleAsync(p =>
+            p.Sessions.Any(s => s.Secret == secret)
+        );
     }
 
     private async Task<LevelEntity> GetOrCreateLevel(string levelName)
     {
-        var level = await replayDatabase.Levels
-            .FirstOrDefaultAsync(l => l.Name == levelName);
+        var level = await replayDatabase.Levels.FirstOrDefaultAsync(l => l.Name == levelName);
         if (level == null)
         {
             logger.LogInformation("Creating level with name {LevelName}", levelName);
-            level = new LevelEntity
-            {
-                Name = levelName,
-            };
+            level = new LevelEntity { Name = levelName };
             replayDatabase.Add(level);
         }
 

@@ -5,9 +5,7 @@ public class FileService
     private readonly IHostEnvironment environment;
     private readonly ILogger<FileService> logger;
 
-    public FileService(
-        IHostEnvironment environment,
-        ILogger<FileService> logger)
+    public FileService(IHostEnvironment environment, ILogger<FileService> logger)
     {
         this.environment = environment;
         this.logger = logger;
@@ -29,7 +27,8 @@ public class FileService
         logger.LogInformation(
             "Stored file with ID {FileId} and size {FileSizeInBytes}",
             id,
-            fileSize);
+            fileSize
+        );
 
         return (id, fileSize);
     }

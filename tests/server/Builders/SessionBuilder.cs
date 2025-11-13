@@ -6,9 +6,7 @@ namespace Game.Server.Integration.Tests.Builders;
 
 internal class SessionBuilder
 {
-    private SessionBuilder()
-    {
-    }
+    private SessionBuilder() { }
 
     /// <returns>The secret of the created session</returns>
     public async static Task<Guid> ForRandomUser(DefaultWebApplicationFactory applicationFactory)
@@ -18,7 +16,10 @@ internal class SessionBuilder
     }
 
     /// <returns>The secret of the created session</returns>
-    public async static Task<Guid> ForUser(DefaultWebApplicationFactory applicationFactory, MockItchUser user)
+    public async static Task<Guid> ForUser(
+        DefaultWebApplicationFactory applicationFactory,
+        MockItchUser user
+    )
     {
         var secret = Guid.NewGuid();
         var response = await applicationFactory

@@ -16,13 +16,7 @@ internal class ItchServiceMock : IItchService
             throw new HttpRequestException("Non existing Itch user");
         }
 
-        return Task.FromResult(new ItchCredentialsInfo
-        {
-            Scopes = new[]
-            {
-                "profile:me"
-            }
-        });
+        return Task.FromResult(new ItchCredentialsInfo { Scopes = new[] { "profile:me" } });
     }
 
     public Task<ItchProfile> FetchProfile(string accessToken)
@@ -34,20 +28,22 @@ internal class ItchServiceMock : IItchService
             throw new HttpRequestException("Non existing Itch user");
         }
 
-        return Task.FromResult(new ItchProfile
-        {
-            User = new()
+        return Task.FromResult(
+            new ItchProfile
             {
-                CoverUrl = null,
-                Developer = false,
-                DisplayName = null,
-                Gamer = true,
-                Id = mockUser.Id,
-                PressUser = false,
-                Url = null,
-                Username = mockUser.UserName
+                User = new()
+                {
+                    CoverUrl = null,
+                    Developer = false,
+                    DisplayName = null,
+                    Gamer = true,
+                    Id = mockUser.Id,
+                    PressUser = false,
+                    Url = null,
+                    Username = mockUser.UserName,
+                },
             }
-        });
+        );
     }
 
     public string GetLoginUrl() => "https://example.com/login";

@@ -44,22 +44,27 @@ internal class ReplayBuilder
     /// <returns>The ID of the created replay</returns>
     public async Task<int> Build()
     {
-        if (sessionSecret == null || levelName == null || timeInMilliseconds == null || gameRevision == null)
+        if (
+            sessionSecret == null
+            || levelName == null
+            || timeInMilliseconds == null
+            || gameRevision == null
+        )
         {
             throw new InvalidOperationException("Cannot construct partial replay");
         }
 
         var client = applicationFactory.CreateClient();
 
-        var response = await client
-            .PostAsJsonAsync(
-                $"/api/game/{gameRevision}/session/{sessionSecret}/replay",
-                new CreateReplayRequest
-                {
-                    TimeInMilliseconds = timeInMilliseconds.Value,
-                    LevelName = levelName,
-                    Data = "{\"blerp\":420}"
-                });
+        var response = await client.PostAsJsonAsync(
+            $"/api/game/{gameRevision}/session/{sessionSecret}/replay",
+            new CreateReplayRequest
+            {
+                TimeInMilliseconds = timeInMilliseconds.Value,
+                LevelName = levelName,
+                Data = "{\"blerp\":420}",
+            }
+        );
 
         var createdReplay = await response.Content.ReadFromJsonAsync<ReplayCreatedResponse>();
         createdReplay.ShouldNotBeNull();

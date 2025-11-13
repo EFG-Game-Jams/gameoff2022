@@ -24,27 +24,35 @@ public class AdminController : Controller
     {
         var playerCount = await replayDatabase.Players.CountAsync();
         var sessionCount = await replayDatabase.Sessions.CountAsync();
-        var levels = await replayDatabase.Levels
-            .Select(l => new { l.Name, l.Id, RecordCount = l.Replays.Count() })
+        var levels = await replayDatabase
+            .Levels.Select(l => new
+            {
+                l.Name,
+                l.Id,
+                RecordCount = l.Replays.Count(),
+            })
             .OrderBy(l => l.Name)
             .ToArrayAsync();
 
         var levelRecords = new List<LevelStatistics>();
         foreach (var level in levels)
         {
-            var records = await replayDatabase.Replays
-                .Where(r => r.LevelId == level.Id)
+            var records = await replayDatabase
+                .Replays.Where(r => r.LevelId == level.Id)
                 .OrderBy(r => r.TimeInMilliseconds)
                 .Select(r => new { r.Player.Name, r.TimeInMilliseconds })
                 .Take(10)
                 .ToArrayAsync();
 
-            levelRecords.Add(new LevelStatistics(
-                level.Name,
-                level.RecordCount,
-                records
-                    .Select(r => new LevelStatisticsRecord(r.Name, (int)r.TimeInMilliseconds))
-                    .ToArray()));
+            levelRecords.Add(
+                new LevelStatistics(
+                    level.Name,
+                    level.RecordCount,
+                    records
+                        .Select(r => new LevelStatisticsRecord(r.Name, (int)r.TimeInMilliseconds))
+                        .ToArray()
+                )
+            );
         }
 
         return View(new StatisticsResponse(playerCount, sessionCount, levelRecords.ToArray()));

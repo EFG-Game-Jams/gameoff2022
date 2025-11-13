@@ -55,8 +55,8 @@ public class SessionControllerTests
         using var scope = applicationFactory.Services.CreateScope();
         using var database = scope.ServiceProvider.GetRequiredService<ReplayDatabase>();
 
-        var sessionEntity = await database.Sessions
-            .AsNoTracking()
+        var sessionEntity = await database
+            .Sessions.AsNoTracking()
             .Include(s => s.Player)
             .SingleAsync(s => s.Secret == result.Secret);
         sessionEntity.Player.Name.ShouldBe(user.UserName);
@@ -82,8 +82,8 @@ public class SessionControllerTests
         using var scope = applicationFactory.Services.CreateScope();
         using var database = scope.ServiceProvider.GetRequiredService<ReplayDatabase>();
 
-        var userOneSessionEntity = await database.Sessions
-            .AsNoTracking()
+        var userOneSessionEntity = await database
+            .Sessions.AsNoTracking()
             .Include(s => s.Player)
             .SingleAsync(s => s.Secret == result.Secret);
         userOneSessionEntity.Player.Name.ShouldBe(userOne.UserName);
@@ -101,8 +101,8 @@ public class SessionControllerTests
         result.PlayerName.ShouldBe(userTwo.UserName);
         result.Secret.ShouldNotBe(Guid.Empty);
 
-        var userTwoSessionEntity = await database.Sessions
-            .AsNoTracking()
+        var userTwoSessionEntity = await database
+            .Sessions.AsNoTracking()
             .Include(s => s.Player)
             .SingleAsync(s => s.Secret == result.Secret);
         userTwoSessionEntity.Player.Name.ShouldBe(userTwo.UserName);
@@ -120,15 +120,18 @@ public class SessionControllerTests
         var user = ItchUserBuilder.BuildRandom();
         var client = applicationFactory.CreateClient();
 
-        var response = await client
-            .PostAsync($"/api/game/42/session/{secret}/create/{user.AccessToken}", null);
+        var response = await client.PostAsync(
+            $"/api/game/42/session/{secret}/create/{user.AccessToken}",
+            null
+        );
         response.EnsureSuccessStatusCode();
 
         var createdSession = await response.Content.ReadFromJsonAsync<CreateSessionResponse>();
         createdSession.ShouldNotBeNull();
 
-        var sessionDetails = await client
-            .GetFromJsonAsync<SessionDetailsResponse>($"/api/game/42/session/{createdSession.Secret}/details");
+        var sessionDetails = await client.GetFromJsonAsync<SessionDetailsResponse>(
+            $"/api/game/42/session/{createdSession.Secret}/details"
+        );
         sessionDetails.ShouldNotBeNull();
         sessionDetails.PlayerName.ShouldBe(user.UserName);
     }

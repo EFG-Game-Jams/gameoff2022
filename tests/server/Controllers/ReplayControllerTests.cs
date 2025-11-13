@@ -22,15 +22,15 @@ public class ReplayControllerTests
         var sessionSecret = await SessionBuilder.ForUser(applicationFactory, user);
         var client = applicationFactory.CreateClient();
 
-        var response = await client
-            .PostAsJsonAsync(
-                $"/api/game/42/session/{sessionSecret}/replay",
-                new CreateReplayRequest
-                {
-                    TimeInMilliseconds = 1234,
-                    LevelName = "create_replay_level",
-                    Data = "{\"blerp\":420}"
-                });
+        var response = await client.PostAsJsonAsync(
+            $"/api/game/42/session/{sessionSecret}/replay",
+            new CreateReplayRequest
+            {
+                TimeInMilliseconds = 1234,
+                LevelName = "create_replay_level",
+                Data = "{\"blerp\":420}",
+            }
+        );
 
         response.EnsureSuccessStatusCode();
         var createdReplay = await response.Content.ReadFromJsonAsync<ReplayCreatedResponse>();
@@ -39,10 +39,14 @@ public class ReplayControllerTests
 
         // Switch user to verify user details returned are not from the session
         // but from the replay
-        sessionSecret = await SessionBuilder.ForUser(applicationFactory, ItchUserBuilder.BuildRandom());
+        sessionSecret = await SessionBuilder.ForUser(
+            applicationFactory,
+            ItchUserBuilder.BuildRandom()
+        );
 
-        var replayResponse = await client
-            .GetFromJsonAsync<ReplayResponse>($"/api/game/42/session/{sessionSecret}/replay/{createdReplay.ReplayId}");
+        var replayResponse = await client.GetFromJsonAsync<ReplayResponse>(
+            $"/api/game/42/session/{sessionSecret}/replay/{createdReplay.ReplayId}"
+        );
         replayResponse.ShouldNotBeNull();
         replayResponse.PlayerId.ShouldBe(user.Id);
         replayResponse.PlayerName.ShouldBe(user.UserName);
@@ -58,41 +62,43 @@ public class ReplayControllerTests
         var sessionSecret = await SessionBuilder.ForRandomUser(applicationFactory);
         var client = applicationFactory.CreateClient();
 
-        var response = await client
-            .PostAsJsonAsync(
-                $"/api/game/42/session/{sessionSecret}/replay",
-                new CreateReplayRequest
-                {
-                    TimeInMilliseconds = 1234,
-                    LevelName = "create_replay_level",
-                    Data = "{\"blerp\":420}"
-                });
+        var response = await client.PostAsJsonAsync(
+            $"/api/game/42/session/{sessionSecret}/replay",
+            new CreateReplayRequest
+            {
+                TimeInMilliseconds = 1234,
+                LevelName = "create_replay_level",
+                Data = "{\"blerp\":420}",
+            }
+        );
 
         var firstCreatedReplay = await response.Content.ReadFromJsonAsync<ReplayCreatedResponse>();
         firstCreatedReplay.ShouldNotBeNull();
 
-        var replayResponse = await client
-            .GetFromJsonAsync<ReplayResponse>($"/api/game/42/session/{sessionSecret}/replay/{firstCreatedReplay.ReplayId}");
+        var replayResponse = await client.GetFromJsonAsync<ReplayResponse>(
+            $"/api/game/42/session/{sessionSecret}/replay/{firstCreatedReplay.ReplayId}"
+        );
         replayResponse.ShouldNotBeNull();
         replayResponse.TimeInMilliseconds.ShouldBe(1234u);
 
-        response = await client
-            .PostAsJsonAsync(
-                $"/api/game/42/session/{sessionSecret}/replay",
-                new CreateReplayRequest
-                {
-                    TimeInMilliseconds = 102,
-                    LevelName = "create_replay_level",
-                    Data = "{\"blerp\":421}"
-                });
+        response = await client.PostAsJsonAsync(
+            $"/api/game/42/session/{sessionSecret}/replay",
+            new CreateReplayRequest
+            {
+                TimeInMilliseconds = 102,
+                LevelName = "create_replay_level",
+                Data = "{\"blerp\":421}",
+            }
+        );
 
         var secondCreatedReplay = await response.Content.ReadFromJsonAsync<ReplayCreatedResponse>();
         secondCreatedReplay.ShouldNotBeNull();
 
         secondCreatedReplay.ReplayId.ShouldBe(firstCreatedReplay.ReplayId);
 
-        replayResponse = await client
-            .GetFromJsonAsync<ReplayResponse>($"/api/game/42/session/{sessionSecret}/replay/{firstCreatedReplay.ReplayId}");
+        replayResponse = await client.GetFromJsonAsync<ReplayResponse>(
+            $"/api/game/42/session/{sessionSecret}/replay/{firstCreatedReplay.ReplayId}"
+        );
         replayResponse.ShouldNotBeNull();
         replayResponse.TimeInMilliseconds.ShouldBe(102u);
         replayResponse.Data.ShouldBe("{\"blerp\":421}");
