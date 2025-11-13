@@ -7,7 +7,3 @@
 
 # Visual studio code directory
 .vscode/
-
-# KoeWaffle scripts
-deploy-game.sh
-deploy-server.sh
