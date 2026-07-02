@@ -1,5 +1,4 @@
 using Game.Server.Entities;
-using Game.Server.Models.Leaderboard;
 using Game.Server.Models.Replay;
 using Microsoft.EntityFrameworkCore;
 
