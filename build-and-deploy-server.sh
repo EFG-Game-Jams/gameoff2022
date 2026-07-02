@@ -17,10 +17,10 @@ rm published/*.db
 ssh -t $REMOTE_NAME 'rm -r $REMOTE_TEMP_DIR'
 scp -r published $REMOTE_NAME:$REMOTE_TEMP_DIR
 
-ssh -t $REMOTE_NAME 'sudo systemctl stop taintrocket.service; \
+ssh -t $REMOTE_NAME "sudo systemctl stop taintrocket.service; \
 sudo rm -r $REMOTE_SRV_DIR/runtimes/; \
 sudo rm $REMOTE_SRV_DIR/Game.Server* $REMOTE_SRV_DIR/web.config; \
 sudo cp -rv $REMOTE_TEMP_DIR/* $REMOTE_SRV_DIR/ && \
 sudo chown -R www-data:www-data $REMOTE_SRV_DIR/* && \
 sudo systemctl start taintrocket.service && \
-rm -r $REMOTE_TEMP_DIR/'
+rm -r $REMOTE_TEMP_DIR/"
